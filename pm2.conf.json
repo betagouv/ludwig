@@ -1,0 +1,9 @@
+{
+	"apps": [
+		{
+			"name": "ludwig-reboot-server",
+			"script": "./server.js",
+			"node_env": "['PORT=3000']"
+		}
+	]
+}

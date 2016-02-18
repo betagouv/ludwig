@@ -1,0 +1,7 @@
+node_modules
+.DS_Store
+bower_components
+dist
+qualimetry
+.idea
+ludwig-*conf.js

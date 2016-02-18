@@ -1,0 +1,25 @@
+{
+  "node": true,
+  "browser": true,
+  "esnext": true,
+  "bitwise": true,
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "indent": 2,
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "quotmark": "single",
+  "regexp": true,
+  "undef": true,
+  "unused": true,
+  "strict": false,
+  "trailing": true,
+  "smarttabs": true,
+  "globals": {
+    "angular": false
+  },
+  "sub":true,
+  "predef":["window", "it", "describe", "beforeEach", "before", "afterEach", "after"]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "ludwig-reboot",
+  "version": "0.0.0",
+  "authors": [
+    "hoshin <martin.bahier@gmail.com>"
+  ],
+  "moduleType": [
+    "es6"
+  ],
+  "keywords": [
+    "testing"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "dist/bower_components/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.6"
+  }
+}
