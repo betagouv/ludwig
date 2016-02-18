@@ -45,7 +45,9 @@ Note : Un fichier ludwig-widget-sample.js se trouve à la racine du projet
 
 ### Ajouter le widget
 
-L'application peut embarquer le widget directement ou se le faire servir par le backend Ludwig. Dans le premier cas, il faut que l'application embarque le fichier bunble.js généré dans l'étape précédente. Dans le second cas on va retrouver ce fichier à <URL_APPLI>/bundle.js .
+L'application peut embarquer le widget directement ou se le faire servir par le backend Ludwig. Dans le premier cas, il faut que l'application embarque le fichier bunble.js généré dans l'étape précédente. Dans le second cas on va retrouver ce fichier à _URL_DE_L_APPLI_/bundle.js .
+
+    <script type="text/javascript" src="http://url.ludwig/bundle.js" charset="utf-8">
 
 ## Configurer / lancer L'API
 
@@ -59,6 +61,19 @@ Note : Un fichier ludwig-widget-sample.js se trouve à la racine du projet
 
 C'est une application NodeJS qui ne demande rien de particulier. Une fois ses dépendances installées, Ludwig peut ensuite être démarré comme bon vous semble :
 
-* npm start
-* node server.js
-* pm2 start pm2.conf.json
+**Attention**, il faut avoir créé les **fichiers de configuration du widget et de l'API avant** de dérouler ces étapes.
+
+    user@host$ npm i #installer / packager
+    user@host$ npm start
+    user@host$ node server.js
+    user@host$ pm2 start pm2.conf.json
+
+## Notes sur la configuration
+
+En l'état, vous devez créer les fichiers de configuration du widget et de l'API, ils ne sont volontairement pas directement fournis pour que le packaging du widget échoue s'il est fait avant que la configuration ait été écrite. De même, le serveur d'API refusera de démarrer sans sa configuration.
+
+Les fichiers "sample" sont là pour qu'il ne reste plus qu'à remplir les blancs et renommer les fichiers pour avoir une configuration qui permette de packager / démarrer.
+
+## Tester l'API
+
+Il existe aujourd'hui une page qui permet de directement tester l'API dans un navigateur, elle est exposée dans /test
