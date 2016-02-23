@@ -32,6 +32,9 @@ app.use('/', require('./routers/main'));
 
 app.listen(config.port, config.ip, function () {
     console.log('Express server listening on %s:%d, in %s mode', config.ip, config.port, app.get('env'));
+    if(ludwigConfig.testFeaturesEnabled){
+        console.info('CAUTION : Test features are enabled. If you are trying to run a production instance, you should probably disable this by setting the testFeaturesEnabled value to false in ludwig-conf.js');
+    }
 });
 
 exports = module.exports = app;
