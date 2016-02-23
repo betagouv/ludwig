@@ -60,7 +60,7 @@ L'application peut embarquer le widget directement ou se le faire servir par le 
 
 ### Configurer
 
-Le fichier de configuration utilisé par l'API se trouve à la racine, il permet de configurer les endpoints de l'API github à utiliser (par exemple), mais surtout les clefs API pour le repository de l'application qui va utiliser Ludwig.
+Le fichier de configuration utilisé par l'API se trouve à la racine. Il permet de configurer les endpoints de l'API Github à utiliser, mais surtout les clefs API pour le repository de l'application qui va utiliser Ludwig.
 
 _Note :_ Un fichier `ludwig-widget-sample.js` se trouve à la racine du projet.
 
@@ -71,7 +71,7 @@ C'est une application NodeJS qui ne demande rien de particulier. Une fois ses d�
 **Attention**, il faut avoir créé les **fichiers de configuration du widget et de l'API avant** de dérouler ces étapes.
 
 ```
-user@host$ npm i #installer / packager
+user@host$ npm install # installer / packager
 user@host$ npm start
 user@host$ node server.js
 user@host$ pm2 start pm2.conf.json
