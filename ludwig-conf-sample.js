@@ -2,6 +2,7 @@ module.exports = {
     url: 'https://github.com/user/repo/new/master',
     template: 'some+basic+template+you+want',
     prefix: 'prefix for suggestions',
+    testFeaturesEnabled:false,
     cors:{
         "Access-Control-Allow-Origin":'http://you.should.probably.edit.this/*'
     },
