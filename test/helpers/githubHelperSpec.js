@@ -1,19 +1,19 @@
-var assert = require('chai').assert;
-var sinon = require('sinon');
-var GithubHelper = require('../../helpers/githubHelper');
-var request = require('superagent');
+import {assert} from 'chai';
+import sinon from 'sinon';
+import {GithubHelper} from '../../helpers/githubHelper';
+import request from 'superagent';
 
-describe('Github Helper', function () {
+describe('Github Helper', () => {
     let githubHelper;
-    let config = [{
+    const config = [{
         pattern: 'https://api.github.com/(.*)',
-        post: function (match, data) {
+        post: (match, data) => {
             return data;
         },
-        put: function (match, data) {
+        put: (match, data) => {
             return data;
         },
-        fixtures: function (match) {
+        fixtures: (match) => {
             if (match[1] === 'repos/hoshin/git-api-tests/pulls') {
                 console.log('hit the mocked PR endpoint');
                 return {
@@ -35,16 +35,16 @@ describe('Github Helper', function () {
         }
     }];
 
-    beforeEach(function () {
+    beforeEach(() => {
         githubHelper = new GithubHelper();
     });
 
-    describe('createPullRequest', function () {
-        it('should send an OK response if pull request was created on configured repo', function () {
+    describe('createPullRequest', () =>  {
+        it('should send an OK response if pull request was created on configured repo', () =>  {
             //setup
-            var superagentMock = require('superagent-mock')(request, config);
+            const superagentMock = require('superagent-mock')(request, config);
             sinon.stub(githubHelper, 'agent').returns(request);
-            var head = 'head', title = 'PR title', body = 'PR body', accessToken = 'access token 12434', callback = sinon.spy();
+            const head = 'head', title = 'PR title', body = 'PR body', accessToken = 'access token 12434', callback = sinon.spy();
             //action
             githubHelper.createPullRequest(head, title, body, accessToken, callback);
             //assert
@@ -56,34 +56,34 @@ describe('Github Helper', function () {
             superagentMock.unset();
         });
     });
-    describe('createPullRequestRequestBody', function () {
-        it('should generate a correctly constructed pull request request body', function () {
+    describe('createPullRequestRequestBody', () =>  {
+        it('should generate a correctly constructed pull request request body', () =>  {
             //setup
-            var head = 'submitterBranch', title = 'PR title', body = 'PR body';
+            const head = 'submitterBranch', title = 'PR title', body = 'PR body';
             //action
-            var actual = githubHelper.createPullRequestRequestBody(head, title, body);
+            const actual = githubHelper.createPullRequestRequestBody(head, title, body);
             //assert
             assert.equal(actual, '{"head":"refs/heads/submitterBranch", "base":"master", "title":"PR title", "body":"PR body"}');
         });
     });
 
-    describe('createCommitRequestBody', function () {
-        it('should generate a correctly constructed commit request body', function () {
+    describe('createContentRequestBody', () =>  {
+        it('should generate a correctly constructed commit request body', () =>  {
             //setup
-            var suggestionFileName = 'path for the suggestion file', branchName = 'branch to commit to', commitMessage = 'commit message', base64FileContents = 'Base64 Contents';
+            const suggestionFileName = 'path for the suggestion file', branchName = 'branch to commit to', commitMessage = 'commit message', base64FileContents = 'Base64 Contents';
             //action
-            var actual = githubHelper.createCommitRequestBody(suggestionFileName, branchName, commitMessage, base64FileContents);
+            const actual = githubHelper.createContentRequestBody(suggestionFileName, branchName, commitMessage, base64FileContents);
             //assert
             assert.equal(actual, '{"path":"path for the suggestion file", "branch":"branch to commit to", "message":"commit message", "content":"Base64 Contents"}');
         });
     });
 
-    describe('createReferenceRequestBody', function(){
-        it('should generate a correctly constructed reference creation request body', function(){
+    describe('createReferenceRequestBody', () => {
+        it('should generate a correctly constructed reference creation request body', () => {
             //setup
-            var newBranchName='newBranchName', commitReferenceToBranchFrom='commit sha1 reference to branch from';
+            const newBranchName='newBranchName', commitReferenceToBranchFrom='commit sha1 reference to branch from';
             //action
-            var actual = githubHelper.createReferenceRequestBody(newBranchName, commitReferenceToBranchFrom);
+            const actual = githubHelper.createReferenceRequestBody(newBranchName, commitReferenceToBranchFrom);
             //assert
             assert.equal(actual, `{"ref":"refs/heads/newBranchName", "sha":"commit sha1 reference to branch from"}`);
         });

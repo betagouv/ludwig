@@ -13,7 +13,7 @@ module.exports = {
         callback_url:'http://authentication.callback.url/for/github/login',
         apiEndpoints:{
             createRef:'https://api.github.com/repos/user/repo/git/refs',
-            createCommit:'https://api.github.com/repos/user/repo/contents/',
+            createContent:'https://api.github.com/repos/user/repo/contents/',
             createPullRequest:'https://api.github.com/repos/user/repo/pulls'
         }
     }

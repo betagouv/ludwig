@@ -1,4 +1,4 @@
-import GithubHelper from '../helpers/githubHelper';
+import {GithubHelper} from '../helpers/githubHelper';
 const FILE_NAME_PREFIX = 'suggestion';
 const BRANCH_PREFIX = 'suggestion';
 const _githubHelper = new GithubHelper();
@@ -30,7 +30,7 @@ class SuggestionsController {
                 const testFileName = FILE_NAME_PREFIX + now + '.txt';
                 const stateStringBuffer = new Buffer(state);
                 const base64FileContents = stateStringBuffer.toString('base64');//contenu du state? ou state + template?
-                self.githubHelper().createCommit(accessToken, testFileName, newBranchName, description, base64FileContents, (err, newCommitData) => {
+                self.githubHelper().createContent(accessToken, testFileName, newBranchName, description, base64FileContents, (err, newCommitData) => {
                     self.githubHelper().createPullRequest(newBranchName, title, description, accessToken, (err, newPullRequestData) => {
                         res.render('ok', {pullRequestURL: newPullRequestData.body.html_url});
                     })

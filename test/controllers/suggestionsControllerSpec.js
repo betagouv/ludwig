@@ -17,7 +17,7 @@ describe('suggestionController', () => {
                 createReference: (accessToken, newBranchName, commitReferenceToBranchFrom, callback) => {
                     callback(null, {});
                 },
-                createCommit: (accessToken, testFileName, newBranchName, description, base64FileContents, callback) => {
+                createContent: (accessToken, testFileName, newBranchName, description, base64FileContents, callback) => {
                     callback(null, {});
                 },
                 createPullRequest: (newBranchName, title, description, accessToken, callback) => {
