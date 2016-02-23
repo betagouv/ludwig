@@ -6,7 +6,7 @@ import GithubStrategy from 'passport-github';
 import {SuggestionsController} from '../controllers/suggestionsController'
 const Strategy = GithubStrategy.Strategy;
 
-const config = require('../ludwig-conf.js');
+import config from '../ludwig-conf.js';
 
 passport.serializeUser((user, done) => {
     done(null, user);
