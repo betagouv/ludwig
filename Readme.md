@@ -12,9 +12,9 @@ Ici, on s'appuie sur Github (et peut être d'autres services à l'avenir) et ses
 
 Pour installer Ludwig et le lancer, vous aurez besoin de :
 
-* nodejs/npm
-* bower
-* webpack
+* [nodejs/npm](https://nodejs.org)
+* [bower](http://bower.io)
+* [webpack](http://webpack.github.io)
 
 ## Utiliser le widget dans une application
 
