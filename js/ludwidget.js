@@ -1,4 +1,4 @@
 'use strict';
-var Ludwig = require('./ludwig');
+import {Ludwig} from './ludwig';
 
 window.Ludwig = Ludwig;
