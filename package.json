@@ -34,7 +34,7 @@
     "webpack-stream": "^3.1.0"
   },
   "engines": {
-    "node": "^5.3.0"
+    "node": "^4.2.0"
   },
   "scripts": {
 		"postinstall":"bower i && gulp",
