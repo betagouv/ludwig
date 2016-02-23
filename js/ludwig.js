@@ -7,6 +7,7 @@ class Ludwig {
         this.template = configuration.template;
         this.prefix = configuration.prefix;
         this.expectedTemplate = configuration.expectedTemplate;
+        this.ludwigCreateSuggestionURL = configuration.ludwigCreateSuggestionURL;
     }
 
     /*
@@ -19,6 +20,7 @@ class Ludwig {
         }
         return suggestionURL;
     }
+
     /*
      @returns a suggestion name that is generated on the fly
      using the configured prefix and the current timestamp
@@ -33,9 +35,27 @@ class Ludwig {
         }
         return suggestionName;
     }
+
+    canGenerateLudwigSuggestionEndpointURL(title, description, currentState, expectedState){
+        return title && description && currentState && expectedState && this.ludwigCreateSuggestionURL;
+    }
+
+    generateLudwigSuggestionEndpointURL(title, description, currentState, expectedState) {
+        if (!this.canGenerateLudwigSuggestionEndpointURL(title, description, currentState, expectedState)){
+            throw new Error('Cannot generate Ludwig suggestions creation endpoint URL (missing)');
+        } else {
+            let URIEncodedState = encodeURIComponent(JSON.stringify(currentState));
+            let URIEncodedExpectedState = encodeURIComponent(expectedState);
+            let URIEncodedTitle = encodeURIComponent(title);
+            let URIEncodedDescription = encodeURIComponent(description);
+            return `${this.ludwigCreateSuggestionURL}?title=${URIEncodedTitle}&description=${URIEncodedDescription}&state=${URIEncodedState}&expectedState=${URIEncodedExpectedState}`
+        }
+    }
+
     acceptedTestsURL() {
         return this.repo_url + this.web.accepted_tests_path;
     }
+
     suggestedTestsURL() {
         return this.repo_url + this.web.suggested_tests_path;
     }

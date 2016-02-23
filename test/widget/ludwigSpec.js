@@ -5,7 +5,7 @@ import {Ludwig} from '../../js/ludwig';
 
 describe('Widget : Sugestion link retrieval', () => {
     let ludwig;
-    beforeEach( () => {
+    beforeEach(() => {
         ludwig = new Ludwig();
     });
 
@@ -78,6 +78,37 @@ describe('Widget : Sugestion link retrieval', () => {
             let actual = ludwig.suggestedTestsURL();
             //assert
             assert.equal(actual, 'my_url/pulls?utf8=✓&q=is%3Apr+is%3Aopen');
+        });
+    });
+
+    describe('generateLudwigSuggestionHandlerURL', () => {
+
+        const suggestionURLGeneratorFailCases = [
+            {testTitle:'title', title:null, description:null, currentState:null, expectedState:null, ludwigCreateSuggestionURL:null},
+            {testTitle:'description', title:'title', description:null, currentState:null, expectedState:null, ludwigCreateSuggestionURL:null},
+            {testTitle:'current state', title:'title', description:'description', currentState:null, expectedState:null, ludwigCreateSuggestionURL:null},
+            {testTitle:'expected state', title:'title', description:'description', currentState:{}, expectedState:null, ludwigCreateSuggestionURL:null},
+            {testTitle:'Ludwig suggestion creation endpoint URL', title:'title', description:'description', currentState:{}, expectedState:{}, ludwigCreateSuggestionURL:null}
+        ];
+
+        suggestionURLGeneratorFailCases.forEach((testCase) => {
+            it( `should throw an error if ${testCase.testTitle} is missing`, () => {
+                //setup
+                //action
+                try{
+                    ludwig.generateLudwigSuggestionEndpointURL();
+                    assert.fail('call without proper parameters should throw an error');
+                }catch(err){
+                    //assert
+                    assert.equal(err.message, 'Cannot generate Ludwig suggestions creation endpoint URL');
+                }
+            });
+        });
+
+        it('should return a correctly formatted URL to a Ludwig endpoint if all necessary data is set', () => {
+            ludwig.ludwigCreateSuggestionURL = 'http://ludwig.foo:3000/createSuggestion';
+            let actual = ludwig.generateLudwigSuggestionEndpointURL('customTitle', 'suggestion description', {one:2}, '{"three":"four"}');
+            assert.equal(actual, 'http://ludwig.foo:3000/createSuggestion?title=customTitle&description=suggestion%20description&state=%7B%22one%22%3A2%7D&expectedState=%7B%22three%22%3A%22four%22%7D');
         });
     });
 });

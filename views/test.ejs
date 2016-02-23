@@ -39,7 +39,7 @@
     }
 
     function createCompleteSuggestion(){
-        window.location = 'http://localhost:3000/createSuggestion?title='+$("#title").val()+'&description='+$("#description").val()+'&state='+encodeURI(JSON.stringify(currentState));
+        window.location = ludwig.generateLudwigSuggestionEndpointURL($("#title").val(), $("#description").val(), currentState, $("#expected").text());
     }
     $(function(){
        $("#expected").val(ludwig.expectedTemplate);
