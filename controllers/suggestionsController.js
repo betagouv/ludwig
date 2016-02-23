@@ -27,18 +27,34 @@ class SuggestionsController {
 
         if(necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, title, description, state)) {
             self.githubHelper().createReference(accessToken, newBranchName, commitReferenceToBranchFrom, (err, newRefData) => {
-                const testFileName = FILE_NAME_PREFIX + now + '.txt';
-                const stateStringBuffer = new Buffer(state);
-                const base64FileContents = stateStringBuffer.toString('base64');//contenu du state? ou state + template?
-                self.githubHelper().createContent(accessToken, testFileName, newBranchName, description, base64FileContents, (err, newCommitData) => {
-                    self.githubHelper().createPullRequest(newBranchName, title, description, accessToken, (err, newPullRequestData) => {
-                        res.render('ok', {pullRequestURL: newPullRequestData.body.html_url});
+                if(!err) {
+                    const testFileName = FILE_NAME_PREFIX + now + '.txt';
+                    const stateStringBuffer = new Buffer(state);
+                    const base64FileContents = stateStringBuffer.toString('base64');
+                    self.githubHelper().createContent(accessToken, testFileName, newBranchName, description, base64FileContents, (err, newCommitData) => {
+                        if(!err){
+                            self.githubHelper().createPullRequest(newBranchName, title, description, accessToken, (err, newPullRequestData) => {
+                                if(!err){
+                                    res.render('ok', {pullRequestURL: newPullRequestData.body.html_url});
+                                } else {
+                                    self.renderErrorPage(res);
+                                }
+                            });
+                        } else {
+                            self.renderErrorPage(res);
+                        }
                     })
-                })
+                } else {
+                    self.renderErrorPage(res);
+                }
             });
         } else {
-            res.render('ko');
+            self.renderErrorPage(res);
         }
+    }
+
+    renderErrorPage(res) {
+        res.render('ko');
     }
 }
 
