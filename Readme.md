@@ -1,10 +1,15 @@
 # Qu'est-ce que c'est ?
 
-## Pour les utilisateurs
-L'objectif de Ludwig est de minimiser le temps passé à saisir un nouveau cas / une fonctionnalité que l'on pense améliorable, à l'équipe qui développe l'application qui intègre Ludwig.
+Ludwig outille la proposition de corrections d'une application web par des utilisateurs et des experts métier.
 
-## Pour les dévelopeurs
-Ici, on s'appuie sur Github (et peut être d'autres services à l'avenir) et ses APIs pour minimiser les outils à déployer pour faire de la gestion de tickets. Ludwig tente aussi de simplifier la gestion de certaines demandes en s'appuyant sur le mécanisme de pull requests.
+## Pour les contributeurs
+
+Ludwig minimise le temps passé à proposer des corrections sur une fonctionnalité et facilite le dialogue avec les développeurs.
+
+## Pour les développeurs
+
+On s'appuie sur Github et ses APIs pour minimiser les outils. Ludwig simplifie la gestion des suggestions en s'appuyant sur les _pull requests_.
+
 
 # Installation
 
