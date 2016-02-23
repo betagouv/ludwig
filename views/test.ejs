@@ -41,6 +41,9 @@
     function createCompleteSuggestion(){
         window.location = 'http://localhost:3000/createSuggestion?title='+$("#title").val()+'&description='+$("#description").val()+'&state='+encodeURI(JSON.stringify(currentState));
     }
+    $(function(){
+       $("#expected").val(ludwig.expectedTemplate);
+    });
 </script>
 
 </a>
@@ -50,39 +53,48 @@
 
 <!-- Begin page content -->
 <div class="container">
-    <div class="form-group">
-        <div class="row">
+    <h2>Page de démonstration de Ludwig et de son widget navigateur</h2>
+    <div>
+        <h4>Diverses actions possibles en passant directement par le widget (pas besoin du backend Ludwig) :</h4>
+        <div class="form-group row">
             <input type="button" class="btn btn-default col-sm-6" value="Générer un lien vers une nouvelle suggestion : ludwig.generateSuggestionURL()"
                    onclick="createLink()"/>
             <a class="col-sm-6" href="" id="linkContainer">
             </a>
         </div>
-        <div class="row">
+        <div class="form-group row">
             <input type="button" class="btn btn-default col-sm-6"
                    value="Créer la suggestion + rediriger l'utilisateur : ludwig.generateSuggestionURL()"
                    onclick="createSuggestion()"/>
         </div>
-        <div class="row">
+        <div class="form-group row">
             <input type="button" class="btn btn-default col-sm-6"
                    value="Aller à la page contenant les tests acceptés : ludwig.acceptedTestsURL()"
                    onclick="showAcceptedTests()"/>
         </div>
-        <div class="row">
+        <div class="form-group row">
             <input type="button" class="btn btn-default col-sm-6"
                    value="Aller à la page contenant les tests suggérés : ludwig.suggestedTestsURL()"
                    onclick="showSuggestedTests()"/>
         </div>
     </div>
-    <div class="form-group">
-        <div class="row">
+    <div>
+        <h4>Appels à l'API GitHub (nécessite de passer par le backend Ludwig):</h4>
+        <div class="form-group row">
             <label class="col-sm-3" for="title">Titre</label>
             <input class="col-sm-3" type="text" id="title" name="title"/>
         </div>
-        <div class="row">
+        <div class="form-group row">
             <label class="col-sm-3" for="description">Description</label>
             <textarea class="col-sm-3" type="text" id="description" name="description"></textarea>
         </div>
-        <div class="row">
+        <div class="form-group row">
+            <label class="col-sm-3" for="description">Données attendues</label>
+            <textarea class="col-sm-3" type="text" id="expected" name="expected" >
+
+            </textarea>
+        </div>
+        <div class="form-group row">
             <input type="button" class="btn btn-default" value="Créer un ticket complet" onclick="createCompleteSuggestion()"/>
         </div>
     </div>

@@ -6,6 +6,7 @@ class Ludwig {
         this.web = configuration.web;
         this.template = configuration.template;
         this.prefix = configuration.prefix;
+        this.expectedTemplate = configuration.expectedTemplate;
     }
 
     /*
