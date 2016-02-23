@@ -1,4 +1,4 @@
-# Qu'est-ce que c'est?
+# Qu'est-ce que c'est ?
 
 ## Pour les utilisateurs
 L'objectif de Ludwig est de minimiser le temps passé à saisir un nouveau cas / une fonctionnalité que l'on pense améliorable, à l'équipe qui développe l'application qui intègre Ludwig.
@@ -20,8 +20,8 @@ Pour installer Ludwig et le lancer, vous aurez besoin de :
 
 Ludwig se découpe en deux composants :
 
-* Le widget navigateur
-* Le webservice
+* le widget navigateur ;
+* le webservice.
 
 Le widget peut s'utiliser seul pour certaines fonctionnalités, mais prend surtout son intérêt couplé au webservice.
 
@@ -49,13 +49,13 @@ L'application peut embarquer le widget directement ou se le faire servir par le 
 
     <script type="text/javascript" src="http://url.ludwig/bundle.js" charset="utf-8">
 
-## Configurer / lancer L'API
+## Configurer et lancer l'API
 
 ### Configurer
 
 Le fichier de configuration utilisé par l'API se trouve à la racine, il permet de configurer les endpoints de l'API github à utiliser (par exemple), mais surtout les clefs API pour le repository de l'application qui va utiliser Ludwig.
 
-Note : Un fichier ludwig-widget-sample.js se trouve à la racine du projet
+Note : Un fichier ludwig-widget-sample.js se trouve à la racine du projet.
 
 ### Lancer
 
