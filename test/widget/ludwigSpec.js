@@ -1,16 +1,16 @@
 'use strict';
-const assert = require('chai').assert;
-const sinon = require('sinon');
-const Ludwig = require('../../js/ludwig');
+import {assert} from 'chai';
+import sinon from 'sinon';
+import {Ludwig} from '../../js/ludwig';
 
-describe('Widget : Sugestion link retrieval', function () {
+describe('Widget : Sugestion link retrieval', () => {
     let ludwig;
     beforeEach( () => {
         ludwig = new Ludwig();
     });
 
     describe('generateSuggestionName', () => {
-        it('should generate suggestion names based on configured prefix and current time', function () {
+        it('should generate suggestion names based on configured prefix and current time', () => {
             //setup
             ludwig.prefix = 'suggestion-prefix';
             //action
@@ -18,7 +18,7 @@ describe('Widget : Sugestion link retrieval', function () {
             //assert
             assert.match(actual, /^suggestion-prefix[0-9]{13}$/);
         });
-        it('should not return NaN if prefix is undefined, just the timestamp', function () {
+        it('should not return NaN if prefix is undefined, just the timestamp', () => {
             //setup
             delete ludwig.prefix;
             //action
@@ -30,7 +30,7 @@ describe('Widget : Sugestion link retrieval', function () {
     });
 
     describe('generateSuggestionURL', () => {
-        it('should concatenate the url and template data from the configuration and generate a unique suggestion name', function () {
+        it('should concatenate the url and template data from the configuration and generate a unique suggestion name', () => {
             //setup
             ludwig.repo_url = 'my_url';
             ludwig.web = {add_path: '/new/master'};
@@ -58,7 +58,7 @@ describe('Widget : Sugestion link retrieval', function () {
     });
 
     describe('acceptedTestsURL', () => {
-        it('should concatenate the base URL of the repo and the public URL of the directory in the master branch of the repo where the tests are', function () {
+        it('should concatenate the base URL of the repo and the public URL of the directory in the master branch of the repo where the tests are', () => {
             //setup
             ludwig.repo_url = 'my_url';
             ludwig.web = {accepted_tests_path: '/tree/master/tests'};
@@ -70,7 +70,7 @@ describe('Widget : Sugestion link retrieval', function () {
     });
 
     describe('suggestionsURL', () => {
-        it('should  concatenate the base URL of the repo and the public URL of the open pull requests', function () {
+        it('should  concatenate the base URL of the repo and the public URL of the open pull requests', () => {
             //setup
             ludwig.repo_url = 'my_url';
             ludwig.web = {suggested_tests_path: '/pulls?utf8=✓&q=is%3Apr+is%3Aopen'};
