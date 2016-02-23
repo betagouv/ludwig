@@ -10,7 +10,7 @@ Ici, on s'appuie sur Github (et peut être d'autres services à l'avenir) et ses
 
 ## Pré-requis
 
-Pour installer Ludwig et le lancer, vous aurez besoin de : 
+Pour installer Ludwig et le lancer, vous aurez besoin de :
 
 * nodejs/npm
 * bower
@@ -18,7 +18,7 @@ Pour installer Ludwig et le lancer, vous aurez besoin de :
 
 ## Utiliser le widget dans une application
 
-Ludwig se découpe en deux composants : 
+Ludwig se découpe en deux composants :
 
 * Le widget navigateur
 * Le webservice
