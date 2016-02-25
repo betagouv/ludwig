@@ -15,20 +15,17 @@ describe('Github Helper', () => {
         },
         fixtures: (match) => {
             if (match[1] === 'repos/hoshin/git-api-tests/pulls') {
-                console.log('hit the mocked PR endpoint');
                 return {
                     'url': 'https://api.github.com/repos/hoshin/git-api-tests/pulls/19'
                 };
             }
 
             if (match[1].match(/repos\/hoshin\/git-api-tests\/contents\/.*/)) {
-                console.log('hit the mocked commit endpoint');
                 return {};
 
             }
 
             if (match[1] === 'repos/hoshin/git-api-tests/git/refs') {
-                console.log('hit the mocked ref creation endpoint');
                 return {};
             }
             return {};

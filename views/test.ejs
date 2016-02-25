@@ -39,7 +39,7 @@
     }
 
     function createCompleteSuggestion() {
-        window.location = ludwig.generateLudwigSuggestionEndpointURL($("#title").val(), $("#description").val(), currentState, $("#expected").text())
+        window.location = ludwig.generateLudwigSuggestionEndpointURL($("#title").val(), $("#description").val(), currentState, $("#expected").val())
     }
     $(function () {
         $("#expected").val(ludwig.expectedTemplate)
