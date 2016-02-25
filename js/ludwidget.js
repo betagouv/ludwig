@@ -1,4 +1,4 @@
-'use strict';
-import {Ludwig} from './ludwig';
+'use strict'
+import {Ludwig} from './ludwig'
 
-window.Ludwig = Ludwig;
+window.Ludwig = Ludwig
