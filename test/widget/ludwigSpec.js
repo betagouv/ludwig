@@ -39,9 +39,9 @@ describe('Widget : Sugestion link retrieval', () => {
 			//action
 			let actual = ludwig.generateSuggestionURL();
 			//assert
-			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some+template');
+			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate%0D%0A');
 		});
-		it('should append state data if present', () => {
+		it('should append state data if present w/ a linefeed inbetween', () => {
 			//setup
 			ludwig.repoUrl = 'my_url';
 			ludwig.web = {addPath: '/new/master'};
@@ -51,7 +51,7 @@ describe('Widget : Sugestion link retrieval', () => {
 			//action
 			let actual = ludwig.generateSuggestionURL({some: 'state'});
 			//assert
-			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some+template%7B%22some%22%3A%22state%22%7D');
+			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate%0D%0A%7B%0A%09%22some%22%3A%20%22state%22%0A%7D');
 		});
 	});
 

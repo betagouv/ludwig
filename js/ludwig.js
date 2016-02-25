@@ -13,9 +13,9 @@ class Ludwig {
 	 @returns the URL to call to create a pull request
 	 */
 	generateSuggestionURL(currentState) {
-		let suggestionURL = `${this.repoUrl}${this.web.addPath}?filename=${this.generateSuggestionName()}&value=${this.template}`;
+		let suggestionURL = `${this.repoUrl}${this.web.addPath}?filename=${this.generateSuggestionName()}&value=${encodeURIComponent(this.template+'\r\n')}`;
 		if (currentState) {
-			suggestionURL += encodeURIComponent(JSON.stringify(currentState));
+			suggestionURL += encodeURIComponent(JSON.stringify(currentState, null, '\t'));
 		}
 		return suggestionURL;
 	}
