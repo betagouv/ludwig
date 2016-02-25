@@ -38,6 +38,6 @@
 	  	"start": "./node_modules/babel-cli/bin/babel-node.js server.js",
     	"test": "mocha --compilers js:babel-core/register --recursive ./test/**/*Spec.js",
     	"qualimetry": "./node_modules/babel-cli/bin/babel-node.js node_modules/.bin/isparta cover _mocha --dir qualimetry/cover -- --compilers js:babel-core/register -R spec test/*     #&&plato -l ./.jshintrc -r -d qualimetry/platoReport -x test/ #plato broken for es6 right now",
-    	"jshint": "jshint --config ./.jshintrc js/ ./test/ --exclude-path .jshintignore"
+        "linting":"eslint ./js ./controllers ./routers ./test ./helpers"
   }
 }
