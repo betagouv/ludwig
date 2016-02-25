@@ -6,7 +6,7 @@ import {Ludwig} from '../../js/ludwig'
 describe('Widget : Sugestion link retrieval', () => {
 	let ludwig
 	beforeEach(() => {
-		ludwig = new Ludwig()
+		ludwig = new Ludwig({})
 	})
 
 	describe('generateSuggestionName', () => {

@@ -1,7 +1,6 @@
 'use strict';
-import configuration from '../ludwig-conf.js';
 class Ludwig {
-	constructor() {
+	constructor(configuration) {
 		this.repoUrl = configuration.repoUrl;
 		this.web = configuration.web;
 		this.template = configuration.template;

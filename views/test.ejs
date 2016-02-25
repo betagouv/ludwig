@@ -9,7 +9,21 @@
 <script type="text/javascript" src="http://localhost:3000/bundle.js" charset="utf-8">
 </script>
 <script>
-    var ludwig = new Ludwig()
+    var configuration = {
+        repoUrl: 'https://github.com/hoshin/git-api-tests/new/master',
+        template: 'some+basic+template',
+        prefix: 'test-ludwig',
+        expectedTemplate: '{\r\n\tdata:"123"\r\n\ttoBe:{\r\n\t\tused:1, \r\n\t\tas:"template for expected state"\r\n\t}\r\n}',
+        ludwigCreateSuggestionURL: 'http://localhost:3000/createSuggestion',
+        web: {
+            acceptedTestsPath: '/tree/master/tests',
+            addPath: '/new/master',
+            suggestedTestsPath: '/pulls?utf8=✓&q=is%3Apr+is%3Aopen'
+        },
+        commitReferenceToBranchFrom: '48bb6a551021348274d7a16fb370278d1b491668'
+    }
+
+    var ludwig = new Ludwig(configuration)
 </script>
 <script>
     var currentState = {
