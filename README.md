@@ -56,6 +56,8 @@ L'application peut embarquer le widget directement ou se le faire servir par le 
 <script type="text/javascript" src="http://url.ludwig/bundle.js" charset="utf-8">
 ```
 
+Une fois cet ajout fait, le widget est disponible sous le nom `Ludwig`
+
 ### L'API du widget
 Le widget embarque sa propre configuration pour les diverses URLs à appeler pour une tâche ou l'autre. Rien à faire de ce côté ci donc. 
 
