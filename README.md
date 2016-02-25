@@ -33,7 +33,7 @@ Le widget peut s'utiliser seul pour certaines fonctionnalités, mais prend surto
 ### Configurer le widget
 
 Le widget s'appuie sur un fichier de configuration qui contient les informations nécessaires pour joindre le dépôt Gihub de votre projet. Il faut donc s'occuper de cette configuration avant de déployer le widget.
-Le plus simple est de renseigner le fichier `ludwig-widget-conf.js`, puis d'exécuter `webpack` à la racine du répertoire de l'application. Un fichier `bundle.js` est généré. Il contient le widget.
+Le plus simple est de renseigner le fichier `ludwig-conf.js` (le server et le widget partagent le même fichier de configuration), puis d'exécuter `webpack` à la racine du répertoire de l'application. Un fichier `bundle.js` est généré. Il contient le widget.
 
 _Note :_ Cette configuration est packagée avec le widget à distribuer, il est inutile de la charger à part.
 
