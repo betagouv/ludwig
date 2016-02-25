@@ -46,7 +46,7 @@ _Note :_ Cette configuration est packagée avec le widget à distribuer, il est 
 * `addPath` : suffixe d'URL accolé à repo_url pour ajouter une nouvelle demande
 * `suggestedTestsPath` : L'URL qui présente les suggestions non validées
 
-_Note :_ Un fichier `ludwig-widget-sample.js` se trouve à la racine du projet.
+_Note :_ Un fichier `ludwig-sample.js` se trouve à la racine du projet.
 
 ### Ajouter le widget
 
@@ -56,7 +56,7 @@ L'application peut embarquer le widget directement ou se le faire servir par le 
 <script type="text/javascript" src="http://url.ludwig/bundle.js" charset="utf-8">
 ```
 
-Une fois cet ajout fait, le widget est disponible sous le nom `Ludwig`
+Une fois cet ajout fait, le widget est disponible sous le nom `Ludwig` (qui est une classe, pour accéder aux fonctionnalités, il faut donc l'instancier en passant par un `new Ludwig()`)
 
 ### L'API du widget
 Le widget embarque sa propre configuration pour les diverses URLs à appeler pour une tâche ou l'autre. Rien à faire de ce côté ci donc. 
@@ -75,7 +75,7 @@ Aujourd'hui, le widget met à disposition plusieurs fonctions :
 
 Le fichier de configuration utilisé par l'API se trouve à la racine. Il permet de configurer les endpoints de l'API Github à utiliser, mais surtout les clefs API pour le repository de l'application qui va utiliser Ludwig.
 
-_Note :_ Un fichier `ludwig-widget-sample.js` se trouve à la racine du projet.
+_Note :_ Un fichier `ludwig-sample.js` se trouve à la racine du projet.
 
 ### Lancer
 
