@@ -36,18 +36,18 @@ class Ludwig {
 	}
 
 	canGenerateLudwigSuggestionEndpointURL(title, description, currentState, expectedState) {
-		return title && description && currentState && expectedState && this.ludwigCreateSuggestionURL
+		return title && description && currentState && expectedState && this.ludwigCreateSuggestionURL;
 	}
 
 	generateLudwigSuggestionEndpointURL(title, description, currentState, expectedState) {
 		if (!this.canGenerateLudwigSuggestionEndpointURL(title, description, currentState, expectedState)) {
-			throw new Error('Cannot generate Ludwig suggestions creation endpoint URL')
+			throw new Error('Cannot generate Ludwig suggestions creation endpoint URL');
 		} else {
-			let URIEncodedState = encodeURIComponent(JSON.stringify(currentState))
-			let URIEncodedExpectedState = encodeURIComponent(expectedState)
-			let URIEncodedTitle = encodeURIComponent(title)
-			let URIEncodedDescription = encodeURIComponent(description)
-			return `${this.ludwigCreateSuggestionURL}?title=${URIEncodedTitle}&description=${URIEncodedDescription}&state=${URIEncodedState}&expectedState=${URIEncodedExpectedState}`
+			let URIEncodedState = encodeURIComponent(JSON.stringify(currentState));
+			let URIEncodedExpectedState = encodeURIComponent(expectedState);
+			let URIEncodedTitle = encodeURIComponent(title);
+			let URIEncodedDescription = encodeURIComponent(description);
+			return `${this.ludwigCreateSuggestionURL}?title=${URIEncodedTitle}&description=${URIEncodedDescription}&state=${URIEncodedState}&expectedState=${URIEncodedExpectedState}`;
 		}
 	}
 

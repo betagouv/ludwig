@@ -1,49 +1,49 @@
 import express from 'express';
 const router = express.Router();
-import https from 'https';
 import passport from 'passport';
 import GithubStrategy from 'passport-github';
-import {SuggestionsController} from '../controllers/suggestionsController'
+import {SuggestionsController} from '../controllers/suggestionsController';
 const Strategy = GithubStrategy.Strategy;
 
 import config from '../ludwig-conf.js';
 
 passport.serializeUser((user, done) => {
-    done(null, user);
+	done(null, user);
 });
 
 passport.deserializeUser((obj, done) => {
-    done(null, obj);
+	done(null, obj);
 });
 
 passport.use('github', new Strategy({
-    clientID: process.env.npm_config_ludwig_clientID,
-    clientSecret: process.env.npm_config_ludwig_clientSecret,
-    callbackURL: config.github.authentication_callback
+	clientID: process.env.npm_config_ludwig_clientID,
+	clientSecret: process.env.npm_config_ludwig_clientSecret,
+	callbackURL: config.github.authentication_callback
 }, (accessToken, refreshToken, profile, done) => {
-    profile.accessToken = accessToken;
-    profile.refreshToken = refreshToken;
-    return done(null, profile);
+	profile.accessToken = accessToken;
+	profile.refreshToken = refreshToken;
+	return done(null, profile);
 }));
 
 // /test route not even declared if not explicitly enabled in configuration
 if (process.env.npm_config_ludwig_testFeatures) {
-    router.get('/test', (req, res) => {
-        res.render('test');
-    });
+	router.get('/test', (req, res) => {
+		res.render('test');
+	});
 }
 
-router.get('/createSuggestion', (req, res, next) => {
-        req.session.title = req.query.title;
-        req.session.description = req.query.description;
-        req.session.state = req.query.state;
-        next();
-    },
-    passport.authenticate('github', {scope: ['repo']}));
+router.get('/createSuggestion',
+	(req, res, next) => {
+		req.session.title = req.query.title;
+		req.session.description = req.query.description;
+		req.session.state = req.query.state;
+		next();
+	},
+	passport.authenticate('github', {scope: [ 'repo' ]}));
 
 router.get('/github_callback', passport.authenticate('github', {failureRedirect: '/authKO'}), (req, res) => {
-    const suggestionsController = new SuggestionsController();
-    suggestionsController.createPullRequest(req.session.passport.user.accessToken, req.session.title, req.session.description, req.session.state, res);
+	const suggestionsController = new SuggestionsController();
+	suggestionsController.createPullRequest(req.session.passport.user.accessToken, req.session.title, req.session.description, req.session.state, res);
 });
 
 module.exports = router;

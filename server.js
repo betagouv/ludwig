@@ -15,25 +15,25 @@ var config = {
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, '/dist')));
 app.use(session({
-    secret: 'we will need to be able to configure this'
+	secret: 'we will need to be able to configure this'
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', process.env.npm_package_config_AccessControlAllowOrigin);
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
+	res.header('Access-Control-Allow-Origin', process.env.npm_package_config_AccessControlAllowOrigin);
+	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	next();
 });
 
 app.use('/', require('./routers/main'));
 
 app.listen(config.port, config.ip, function () {
-    console.log('Express server listening on %s:%d, in %s mode', config.ip, config.port, app.get('env'));
-    if(process.env.npm_config_ludwig_testFeatures){
-        console.info('CAUTION : Test features are enabled. If you are trying to run a production instance, you should probably disable this by setting the appropriate npm configuration (ludwig:testFeatures)');
-    }
+	console.log('Express server listening on %s:%d, in %s mode', config.ip, config.port, app.get('env'));
+	if(process.env.npm_config_ludwig_testFeatures) {
+		console.info('CAUTION : Test features are enabled. If you are trying to run a production instance, you should probably disable this by setting the appropriate npm configuration (ludwig:testFeatures)');
+	}
 });
 
 exports = module.exports = app;
