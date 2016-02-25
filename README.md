@@ -32,8 +32,8 @@ Le widget peut s'utiliser seul pour certaines fonctionnalités, mais prend surto
 
 ### Configurer le widget
 
-Le widget s'appuie sur un fichier de configuration qui contient les informations nécessaires pour joindre le dépôt Gihub de votre projet. Il faut donc s'occuper de cette configuration avant de déployer le widget.
-Le plus simple est de renseigner le fichier `ludwig-conf.js` (le server et le widget partagent le même fichier de configuration), puis d'exécuter `webpack` à la racine du répertoire de l'application. Un fichier `bundle.js` est généré. Il contient le widget.
+Le widget s'instancie avec en unique paramètre un objet contient les informations nécessaires pour joindre le dépôt Gihub de votre projet. Il faut donc s'occuper de cette configuration avant de déployer le widget.
+Le plus simple est de se baser sur le fichier `ludwig-conf.js` (le server et le widget partagent le même fichier de configuration), puis d'exécuter `webpack` à la racine du répertoire de l'application. Un fichier `bundle.js` est généré. Il contient le widget.
 
 _Note :_ Cette configuration est packagée avec le widget à distribuer, il est inutile de la charger à part.
 
@@ -46,7 +46,7 @@ _Note :_ Cette configuration est packagée avec le widget à distribuer, il est 
 * `addPath` : suffixe d'URL accolé à repo_url pour ajouter une nouvelle demande
 * `suggestedTestsPath` : L'URL qui présente les suggestions non validées
 
-_Note :_ Un fichier `ludwig-sample.js` se trouve à la racine du projet.
+_Note :_ Le fichier `ludwig-sample.js` se trouve à la racine du projet.
 
 ### Ajouter le widget
 
@@ -56,7 +56,7 @@ L'application peut embarquer le widget directement ou se le faire servir par le 
 <script type="text/javascript" src="http://url.ludwig/bundle.js" charset="utf-8">
 ```
 
-Une fois cet ajout fait, le widget est disponible sous le nom `Ludwig` (qui est une classe, pour accéder aux fonctionnalités, il faut donc l'instancier en passant par un `new Ludwig()`)
+Une fois cet ajout fait, le widget est disponible sous le nom `Ludwig` (qui est une classe, pour accéder aux fonctionnalités, il faut donc l'instancier en passant par un `new Ludwig(configuration)`, avec `configuration` un objet contenant la configuration du widget se basant sur l'exemple fourni par `ludwig-sample.js`)
 
 ### L'API du widget
 Le widget embarque sa propre configuration pour les diverses URLs à appeler pour une tâche ou l'autre. Rien à faire de ce côté ci donc. 
