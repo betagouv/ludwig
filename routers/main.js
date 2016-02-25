@@ -17,8 +17,8 @@ passport.deserializeUser((obj, done) => {
 });
 
 passport.use('github', new Strategy({
-    clientID: config.github.client_id,
-    clientSecret: config.github.client_secret,
+    clientID: process.env.npm_config_ludwig_clientID,
+    clientSecret: process.env.npm_config_ludwig_clientSecret,
     callbackURL: config.github.authentication_callback
 }, (accessToken, refreshToken, profile, done) => {
     profile.accessToken = accessToken;
@@ -27,7 +27,7 @@ passport.use('github', new Strategy({
 }));
 
 // /test route not even declared if not explicitly enabled in configuration
-if (config.testFeaturesEnabled) {
+if (process.env.npm_config_ludwig_testFeatures) {
     router.get('/test', (req, res) => {
         res.render('test');
     });

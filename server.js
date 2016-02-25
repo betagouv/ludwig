@@ -2,7 +2,6 @@
 var express = require('express'), path = require('path');
 var session = require('express-session');
 var passport = require('passport');
-var ludwigConfig = require('./ludwig-conf');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -23,7 +22,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', ludwigConfig.cors['Access-Control-Allow-Origin']);
+    res.header('Access-Control-Allow-Origin', process.env.npm_package_config_AccessControlAllowOrigin);
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
 });
@@ -32,8 +31,8 @@ app.use('/', require('./routers/main'));
 
 app.listen(config.port, config.ip, function () {
     console.log('Express server listening on %s:%d, in %s mode', config.ip, config.port, app.get('env'));
-    if(ludwigConfig.testFeaturesEnabled){
-        console.info('CAUTION : Test features are enabled. If you are trying to run a production instance, you should probably disable this by setting the testFeaturesEnabled value to false in ludwig-conf.js');
+    if(process.env.npm_config_ludwig_testFeatures){
+        console.info('CAUTION : Test features are enabled. If you are trying to run a production instance, you should probably disable this by setting the appropriate npm configuration (ludwig:testFeatures)');
     }
 });
 

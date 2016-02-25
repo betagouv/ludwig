@@ -1,10 +1,17 @@
 {
 	"apps": [
 		{
-			"name": "ludwig-reboot-server",
+			"name": "ludwig",
 			"script": "./server.js",
 			"node_env": "['PORT=3000']",
-			"exec_interpreter":"./node_modules/babel-cli/bin/babel-node.js" 
+			"exec_interpreter":"./node_modules/babel-cli/bin/babel-node.js", 
+			"scripts": {
+				"start": "./node_modules/babel-cli/bin/babel-node.js server.js"
+			},
+			"env":{
+				"npm_package_config_clientID":"clientId",
+				"npm_package_config_clientSecret":"clientSecret"
+			}
 		}
 	]
 }
