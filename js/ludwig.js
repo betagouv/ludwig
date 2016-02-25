@@ -1,5 +1,5 @@
 'use strict';
-import configuration from '../ludwig-widget-conf.js';
+import configuration from '../ludwig-conf.js';
 class Ludwig {
 	constructor() {
 		this.repoUrl = configuration.repoUrl;
@@ -7,6 +7,7 @@ class Ludwig {
 		this.template = configuration.template;
 		this.prefix = configuration.prefix;
 		this.expectedTemplate = configuration.expectedTemplate;
+		this.ludwigCreateSuggestionURL = configuration.ludwigCreateSuggestionURL;
 	}
 
 	/*
