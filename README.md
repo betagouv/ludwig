@@ -56,6 +56,17 @@ L'application peut embarquer le widget directement ou se le faire servir par le 
 <script type="text/javascript" src="http://url.ludwig/bundle.js" charset="utf-8">
 ```
 
+### L'API du widget
+Le widget embarque sa propre configuration pour les diverses URLs à appeler pour une tâche ou l'autre. Rien à faire de ce côté ci donc. 
+
+Aujourd'hui, le widget met à disposition plusieurs fonctions :
+
+* generateSuggestionURL(currentState) : Génère une URL permettant d'ajouter un fichier correspondant à une suggestion. L'état collecté par l'application est sérialisé dans la requête.
+* generateSuggestionName() : Génère un nom de suggestion qui se base sur le préfixe configuré et la date courante.
+* acceptedTestsURL() : Génère l'URL permettant d'accéder à la liste des tests acceptés.
+* suggestedTestsURL() : Génère l'URL permettant de consulter les suggestions de tests.
+* generateLudwigSuggestionEndpointURL(suggestionTitle, suggestionDescription, currentState, expectedResult) : Crée le lien qui permet de contacter l'API Ludwig pour créer une nouvelle suggestion. Cela permet de fournir un titre et une description en plus de l'état et du résultat attendu. 
+
 ## Configurer et lancer l'API
 
 ### Configurer

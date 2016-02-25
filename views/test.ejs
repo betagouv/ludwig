@@ -9,41 +9,41 @@
 <script type="text/javascript" src="http://localhost:3000/bundle.js" charset="utf-8">
 </script>
 <script>
-    var ludwig = new Ludwig();
+    var ludwig = new Ludwig()
 </script>
 <script>
     var currentState = {
-        step1:{selected:'field1', value:1234},
-        step2:{checked:'selection', value:[1, 'deux', {trois:4}]},
-        step3:{filled:'demande_situation_detail', value:'Ceci est un texte libre'},
-        step4:{clicked:'simulation', value:null}
-    };
+        step1: {selected: 'field1', value: 1234},
+        step2: {checked: 'selection', value: [1, 'deux', {trois: 4}]},
+        step3: {filled: 'demande_situation_detail', value: 'Ceci est un texte libre'},
+        step4: {clicked: 'simulation', value: null}
+    }
 
     function createLink() {
-        var suggestionLink = ludwig.generateSuggestionURL(currentState);
-        var elementContainer = document.getElementById('linkContainer');
-        elementContainer.setAttribute('href', suggestionLink);
-        elementContainer.innerText = suggestionLink;
+        var suggestionLink = ludwig.generateSuggestionURL(currentState)
+        var elementContainer = document.getElementById('linkContainer')
+        elementContainer.setAttribute('href', suggestionLink)
+        elementContainer.innerText = suggestionLink
     }
 
     function createSuggestion() {
-        window.open(ludwig.generateSuggestionURL(currentState));
+        window.open(ludwig.generateSuggestionURL(currentState))
     }
 
     function showAcceptedTests() {
-        window.open(ludwig.acceptedTestsURL());
+        window.open(ludwig.acceptedTestsURL())
     }
 
     function showSuggestedTests() {
-        window.open(ludwig.suggestedTestsURL());
+        window.open(ludwig.suggestedTestsURL())
     }
 
-    function createCompleteSuggestion(){
-        window.location = 'http://localhost:3000/createSuggestion?title='+$("#title").val()+'&description='+$("#description").val()+'&state='+encodeURI(JSON.stringify(currentState));
+    function createCompleteSuggestion() {
+        window.location = ludwig.generateLudwigSuggestionEndpointURL($("#title").val(), $("#description").val(), currentState, $("#expected").text())
     }
-    $(function(){
-       $("#expected").val(ludwig.expectedTemplate);
-    });
+    $(function () {
+        $("#expected").val(ludwig.expectedTemplate)
+    })
 </script>
 
 </a>
@@ -57,7 +57,8 @@
     <div>
         <h4>Diverses actions possibles en passant directement par le widget (pas besoin du backend Ludwig) :</h4>
         <div class="form-group row">
-            <input type="button" class="btn btn-default col-sm-6" value="Générer un lien vers une nouvelle suggestion : ludwig.generateSuggestionURL()"
+            <input type="button" class="btn btn-default col-sm-6"
+                   value="Générer un lien vers une nouvelle suggestion : ludwig.generateSuggestionURL()"
                    onclick="createLink()"/>
             <a class="col-sm-6" href="" id="linkContainer">
             </a>
@@ -90,12 +91,13 @@
         </div>
         <div class="form-group row">
             <label class="col-sm-3" for="description">Données attendues</label>
-            <textarea class="col-sm-3" type="text" id="expected" name="expected" >
+            <textarea class="col-sm-3" type="text" id="expected" name="expected">
 
             </textarea>
         </div>
         <div class="form-group row">
-            <input type="button" class="btn btn-default" value="Créer un ticket complet" onclick="createCompleteSuggestion()"/>
+            <input type="button" class="btn btn-default" value="Créer un ticket complet"
+                   onclick="createCompleteSuggestion()"/>
         </div>
     </div>
 </div>
