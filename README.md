@@ -39,12 +39,12 @@ _Note :_ Cette configuration est packagée avec le widget à distribuer, il est 
 
 #### Détail des entrées du fichier de configuration du widget
 
-* `repo_url` : l'URL Github principale du dépôt de l'application
+* `repoUrl` : l'URL Github principale du dépôt de l'application
 * `template` : Un template (URLencoded) à utiliser pour remplir le fichier créé avec la suggestion
 * `prefix` : préfixe du fichier qui sera créé lors de la suggestion
-* `accepted_tests_path` : l'URL où l'on peut consulter les tests acceptés par l'équipe
-* `add_path` : suffixe d'URL accolé à repo_url pour ajouter une nouvelle demande
-* `suggested_tests_path` : L'URL qui présente les suggestions non validées
+* `acceptedTestsPath` : l'URL où l'on peut consulter les tests acceptés par l'équipe
+* `addPath` : suffixe d'URL accolé à repo_url pour ajouter une nouvelle demande
+* `suggestedTestsPath` : L'URL qui présente les suggestions non validées
 
 _Note :_ Un fichier `ludwig-widget-sample.js` se trouve à la racine du projet.
 

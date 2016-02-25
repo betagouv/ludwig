@@ -2,7 +2,7 @@
 import configuration from '../ludwig-widget-conf.js';
 class Ludwig {
 	constructor() {
-		this.repo_url = configuration.repo_url;
+		this.repoUrl = configuration.repoUrl;
 		this.web = configuration.web;
 		this.template = configuration.template;
 		this.prefix = configuration.prefix;
@@ -13,7 +13,7 @@ class Ludwig {
 	 @returns the URL to call to create a pull request
 	 */
 	generateSuggestionURL(currentState) {
-		let suggestionURL = `${this.repo_url}${this.web.add_path}?filename=${this.generateSuggestionName()}&value=${this.template}`;
+		let suggestionURL = `${this.repoUrl}${this.web.addPath}?filename=${this.generateSuggestionName()}&value=${this.template}`;
 		if (currentState) {
 			suggestionURL += encodeURIComponent(JSON.stringify(currentState));
 		}
@@ -52,11 +52,11 @@ class Ludwig {
 	}
 
 	acceptedTestsURL() {
-		return this.repo_url + this.web.accepted_tests_path;
+		return this.repoUrl + this.web.acceptedTestsPath;
 	}
 
 	suggestedTestsURL() {
-		return this.repo_url + this.web.suggested_tests_path;
+		return this.repoUrl + this.web.suggestedTestsPath;
 	}
 }
 

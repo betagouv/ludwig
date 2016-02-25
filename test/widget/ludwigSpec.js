@@ -32,8 +32,8 @@ describe('Widget : Sugestion link retrieval', () => {
 	describe('generateSuggestionURL', () => {
 		it('should concatenate the url and template data from the configuration and generate a unique suggestion name', () => {
 			//setup
-			ludwig.repo_url = 'my_url'
-			ludwig.web = {add_path: '/new/master'}
+			ludwig.repoUrl = 'my_url'
+			ludwig.web = {addPath: '/new/master'}
 			//ludwig.accepted_suggestions_path = '/tree/master/tests'
 			ludwig.template = 'some+template'
 			ludwig.prefix = 'suggestions/ludwig-suggestion'
@@ -45,8 +45,8 @@ describe('Widget : Sugestion link retrieval', () => {
 		})
 		it('should append state data if present', () => {
 			//setup
-			ludwig.repo_url = 'my_url'
-			ludwig.web = {add_path: '/new/master'}
+			ludwig.repoUrl = 'my_url'
+			ludwig.web = {addPath: '/new/master'}
 			ludwig.template = 'some+template'
 			ludwig.prefix = 'suggestions/ludwig-suggestion'
 			sinon.stub(ludwig, 'generateSuggestionName').returns('suggestions/ludwig-suggestion-1234')
@@ -60,8 +60,8 @@ describe('Widget : Sugestion link retrieval', () => {
 	describe('acceptedTestsURL', () => {
 		it('should concatenate the base URL of the repo and the public URL of the directory in the master branch of the repo where the tests are', () => {
 			//setup
-			ludwig.repo_url = 'my_url'
-			ludwig.web = {accepted_tests_path: '/tree/master/tests'}
+			ludwig.repoUrl = 'my_url'
+			ludwig.web = {acceptedTestsPath: '/tree/master/tests'}
 			//action
 			let actual = ludwig.acceptedTestsURL()
 			//assert
@@ -72,8 +72,8 @@ describe('Widget : Sugestion link retrieval', () => {
 	describe('suggestionsURL', () => {
 		it('should  concatenate the base URL of the repo and the public URL of the open pull requests', () => {
 			//setup
-			ludwig.repo_url = 'my_url'
-			ludwig.web = {suggested_tests_path: '/pulls?utf8=✓&q=is%3Apr+is%3Aopen'}
+			ludwig.repoUrl = 'my_url'
+			ludwig.web = {suggestedTestsPath: '/pulls?utf8=✓&q=is%3Apr+is%3Aopen'}
 			//action
 			let actual = ludwig.suggestedTestsURL()
 			//assert
