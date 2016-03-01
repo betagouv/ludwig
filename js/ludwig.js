@@ -9,14 +9,28 @@ class Ludwig {
 		this.ludwigCreateSuggestionURL = configuration.ludwigCreateSuggestionURL;
 	}
 
+	defaultSuggestionFormatter(template, currentState, expectedResult) {
+		let result = this.template+'\r\n';
+		if (currentState) {
+			result += JSON.stringify(currentState, null, '\t');
+		}
+		if(expectedResult) {
+			result += JSON.stringify(expectedResult, null, '\t');
+		}
+		return result;
+	}
 	/*
 	 @returns the URL to call to create a pull request
 	 */
-	generateSuggestionURL(currentState) {
-		let suggestionURL = `${this.repoUrl}${this.web.addPath}?filename=${this.generateSuggestionName()}&value=${encodeURIComponent(this.template+'\r\n')}`;
-		if (currentState) {
-			suggestionURL += encodeURIComponent(JSON.stringify(currentState, null, '\t'));
+	generateSuggestionURL(currentState, expectedResult, customFormatter) {
+		let suggestionURL = `${this.repoUrl}${this.web.addPath}?filename=${this.generateSuggestionName()}&value=`;
+
+		if(customFormatter) {
+			suggestionURL+=encodeURIComponent(customFormatter(this.template, currentState, expectedResult));
+		} else {
+			suggestionURL+=encodeURIComponent(this.defaultSuggestionFormatter(this.template, currentState, expectedResult));
 		}
+
 		return suggestionURL;
 	}
 

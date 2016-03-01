@@ -53,6 +53,46 @@ describe('Widget : Sugestion link retrieval', () => {
 			//assert
 			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate%0D%0A%7B%0A%09%22some%22%3A%20%22state%22%0A%7D');
 		});
+
+		it('should append the result to the query if it is given', () => {
+			//setup
+			ludwig.repoUrl = 'my_url';
+			ludwig.web = {addPath: '/new/master'};
+			ludwig.template = 'some+template';
+			ludwig.prefix = 'suggestions/ludwig-suggestion';
+			sinon.stub(ludwig, 'generateSuggestionName').returns('suggestions/ludwig-suggestion-1234');
+			//action
+			let actual = ludwig.generateSuggestionURL({some: 'state'}, {another:'result'});
+			//assert
+			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate%0D%0A%7B%0A%09%22some%22%3A%20%22state%22%0A%7D%7B%0A%09%22another%22%3A%20%22result%22%0A%7D');
+		});
+
+		it('should bypass standard formatting if a clojure is given as 3rd param and format currentState & expectedResult using that clojure instead', () => {
+			//setup
+			ludwig.repoUrl = 'my_url';
+			ludwig.web = {addPath: '/new/master'};
+			ludwig.template = 'some+template';
+			ludwig.prefix = 'suggestions/ludwig-suggestion';
+			sinon.stub(ludwig, 'generateSuggestionName').returns('suggestions/ludwig-suggestion-1234');
+			const customFormatter = () => {
+				return 'this is my custom formatted suggestion template';
+			};
+			//action
+			let actual = ludwig.generateSuggestionURL({some: 'state'}, {another:'result'}, customFormatter);
+			//assert
+			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=this%20is%20my%20custom%20formatted%20suggestion%20template');
+		});
+
+		//it('should return an error if second parameter is given and is not a closure', function(){
+		//	//setup
+		//
+		//	//action
+		//	try{
+		//		ludwig.generateSuggestionURL({some:'state'});
+		//	} catch(error){
+		//		assert.equal(error.message, 'Second parameter should be a clojure function(state, result){}:String');
+		//	}
+		//});
 	});
 
 	describe('acceptedTestsURL', () => {
