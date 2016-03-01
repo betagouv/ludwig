@@ -9,24 +9,28 @@ class Ludwig {
 		this.ludwigCreateSuggestionURL = configuration.ludwigCreateSuggestionURL;
 	}
 
-	defaultSuggestionFormatter(template, currentState, expectedResult) {
-		let result = this.template+'\r\n';
+	defaultSuggestionFormatter(template, currentState, expectedResult)  {
+		let result = this.template;
 		if (currentState) {
-			result += JSON.stringify(currentState, null, '\t');
+			result += `\r\n${JSON.stringify(currentState, null, '\t')}`;
 		}
 		if(expectedResult) {
-			result += JSON.stringify(expectedResult, null, '\t');
+			result += `\r\n${JSON.stringify(expectedResult, null, '\t')}`;
 		}
 		return result;
 	}
 	/*
 	 @returns the URL to call to create a pull request
 	 */
-	generateSuggestionURL(currentState, expectedResult, customFormatter) {
+	generateSuggestionURL(currentState, expectedResult, customSuggestionFormatter) {
 		let suggestionURL = `${this.repoUrl}${this.web.addPath}?filename=${this.generateSuggestionName()}&value=`;
 
-		if(customFormatter) {
-			suggestionURL+=encodeURIComponent(customFormatter(this.template, currentState, expectedResult));
+		if(customSuggestionFormatter) {
+			if(typeof customSuggestionFormatter === 'function') {
+				suggestionURL+=encodeURIComponent(customSuggestionFormatter(this.template, currentState, expectedResult));
+			} else {
+				throw new Error('customSuggestionFormatter expected to be a clojure');
+			}
 		} else {
 			suggestionURL+=encodeURIComponent(this.defaultSuggestionFormatter(this.template, currentState, expectedResult));
 		}

@@ -39,7 +39,7 @@ describe('Widget : Sugestion link retrieval', () => {
 			//action
 			let actual = ludwig.generateSuggestionURL();
 			//assert
-			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate%0D%0A');
+			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate');
 		});
 		it('should append state data if present w/ a linefeed inbetween', () => {
 			//setup
@@ -64,7 +64,7 @@ describe('Widget : Sugestion link retrieval', () => {
 			//action
 			let actual = ludwig.generateSuggestionURL({some: 'state'}, {another:'result'});
 			//assert
-			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate%0D%0A%7B%0A%09%22some%22%3A%20%22state%22%0A%7D%7B%0A%09%22another%22%3A%20%22result%22%0A%7D');
+			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate%0D%0A%7B%0A%09%22some%22%3A%20%22state%22%0A%7D%0D%0A%7B%0A%09%22another%22%3A%20%22result%22%0A%7D');
 		});
 
 		it('should bypass standard formatting if a clojure is given as 3rd param and format currentState & expectedResult using that clojure instead', () => {
@@ -83,16 +83,21 @@ describe('Widget : Sugestion link retrieval', () => {
 			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=this%20is%20my%20custom%20formatted%20suggestion%20template');
 		});
 
-		//it('should return an error if second parameter is given and is not a closure', function(){
-		//	//setup
-		//
-		//	//action
-		//	try{
-		//		ludwig.generateSuggestionURL({some:'state'});
-		//	} catch(error){
-		//		assert.equal(error.message, 'Second parameter should be a clojure function(state, result){}:String');
-		//	}
-		//});
+		it('should return an error if given customSuggestionFormatter is not a function', () => {
+			//setup
+			ludwig.repoUrl = 'my_url';
+			ludwig.web = {addPath: '/new/master'};
+			ludwig.template = 'some+template';
+			ludwig.prefix = 'suggestions/ludwig-suggestion';
+			sinon.stub(ludwig, 'generateSuggestionName').returns('suggestions/ludwig-suggestion-1234');
+			//action
+			try {
+				ludwig.generateSuggestionURL({}, {}, 'a');
+				assert.fail('we should not be able to get there');
+			} catch (error) {
+				assert.equal(error.message, 'customSuggestionFormatter expected to be a clojure');
+			}
+		});
 	});
 
 	describe('acceptedTestsURL', () => {
