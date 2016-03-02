@@ -13,7 +13,7 @@
         repoUrl: 'https://github.com/hoshin/git-api-tests/new/master',
         template: 'some+basic+template',
         prefix: 'test-ludwig',
-        expectedTemplate: '{\r\n\tdata:"123"\r\n\ttoBe:{\r\n\t\tused:1, \r\n\t\tas:"template for expected state"\r\n\t}\r\n}',
+        expectedTemplate: '{\r\n\t"data":"123",\r\n\t"toBe":{\r\n\t\t"used":1, \r\n\t\t"as":"template for expected state"\r\n\t}\r\n}',
         ludwigCreateSuggestionURL: 'http://localhost:3000/createSuggestion',
         web: {
             acceptedTestsPath: '/tree/master/tests',
@@ -34,13 +34,15 @@
     }
 
     function createLink() {
-        var suggestionLink = ludwig.generateSuggestionURL(currentState)
+        debugger;
+        var suggestionLink = ludwig.generateSuggestionURL(currentState, JSON.parse($('#expected').val()));
         var elementContainer = document.getElementById('linkContainer')
         elementContainer.setAttribute('href', suggestionLink)
         elementContainer.innerText = suggestionLink
     }
 
     function createSuggestion() {
+
         window.open(ludwig.generateSuggestionURL(currentState))
     }
 
