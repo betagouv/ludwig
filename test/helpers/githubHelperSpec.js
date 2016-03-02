@@ -15,18 +15,17 @@ describe('Github Helper', () => {
 			return data;
 		},
 		fixtures: (match) => {
-			if (match[1] === 'repos/hoshin/git-api-tests/pulls') {
+			if (match[1] === 'repos/user/reponame/pulls') {
 				return {
-					'url': 'https://api.github.com/repos/hoshin/git-api-tests/pulls/19'
+					'url': 'https://api.github.com/repos/user/reponame/pulls/19'
 				};
 			}
 
-			if (match[1].match(/repos\/hoshin\/git-api-tests\/contents\/.*/)) {
+			if (match[1].match(/repos\/user\/reponame\/contents\/.*/)) {
 				return {};
-
 			}
 
-			if (match[1] === 'repos/hoshin/git-api-tests/git/refs') {
+			if (match[1] === 'repos/user/reponame/git/refs') {
 				return {};
 			}
 			return {};
@@ -43,13 +42,13 @@ describe('Github Helper', () => {
 			const superagentMock = require('superagent-mock')(request, config);
 			sinon.stub(githubHelper, 'agent').returns(request);
 			const head = 'head', title = 'PR title', body = 'PR body', accessToken = 'access token 12434', callback = sinon.spy();
+			sinon.stub(githubHelper, 'config').returns({github:{apiEndpoints:{createPullRequest:'https://api.github.com/repos/user/reponame/pulls'}}});
 			//action
 			githubHelper.createPullRequest(head, title, body, accessToken, callback);
 			//assert
 			assert.equal(callback.calledOnce, true);
-
 			assert.deepEqual(callback.getCall(0).args[1], {
-				'url': 'https://api.github.com/repos/hoshin/git-api-tests/pulls/19'
+				'url': 'https://api.github.com/repos/user/reponame/pulls/19'
 			});
 			superagentMock.unset();
 		});
