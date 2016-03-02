@@ -6,6 +6,9 @@ class GithubHelper {
 	constructor() {
 
 	}
+	config() {
+		return config;
+	}
 	agent() {
 		return superAgent;
 	}
@@ -14,7 +17,7 @@ class GithubHelper {
 	}
 	createPullRequest(head, title, body, accessToken, callback) {
 		this.agent()
-			.post(config.github.apiEndpoints.createPullRequest)
+			.post(this.config().github.apiEndpoints.createPullRequest)
 			.send(this.createPullRequestRequestBody(head, title, body))
 			.set('Authorization', `token ${accessToken}`)
 			.end((err, dataToReturn) => {
@@ -26,7 +29,7 @@ class GithubHelper {
 	}
 	createContent(accessToken, testFileName, branchName, commitMessage, base64FileContents, callback) {
 		this.agent()
-			.put(`${config.github.apiEndpoints.createContent}${testFileName}`)
+			.put(`${this.config().github.apiEndpoints.createContent}${testFileName}`)
 			.send(this.createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents))
 			.set('Authorization', `token ${accessToken}`)
 			.end((err, createCommitResult) => {
@@ -38,7 +41,7 @@ class GithubHelper {
 	}
 	createReference(accessToken, newBranchName, commitReferenceToBranchFrom, callback) {
 		this.agent()
-			.post(config.github.apiEndpoints.createRef)
+			.post(this.config().github.apiEndpoints.createRef)
 			.send(this.createReferenceRequestBody(newBranchName, commitReferenceToBranchFrom))
 			.set('Authorization', `token ${accessToken}`)
 			.end((err, createReferenceResult) => {
