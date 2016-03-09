@@ -1,5 +1,6 @@
 import fs from 'fs';
-import {parser} from 'junit-xml-parser';
+import xml2js from 'xml2js';
+import {from} from './parsed';
 
 class XUnitParser {
 	constructor() {
@@ -28,26 +29,30 @@ class XUnitParser {
 		const self = this;
 		this.readFile(xUnitFilePath, (err, data) => {
 			if (!err) {
-				parser.parse(data).then( (parsedData) => {
-					if (parsedData.suite && parsedData.suite.tests) {
-						const testCases = [];
-						parsedData.suite.tests.forEach((testCaseXMLObject) => {
-							var testCase = self.parseSingleTestData(testCaseXMLObject, parsedData);
-							testCases.push(testCase);
-						});
-						let testSuite = {
-							name: parsedData.suite.name,
-							tests: parsedData.suite.summary.tests,
-							failures: parsedData.suite.summary.failures,
-							timestamp: parsedData.suite.timestamp,
-							testCases: testCases
-						};
-						callback(null, testSuite);
+				xml2js.parseString(data, function (err, parsedData) {
+					if(err) {
+						callback(err);
 					} else {
-						callback(null, null);
+						parsedData = from(parsedData);
+						if (parsedData.suite && parsedData.suite.tests) {
+							const testCases = [];
+							parsedData.suite.tests.forEach((testCaseXMLObject) => {
+								var testCase = self.parseSingleTestData(testCaseXMLObject, parsedData);
+								testCases.push(testCase);
+							});
+							let testSuite = {
+								name: parsedData.suite.name,
+								tests: parsedData.suite.summary.tests,
+								failures: parsedData.suite.summary.failures,
+								timestamp: parsedData.suite.timestamp,
+								testCases: testCases
+							};
+							callback(null, testSuite);
+						} else {
+							callback(null, null);
+						}
 					}
 				});
-
 			} else {
 				callback({message: err.message});
 			}
