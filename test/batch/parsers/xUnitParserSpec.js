@@ -12,7 +12,7 @@ describe('XUnit Parser', () => {
 
 	it('should return null if file to parse is empty (no test suite)', () => {
 		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Mocha Tests" tests="28" failures="1" errors="1" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"></testsuite>');
+		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Mocha Tests" tests="0" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"></testsuite>');
 		const callback = sinon.spy();
 		//action
 		xUnitParser.parse('./filename.xunitreport', callback);
@@ -23,7 +23,7 @@ describe('XUnit Parser', () => {
 
 	it('should return a testSuite with one ok test included in it if xUnitReport contains one test case', () => {
 		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="1" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="" name="Test Case" time="0.02"><randomElement>not a failure</randomElement></testcase></testsuite>');
+		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="1" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="" name="Test Case" time="0.02"><randomElement>not a failure</randomElement></testcase><system-out></system-out><system-err></system-err></testsuite>');
 		const callback = sinon.spy();
 		//action
 		xUnitParser.parse('./filename.xunitreport', callback);
@@ -39,9 +39,9 @@ describe('XUnit Parser', () => {
 		});
 	});
 
-	it('should return a testSuite with two ok tests included in it if xUnitReport contains two test cases', () => {
+	it('should return a testSuite with its "tests" property read form testsuite attributes', () => {
 		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="1" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="" name="Test Case" time="0.02"><randomElement>not a failure</randomElement></testcase><testcase classname="" name="Test Case 2" time="0.02"/></testsuite>');
+		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="2" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="" name="Test Case" time="0.02"><randomElement>not a failure</randomElement></testcase><testcase classname="" name="Test Case 2" time="0.02"/><system-out></system-out><system-err></system-err></testsuite>');
 		const callback = sinon.spy();
 		//action
 		xUnitParser.parse('./filename.xunitreport', callback);
@@ -61,9 +61,9 @@ describe('XUnit Parser', () => {
 		});
 	});
 
-	it('should return a testSuite with one failed test included in it if xUnitReport contains one test case', () => {
+	it('should return a testSuite with one failed test included in it if xUnitReport contains one test case, failures property must be read from testSuite attributes', () => {
 		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="1" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="" name="Test Case" time="0.02"><failure>some failure message</failure></testcase></testsuite>');
+		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="1" failures="1" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="" name="Test Case" time="0.02"><failure type="failure" message="some failure message"></failure></testcase><system-out></system-out><system-err></system-err></testsuite>');
 		const callback = sinon.spy();
 		//action
 		xUnitParser.parse('./filename.xunitreport', callback);
@@ -90,7 +90,7 @@ describe('XUnit Parser', () => {
 		assert.deepEqual(callback.getCall(0).args[0], {message:'failed to read the file'});
 	});
 
-	it('should return null if xml data is invalid', () => {
+	it('should return an error if xml data is invalid', () => {
 		//setup
 		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="" name="Test Case" time="0.02"</testsuite>');
 		const callback = sinon.spy();
@@ -98,6 +98,6 @@ describe('XUnit Parser', () => {
 		xUnitParser.parse('./filename.xunitreport', callback);
 		//assert
 		assert.equal(callback.calledOnce, true);
-		assert.deepEqual(callback.getCall(0).args[0], null);
+		assert.deepEqual(callback.getCall(0).args[0].message, 'Invalid attribute name\nLine: 0\nColumn: 131\nChar: <');
 	});
 });

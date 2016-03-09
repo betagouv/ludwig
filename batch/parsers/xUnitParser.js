@@ -16,7 +16,7 @@ class XUnitParser {
 		let testCase = {
 			name: testCaseXMLObject.name,
 			status: 'ok',
-			timestamp: parsedData.timestamp
+			timestamp: parsedData.suite.timestamp
 		};
 		if(testCaseXMLObject.failure){
 			testCase.status = 'ko';
@@ -33,24 +33,29 @@ class XUnitParser {
 					if(err) {
 						callback(err);
 					} else {
-						parsedData = from(parsedData);
-						if (parsedData.suite && parsedData.suite.tests) {
-							const testCases = [];
-							parsedData.suite.tests.forEach((testCaseXMLObject) => {
-								var testCase = self.parseSingleTestData(testCaseXMLObject, parsedData);
-								testCases.push(testCase);
-							});
-							let testSuite = {
-								name: parsedData.suite.name,
-								tests: parsedData.suite.summary.tests,
-								failures: parsedData.suite.summary.failures,
-								timestamp: parsedData.suite.timestamp,
-								testCases: testCases
-							};
-							callback(null, testSuite);
+						if(parsedData.testsuite.$.tests !== '0'){
+							parsedData = from(parsedData);
+							if (parsedData.suite && parsedData.suite.tests) {
+								const testCases = [];
+								parsedData.suite.tests.forEach((testCaseXMLObject) => {
+									var testCase = self.parseSingleTestData(testCaseXMLObject, parsedData);
+									testCases.push(testCase);
+								});
+								let testSuite = {
+									name: parsedData.suite.name,
+									tests: parsedData.suite.summary.tests,
+									failures: parsedData.suite.summary.failures,
+									timestamp: parsedData.suite.timestamp,
+									testCases: testCases
+								};
+								callback(null, testSuite);
+							} else {
+								callback(null, null);
+							}
 						} else {
 							callback(null, null);
 						}
+
 					}
 				});
 			} else {
