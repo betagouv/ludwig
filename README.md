@@ -90,6 +90,23 @@ user@host$ node server.js
 user@host$ pm2 start pm2.conf.json
 ```
 
+## Consulter le rapport des derniers tests
+
+### Description générale
+Il est possible d'alimenter une base de données avec des rapports de tests afin de présenter aux contributeurs l'état des tests de l'application et son historique.
+
+Pour pouvoir visualiser ces rapports, il faut tout d'abord alimenter la base de données de l'application. Cela se fait en utilisant l'utilitaire d'alimentation : 
+
+```
+user@host$ npm run insertTestReportData <fichier.xunit.xml>
+```
+
+Pour l'instant Ludwig accepte les rapports au format JUnit avec une suite de tests à la racine. Pour éviter d'insérer deux fois le même rapport, on considère que la propriété "timestamp" de la suite de tests est une clef unique (et l'importeur déclenchera une erreur si l'on tente d'insérer deux rapports avec le même timestamp, ce qui semble être une approche raisonnable pour un unique projet).
+
+### Où trouver ce rapport?
+
+Le rapport peut être trouvé à l'adresse suivante : `/listTests`
+
 ## Notes sur la configuration
 
 En l'état, vous devez créer les fichiers de configuration du widget et de l'API, ils ne sont volontairement pas directement fournis pour que le packaging du widget échoue s'il est fait avant que la configuration ait été écrite. De même, le serveur d'API refusera de démarrer sans sa configuration.
