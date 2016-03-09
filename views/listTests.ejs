@@ -2,7 +2,7 @@
 <head>
     <meta charset="utf-8">
     <title>Liste des tests de l'application</title>
-    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
 </head>
 <body>
 
@@ -12,7 +12,7 @@
 
     <div class="bs-example" data-example-id="table-within-panel">
         <div class="panel panel-default">
-            <div class="panel-heading">Les tests pour la campagne "<%=testSuite.name%>" réalisés le <%= testSuite.timestamp %></div>
+            <div class="panel-heading">Les tests pour la campagne "<%=testSuite.name%>" réalisés le <%= formattedTimestamp %></div>
             <div class="panel-body"><p>
                     Nombre total de tests : <%= testSuite.testCases.length %>
                 </p>

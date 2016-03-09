@@ -5,6 +5,7 @@ import GithubStrategy from 'passport-github';
 import {SuggestionsController} from '../controllers/suggestionsController';
 const Strategy = GithubStrategy.Strategy;
 import {TestsService} from '../services/testsService';
+import moment from 'moment';
 
 import config from '../ludwig-conf.js';
 const testsService = new TestsService(config.mongo);
@@ -52,7 +53,9 @@ router.get('/github_callback', passport.authenticate('github', {failureRedirect:
 router.get('/listTests', (req, res) => {
 	testsService.getMostRecentTestSuite((err, mostRecentTestSuite) => {
 		if(!err) {
-			res.render('listTests', {testSuite:mostRecentTestSuite});
+			var date = new Date();
+			date.setTime(mostRecentTestSuite.timestamp);
+			res.render('listTests', {testSuite:mostRecentTestSuite, formattedTimestamp:moment(date).format('YYYY/MM/DD à HH:mm:ss')});
 		} else {
 			res.render('ko');
 		}

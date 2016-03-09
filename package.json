@@ -9,9 +9,11 @@
   "dependencies": {
     "babel-cli": "^6.5.1",
     "babel-core": "^6.5.2",
+    "bootstrap": "^3.3.6",
     "ejs": "^2.4.1",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
+    "moment": "^2.12.0",
     "mongoose": "^4.4.6",
     "passport": "^0.3.2",
     "passport-github": "^1.1.0",
@@ -55,7 +57,7 @@
     "webpack.config.js"
   ],
   "scripts": {
-    "build": "webpack",
+    "build": "cp -r node_modules/bootstrap/dist ./dist/bootstrap && webpack",
     "prepublish": "npm run build",
     "start": "babel-node server.js",
     "test": "mocha --compilers js:babel-core/register --recursive ./test/",
