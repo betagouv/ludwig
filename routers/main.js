@@ -52,7 +52,6 @@ router.get('/github_callback', passport.authenticate('github', {failureRedirect:
 router.get('/listTests', (req, res) => {
 	testsService.getMostRecentTestSuite((err, mostRecentTestSuite) => {
 		if(!err) {
-			console.log(mostRecentTestSuite);
 			res.render('listTests', {testSuite:mostRecentTestSuite});
 		} else {
 			res.render('ko');

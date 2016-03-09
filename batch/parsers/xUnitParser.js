@@ -48,10 +48,12 @@ class XUnitParser {
 					const testCases = [];
 					let failuresCount = 0;
 					parsedData.root.children.forEach((testCaseXMLObject) => {
-						var __ret = self.parseSingleTestData(testCaseXMLObject, parsedData, failuresCount);
-						var testCase = __ret.testCase;
-						failuresCount = __ret.failuresCount;
-						testCases.push(testCase);
+						if(testCaseXMLObject.name === 'testcase') {
+							var __ret = self.parseSingleTestData(testCaseXMLObject, parsedData, failuresCount);
+							var testCase = __ret.testCase;
+							failuresCount = __ret.failuresCount;
+							testCases.push(testCase);
+						}
 					});
 					let testSuite = self.parseTestSuiteData(parsedData, failuresCount, testCases);
 					callback(null, testSuite);

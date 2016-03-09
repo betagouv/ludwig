@@ -29,6 +29,8 @@ class TestResultsCollector {
 							testSuite.save((err, data) => {
 								callback(err, data);
 							});
+						} else {
+							callback(err);
 						}
 					});
 				} else {
