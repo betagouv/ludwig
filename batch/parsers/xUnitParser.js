@@ -1,5 +1,5 @@
 import fs from 'fs';
-import xmlParser from 'xml-parser';
+import {parser} from 'junit-xml-parser';
 
 class XUnitParser {
 	constructor() {
@@ -11,55 +11,43 @@ class XUnitParser {
 		});
 	}
 
-	parseSingleTestData(testCaseXMLObject, parsedData, failuresCount) {
+	parseSingleTestData(testCaseXMLObject, parsedData) {
 		let testCase = {
-			name: testCaseXMLObject.attributes.name,
+			name: testCaseXMLObject.name,
 			status: 'ok',
-			timestamp: parsedData.root.attributes.timestamp
+			timestamp: parsedData.timestamp
 		};
-		if (testCaseXMLObject.children.length) {
-			testCaseXMLObject.children.forEach((testCaseChild) => {
-				if (testCaseChild.name === 'failure') {
-					testCase.status = 'ko';
-					testCase.message = testCaseXMLObject.children[0].content;
-					failuresCount++;
-				}
-			});
+		if(testCaseXMLObject.failure){
+			testCase.status = 'ko';
+			testCase.message = testCaseXMLObject.failure.message;
 		}
-		return {testCase: testCase, failuresCount: failuresCount};
-	}
-
-	parseTestSuiteData(parsedData, failuresCount, testCases) {
-		return {
-			name: parsedData.root.attributes.name,
-			tests: testCases.length,
-			failures: failuresCount,
-			timestamp: parsedData.root.attributes.timestamp,
-			testCases: testCases
-		};
+		return testCase;
 	}
 
 	parse(xUnitFilePath, callback) {
 		const self = this;
-		this.readFile(xUnitFilePath, function (err, data) {
+		this.readFile(xUnitFilePath, (err, data) => {
 			if (!err) {
-				const parsedData = xmlParser(data);
-				if (parsedData.root && parsedData.root.children.length) {
-					const testCases = [];
-					let failuresCount = 0;
-					parsedData.root.children.forEach((testCaseXMLObject) => {
-						if(testCaseXMLObject.name === 'testcase') {
-							var __ret = self.parseSingleTestData(testCaseXMLObject, parsedData, failuresCount);
-							var testCase = __ret.testCase;
-							failuresCount = __ret.failuresCount;
+				parser.parse(data).then( (parsedData) => {
+					if (parsedData.suite && parsedData.suite.tests) {
+						const testCases = [];
+						parsedData.suite.tests.forEach((testCaseXMLObject) => {
+							var testCase = self.parseSingleTestData(testCaseXMLObject, parsedData);
 							testCases.push(testCase);
-						}
-					});
-					let testSuite = self.parseTestSuiteData(parsedData, failuresCount, testCases);
-					callback(null, testSuite);
-				} else {
-					callback(null, null);
-				}
+						});
+						let testSuite = {
+							name: parsedData.suite.name,
+							tests: parsedData.suite.summary.tests,
+							failures: parsedData.suite.summary.failures,
+							timestamp: parsedData.suite.timestamp,
+							testCases: testCases
+						};
+						callback(null, testSuite);
+					} else {
+						callback(null, null);
+					}
+				});
+
 			} else {
 				callback({message: err.message});
 			}

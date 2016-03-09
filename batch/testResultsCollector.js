@@ -14,7 +14,6 @@ class TestResultsCollector {
 	saveFromXUnitData(xUnitFilePath, callback) {
 		const parser = new XUnitParser();
 		parser.parse(xUnitFilePath, (errors, parsedTestSuiteData) => {
-
 			let testSuite = new TestSuiteModel({
 				name: parsedTestSuiteData.name,
 				failures: parsedTestSuiteData.failures,
