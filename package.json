@@ -12,9 +12,11 @@
     "ejs": "^2.4.1",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
+    "mongoose": "^4.4.6",
     "passport": "^0.3.2",
     "passport-github": "^1.1.0",
-    "superagent": "^1.7.2"
+    "superagent": "^1.7.2",
+    "xml-parser": "^1.2.1"
   },
   "devDependencies": {
     "babel-loader": "^6.2.3",
@@ -26,6 +28,7 @@
     "mocha": "^2.1.0",
     "mocha-istanbul": "~0.2.0",
     "mocha-lcov-reporter": "^1.0.0",
+    "proxyquire": "^1.7.4",
     "sinon": "^1.12.2",
     "superagent-mock": "^1.10.0",
     "supertest": "~1.1.0",
@@ -55,7 +58,7 @@
     "build": "webpack",
     "prepublish": "npm run build",
     "start": "babel-node server.js",
-    "test": "mocha --compilers js:babel-core/register --recursive ./test/**/*Spec.js",
+    "test": "mocha --compilers js:babel-core/register --recursive ./test/",
     "qualimetry": "babel-node node_modules/.bin/isparta cover _mocha --dir qualimetry/cover -- --compilers js:babel-core/register -R spec test/*",
     "linting": "eslint ./js ./controllers ./routers ./test ./helpers ./*.js"
   }

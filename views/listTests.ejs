@@ -1,0 +1,53 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Liste des tests de l'application</title>
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- Begin page content -->
+<div class="container">
+    <h1>Les tests de l'application : Résumé</h1>
+
+    <div class="bs-example" data-example-id="table-within-panel">
+        <div class="panel panel-default">
+            <div class="panel-heading">Les tests pour la campagne "<%=testSuite.name%>" réalisés le <%= testSuite.timestamp %></div>
+            <div class="panel-body"><p>
+                    Nombre total de tests : <%= testSuite.testCases.length %>
+                </p>
+                <p>
+                    Nombre d'échecs : <%= testSuite.failures %>
+                </p></div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Statut</th>
+                    <th>Nom du test</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% testSuite.testCases.forEach(function(testCase){ %>
+                <tr>
+                    <td>
+                        <span class="glyphicon <%= testCase.status === 'ok' ? 'glyphicon-ok' : 'glyphicon-remove' %>"></span>
+                    </td>
+                    <td><%= testCase.name %></td>
+                </tr>
+                <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <p class="text-muted"></p>
+    </div>
+</footer>
+
+</body>
+
+</html>
+

@@ -4,8 +4,10 @@ import passport from 'passport';
 import GithubStrategy from 'passport-github';
 import {SuggestionsController} from '../controllers/suggestionsController';
 const Strategy = GithubStrategy.Strategy;
+import {TestsService} from '../services/testsService';
 
 import config from '../ludwig-conf.js';
+const testsService = new TestsService(config.mongo);
 
 passport.serializeUser((user, done) => {
 	done(null, user);
@@ -44,6 +46,18 @@ router.get('/createSuggestion',
 router.get('/github_callback', passport.authenticate('github', {failureRedirect: '/authKO'}), (req, res) => {
 	const suggestionsController = new SuggestionsController();
 	suggestionsController.createPullRequest(req.session.passport.user.accessToken, req.session.title, req.session.description, req.session.state, res);
+});
+
+
+router.get('/listTests', (req, res) => {
+	testsService.getMostRecentTestSuite((err, mostRecentTestSuite) => {
+		if(!err) {
+			console.log(mostRecentTestSuite);
+			res.render('listTests', {testSuite:mostRecentTestSuite});
+		} else {
+			res.render('ko');
+		}
+	});
 });
 
 module.exports = router;
