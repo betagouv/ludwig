@@ -53,9 +53,13 @@ router.get('/github_callback', passport.authenticate('github', {failureRedirect:
 router.get('/listTests', (req, res) => {
 	testsService.getMostRecentTestSuite((err, mostRecentTestSuite) => {
 		if(!err) {
-			var date = new Date();
-			date.setTime(mostRecentTestSuite.timestamp);
-			res.render('listTests', {testSuite:mostRecentTestSuite, formattedTimestamp:moment(date).format('YYYY/MM/DD à HH:mm:ss')});
+			if(mostRecentTestSuite) {
+				var date = new Date();
+				date.setTime(mostRecentTestSuite.timestamp);
+				res.render('listTests', {testSuite:mostRecentTestSuite, formattedTimestamp:moment(date).format('YYYY/MM/DD à HH:mm:ss')});
+			} else {
+				res.render('listTests', {testSuite:null});
+			}
 		} else {
 			res.render('ko');
 		}

@@ -10,9 +10,11 @@
 <div class="container">
     <h1>Les tests de l'application : Résumé</h1>
 
+    <% if (testSuite) { %>
     <div class="bs-example" data-example-id="table-within-panel">
         <div class="panel panel-default">
-            <div class="panel-heading">Les tests pour la campagne "<%=testSuite.name%>" réalisés le <%= formattedTimestamp %></div>
+            <div class="panel-heading">Les tests pour la campagne "<%= testSuite.name %>" réalisés
+                le <%= formattedTimestamp %></div>
             <div class="panel-body"><p>
                     Nombre total de tests : <%= testSuite.testCases.length %>
                 </p>
@@ -39,6 +41,13 @@
             </table>
         </div>
     </div>
+    <% } else { %>
+    <div class="bs-example" data-example-id="table-within-panel">
+        <div class="panel panel-default">
+            <div class="panel-heading">Pas de campagnes de test enregistrées pour l'instant</div>
+        </div>
+    </div>
+    <% } %>
 </div>
 
 <footer class="footer">
