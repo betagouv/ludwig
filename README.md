@@ -17,8 +17,9 @@ On s'appuie sur Github et ses APIs pour minimiser les outils. Ludwig simplifie l
 
 Pour installer Ludwig et le lancer, vous aurez besoin de :
 
-* [nodejs/npm](https://nodejs.org)
-* [webpack](http://webpack.github.io)
+* [NodeJS/NPM](https://nodejs.org)
+* [Webpack](http://webpack.github.io)
+* [MongoDB](http://www.mongodb.org)
 
 ## Utiliser le widget dans une application
 
