@@ -57,7 +57,7 @@
     "webpack.config.js"
   ],
   "scripts": {
-    "build": "cp -r node_modules/bootstrap/dist ./dist/bootstrap && webpack",
+    "build": "mkdir -p dist && cp -r node_modules/bootstrap/dist ./dist/bootstrap && webpack",
     "prepublish": "npm run build",
     "start": "babel-node server.js",
     "test": "mocha --compilers js:babel-core/register --recursive ./test/",
