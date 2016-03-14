@@ -1,7 +1,7 @@
 import {XUnitParser} from './parsers/xUnitParser';
 import mongoose from 'mongoose';
 import {TestSuiteModel} from '../models/testSuiteModel';
-import {TestCaseModel} from '../models/testcaseModel';
+import {TestCaseModel} from '../models/testCaseModel';
 
 
 class TestResultsCollector {
