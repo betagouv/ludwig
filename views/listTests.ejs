@@ -34,7 +34,7 @@
                     <td>
                         <span class="glyphicon <%= testCase.status === 'ok' ? 'glyphicon-ok' : 'glyphicon-remove' %>"></span>
                     </td>
-                    <td><%= testCase.name %></td>
+                    <td><a href="<%= testCase.location %>"><%= testCase.name %></a></td>
                 </tr>
                 <% }) %>
                 </tbody>

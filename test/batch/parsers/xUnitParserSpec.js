@@ -7,7 +7,12 @@ describe('XUnit Parser', () => {
 	let xUnitParser;
 
 	beforeEach(()=> {
-		xUnitParser = new XUnitParser();
+		xUnitParser = new XUnitParser({
+			repoUrl: 'https://github.com/user/repo',
+			web: {
+				accepted_tests_path: '/tree/master/tests'
+			}
+		});
 	});
 
 	it('should return null if file to parse is empty (no test suite)', () => {
@@ -18,12 +23,12 @@ describe('XUnit Parser', () => {
 		xUnitParser.parse('./filename.xunitreport', callback);
 		//assert
 		assert.equal(callback.calledOnce, true);
-		assert.deepEqual(callback.getCall(0).args, [ null, null ]);
+		assert.deepEqual(callback.getCall(0).args, [null, null]);
 	});
 
 	it('should return a testSuite with one ok test included in it if xUnitReport contains one test case', () => {
 		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="1" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="" name="Test Case" time="0.02"><randomElement>not a failure</randomElement></testcase><system-out></system-out><system-err></system-err></testsuite>');
+		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="1" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="test spec location" name="Test Case" time="0.02"><randomElement>not a failure</randomElement></testcase><system-out></system-out><system-err></system-err></testsuite>');
 		const callback = sinon.spy();
 		//action
 		xUnitParser.parse('./filename.xunitreport', callback);
@@ -35,7 +40,12 @@ describe('XUnit Parser', () => {
 			tests: 1,
 			failures: 0,
 			timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT',
-			testCases: [ {name: 'Test Case', status: 'ok', timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT'} ]
+			testCases: [{
+				location: 'https://github.com/user/repo/tree/master/tests/test spec location',
+				name: 'Test Case',
+				status: 'ok',
+				timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT'
+			}]
 		});
 	});
 
@@ -53,11 +63,18 @@ describe('XUnit Parser', () => {
 			tests: 2,
 			failures: 0,
 			timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT',
-			testCases: [ {name: 'Test Case', status: 'ok', timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT'},    {
-				'name': 'Test Case 2',
-				'status': 'ok',
-				'timestamp': 'Tue, 08 Mar 2016 09:07:06 GMT'
-			} ]
+			testCases: [
+				{
+					location: 'https://github.com/user/repo/tree/master/tests/',
+					name: 'Test Case',
+					status: 'ok',
+					timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT'
+				}, {
+					location: 'https://github.com/user/repo/tree/master/tests/',
+					'name': 'Test Case 2',
+					'status': 'ok',
+					'timestamp': 'Tue, 08 Mar 2016 09:07:06 GMT'
+				}]
 		});
 	});
 
@@ -75,7 +92,13 @@ describe('XUnit Parser', () => {
 			tests: 1,
 			failures: 1,
 			timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT',
-			testCases: [ {name: 'Test Case', status: 'ko', timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT', message:'some failure message'} ]
+			testCases: [{
+				location: 'https://github.com/user/repo/tree/master/tests/',
+				name: 'Test Case',
+				status: 'ko',
+				timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT',
+				message: 'some failure message'
+			}]
 		});
 	});
 
@@ -87,7 +110,7 @@ describe('XUnit Parser', () => {
 		xUnitParser.parse('./filename.xunitreport', callback);
 		//assert
 		assert.equal(callback.calledOnce, true);
-		assert.deepEqual(callback.getCall(0).args[0], {message:'failed to read the file'});
+		assert.deepEqual(callback.getCall(0).args[0], {message: 'failed to read the file'});
 	});
 
 	it('should return an error if xml data is invalid', () => {

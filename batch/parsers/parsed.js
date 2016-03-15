@@ -28,6 +28,7 @@ function tests(raw) {
 		return _({
 			'name': test.$.name,
 			'time': time(test.$.time),
+			'classname': test.$.classname,
 			'failure': failure(current)
 		}).tap(function (result) { !test.failure && delete result.failure; }).value();
 	}).value();

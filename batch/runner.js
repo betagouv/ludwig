@@ -1,11 +1,5 @@
 import {TestResultsCollector} from './testResultsCollector';
-
-let configuration = {
-	mongo: {
-		uri: 'mongodb://localhost/ludwig',
-		options: {}
-	}
-};
+import configuration from '../ludwig-conf';
 
 const collector = new TestResultsCollector(configuration);
 

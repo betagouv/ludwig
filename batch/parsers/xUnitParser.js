@@ -3,7 +3,8 @@ import xml2js from 'xml2js';
 import {from} from './parsed';
 
 class XUnitParser {
-	constructor() {
+	constructor(configuration) {
+		this.configuration = configuration;
 	}
 
 	readFile(xUnitFilePath, callback) {
@@ -16,7 +17,8 @@ class XUnitParser {
 		let testCase = {
 			name: testCaseXMLObject.name,
 			status: 'ok',
-			timestamp: parsedData.suite.timestamp
+			timestamp: parsedData.suite.timestamp,
+			location:`${this.configuration.repoUrl}${this.configuration.web.accepted_tests_path}/${testCaseXMLObject.classname}`
 		};
 		if(testCaseXMLObject.failure){
 			testCase.status = 'ko';
