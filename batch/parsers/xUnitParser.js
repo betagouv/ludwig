@@ -1,6 +1,6 @@
 import fs from 'fs';
 import xml2js from 'xml2js';
-import {from} from './parsed';
+import {from, time} from './parsed';
 
 class XUnitParser {
 	constructor(configuration) {
@@ -18,7 +18,8 @@ class XUnitParser {
 			name: testCaseXMLObject.name,
 			status: 'ok',
 			timestamp: `${parsedData.suite.timestamp}`,
-			location:`${this.configuration.repoUrl}${this.configuration.web.accepted_tests_path}/${testCaseXMLObject.classname}`
+			location:`${this.configuration.repoUrl}${this.configuration.web.accepted_tests_path}/${testCaseXMLObject.classname}`,
+			time:time(testCaseXMLObject.time)
 		};
 		if(testCaseXMLObject.failure){
 			testCase.status = 'ko';
@@ -58,7 +59,6 @@ class XUnitParser {
 						} else {
 							callback(null, null);
 						}
-
 					}
 				});
 			} else {

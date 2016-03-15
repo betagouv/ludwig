@@ -3,6 +3,7 @@
     <meta charset="utf-8">
     <title>Liste des tests de l'application</title>
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/ludwig.css" rel="stylesheet"/>
 </head>
 <body>
 
@@ -26,6 +27,7 @@
                 <tr>
                     <th>Statut</th>
                     <th>Nom du test</th>
+                    <th>Temps</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -34,7 +36,17 @@
                     <td>
                         <span class="glyphicon <%= testCase.status === 'ok' ? 'glyphicon-ok' : 'glyphicon-remove' %>"></span>
                     </td>
-                    <td><a href="<%= testCase.location %>"><%= testCase.name %></a></td>
+                    <td>
+                        <div><a href="<%= testCase.location %>"><%= testCase.name %></a></div>
+                        <% if(testCase.status === 'ko') { %>
+                            <div class="alert alert-danger"><span class="failureDetailsTitle">Détails de l'erreur</span><p>
+                                    <%= testCase.message %>
+                                </p></div>
+                        <%}%>
+                    </td>
+                    <td>
+                        <%= testCase.time %>s
+                    </td>
                 </tr>
                 <% }) %>
                 </tbody>

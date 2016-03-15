@@ -44,6 +44,7 @@ describe('XUnit Parser', () => {
 				location: 'https://github.com/user/repo/tree/master/tests/test spec location',
 				name: 'Test Case',
 				status: 'ok',
+				time:'0.02',
 				timestamp: '1457428026000'
 			}]
 		});
@@ -68,12 +69,14 @@ describe('XUnit Parser', () => {
 					location: 'https://github.com/user/repo/tree/master/tests/',
 					name: 'Test Case',
 					status: 'ok',
+					time:'0.02',
 					timestamp: '1457428026000'
 				}, {
 					location: 'https://github.com/user/repo/tree/master/tests/',
-					'name': 'Test Case 2',
-					'status': 'ok',
-					'timestamp': '1457428026000'
+					name: 'Test Case 2',
+					status: 'ok',
+					time:'0.02',
+					timestamp: '1457428026000'
 				}]
 		});
 	});
@@ -96,6 +99,7 @@ describe('XUnit Parser', () => {
 				location: 'https://github.com/user/repo/tree/master/tests/',
 				name: 'Test Case',
 				status: 'ko',
+				time: '0.02',
 				timestamp: '1457428026000',
 				message: 'some failure message'
 			}]
