@@ -63,7 +63,7 @@
     "prepublish": "npm run build",
     "start": "babel-node server.js",
     "test": "mocha --compilers js:babel-core/register --recursive ./test/",
-    "qualimetry": "babel-node node_modules/.bin/isparta cover _mocha --dir qualimetry/cover -- --compilers js:babel-core/register -R spec test/**/*Spec.js",
+    "qualimetry": "istanbul cover _mocha --dir qualimetry/cover -- --compilers js:babel-core/register -R spec test/* test/batch/*",
     "linting": "eslint ./js ./controllers ./routers ./test ./helpers ./*.js"
   }
 }
