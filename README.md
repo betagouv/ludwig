@@ -108,6 +108,25 @@ Pour l'instant Ludwig accepte les rapports au format JUnit avec une suite de tes
 
 Le rapport peut être trouvé à l'adresse suivante : `/listTests`
 
+### Comment générer un rapport pour Ludwig?
+
+Pour l'instant, les rapports que Ludwig est capable de traiter doivent suivre le format xUnit (avec un bloc testsuite juste sous la racine). Quelques consignes pour profiter des fonctionnalités comme le lien direct vers le fichier source d'un test :
+
+Pour déterminer l'URL du fichier source d'un test, Ludwig se base sur
+ 
+* L'URL de base du dépôt où se trouvent les tests (dans la configuration c'est la propriété "baseUrl")
+* Le chemin permettant d'atteindre, sur le dépôt, le répertoire contenant les fichiers de test
+* Le nom du fichier de test lié au test à consulter doit être renseigné dans l'attribut "classname" de chacun des testcases
+
+Les informations générales (tests ok, en échec, date des tests, temps pris par la campagne de tests ...) se trouvent dans les propriétés de la suite de tests.
+
+* name : Le nom de la campagne de test
+* time : Le temps pris par tous les tests
+* timestamp : L'heure à laquelle la campagne de tests s'est terminée
+* tests : Le nombre total de tests
+* errors : Les tests en erreur (cassés, le problème est technique)
+* failures : Les échecs (les tests ont échoué car le comportement observé n'est plus celui attendu par les tests)
+
 ## Notes sur la configuration
 
 En l'état, vous devez créer les fichiers de configuration du widget et de l'API, ils ne sont volontairement pas directement fournis pour que le packaging du widget échoue s'il est fait avant que la configuration ait été écrite. De même, le serveur d'API refusera de démarrer sans sa configuration.
