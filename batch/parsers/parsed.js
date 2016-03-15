@@ -1,59 +1,69 @@
 var _ = require('lodash');
 
-function time(raw) {
-	return +(+(raw || 0)).toFixed(2);
-}
+const time = (rawTime) => {
+	let returnValue = 0;
+	if (rawTime) {
+		returnValue = Number.parseFloat(rawTime);
+	}
+	return returnValue.toFixed(2);
+};
 
-function summary(raw) {
+
+const summary = (raw) => {
 	return {
-		'tests': time(raw.tests),
-		'failures': time(raw.failures),
-		'skipped': time(raw.skipped),
-		'errors': time(raw.errors)
+		'tests': Number.parseInt(raw.tests),
+		'failures': Number.parseInt(raw.failures),
+		'skipped': Number.parseInt(raw.skipped),
+		'errors': Number.parseInt(raw.errors)
 	};
-}
+};
 
-function failure(raw) {
+const failure = (raw) => {
 	return {
 		'type': raw.$.type,
 		'message': raw.$.message,
 		'raw': raw._
 	};
-}
+};
 
-function tests(raw) {
+const tests = (raw) => {
 	return _(raw).map(function (test) {
-		var current = (test.failure || [])[0] || { $: {}, _: '' };
+		var current = (test.failure || [])[0] || {$: {}, _: ''};
 
 		return _({
 			'name': test.$.name,
 			'time': time(test.$.time),
 			'classname': test.$.classname,
 			'failure': failure(current)
-		}).tap(function (result) { !test.failure && delete result.failure; }).value();
+		}).tap(function (result) {
+			!test.failure && delete result.failure;
+		}).value();
 	}).value();
-}
+};
 
-function extras(raw) {
-	return {
-		'output': (!_(raw['system-out'][0]).isObject() && raw['system-out'][0]) || '',
-		'errors': (!_(raw['system-err'][0]).isObject() && raw['system-err'][0]) || ''
-	};
-}
+const extras = (raw) => {
+	const extras = {};
+	if (raw['system-out']) {
+		extras.output = (!_.isObject(raw['system-out'][0]) && raw['system-out'][0]) || '';
+	}
+	if (raw['system-err']) {
+		extras.errors = (!_.isObject(raw['system-err'][0]) && raw['system-err'][0]) || '';
 
-function from(raw) {
-	var rawSuite = raw.testsuite || { $: {} };
+	}
+	return extras;
+};
 
+const from = (raw) => {
+	var testSuiteFromParsedData = raw.testsuite || {$: {}};
 	var parsed = {
-		'name': rawSuite.$.name,
-		'time': time(rawSuite.$.time),
-		'summary': summary(rawSuite.$),
-		'tests': tests(rawSuite.testcase),
-		'extras': extras(rawSuite),
-		'timestamp':rawSuite.$.timestamp
+		'name': testSuiteFromParsedData.$.name,
+		'time': time(testSuiteFromParsedData.$.time),
+		'summary': summary(testSuiteFromParsedData.$),
+		'tests': tests(testSuiteFromParsedData.testcase),
+		'extras': extras(testSuiteFromParsedData),
+		'timestamp': testSuiteFromParsedData.$.timestamp
 	};
+	return {'suite': parsed};
+};
 
-	return { 'suite': parsed };
-}
-
-exports.from = from;
+export {from, time, summary, failure, extras, tests};
