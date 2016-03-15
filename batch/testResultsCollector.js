@@ -16,7 +16,7 @@ class TestResultsCollector {
 			let testSuite = new TestSuiteModel({
 				name: parsedTestSuiteData.name,
 				failures: parsedTestSuiteData.failures,
-				timestamp: new Date(parsedTestSuiteData.timestamp).getTime()
+				timestamp: parsedTestSuiteData.timestamp
 			});
 
 			testSuite.save((err, testSuiteSavedData) => {

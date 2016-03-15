@@ -17,7 +17,7 @@ class XUnitParser {
 		let testCase = {
 			name: testCaseXMLObject.name,
 			status: 'ok',
-			timestamp: parsedData.suite.timestamp,
+			timestamp: `${parsedData.suite.timestamp}`,
 			location:`${this.configuration.repoUrl}${this.configuration.web.accepted_tests_path}/${testCaseXMLObject.classname}`
 		};
 		if(testCaseXMLObject.failure){
@@ -37,6 +37,7 @@ class XUnitParser {
 					} else {
 						if(parsedData.testsuite.$.tests !== '0'){
 							parsedData = from(parsedData);
+							parsedData.suite.timestamp = new Date(parsedData.suite.timestamp).getTime();
 							if (parsedData.suite && parsedData.suite.tests) {
 								const testCases = [];
 								parsedData.suite.tests.forEach((testCaseXMLObject) => {
@@ -47,7 +48,7 @@ class XUnitParser {
 									name: parsedData.suite.name,
 									tests: parsedData.suite.summary.tests,
 									failures: parsedData.suite.summary.failures,
-									timestamp: parsedData.suite.timestamp,
+									timestamp: `${parsedData.suite.timestamp}`,
 									testCases: testCases
 								};
 								callback(null, testSuite);

@@ -39,12 +39,12 @@ describe('XUnit Parser', () => {
 			name: 'Test Suite',
 			tests: 1,
 			failures: 0,
-			timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT',
+			timestamp: '1457428026000',
 			testCases: [{
 				location: 'https://github.com/user/repo/tree/master/tests/test spec location',
 				name: 'Test Case',
 				status: 'ok',
-				timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT'
+				timestamp: '1457428026000'
 			}]
 		});
 	});
@@ -62,18 +62,18 @@ describe('XUnit Parser', () => {
 			name: 'Test Suite',
 			tests: 2,
 			failures: 0,
-			timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT',
+			timestamp: '1457428026000',
 			testCases: [
 				{
 					location: 'https://github.com/user/repo/tree/master/tests/',
 					name: 'Test Case',
 					status: 'ok',
-					timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT'
+					timestamp: '1457428026000'
 				}, {
 					location: 'https://github.com/user/repo/tree/master/tests/',
 					'name': 'Test Case 2',
 					'status': 'ok',
-					'timestamp': 'Tue, 08 Mar 2016 09:07:06 GMT'
+					'timestamp': '1457428026000'
 				}]
 		});
 	});
@@ -91,12 +91,12 @@ describe('XUnit Parser', () => {
 			name: 'Test Suite',
 			tests: 1,
 			failures: 1,
-			timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT',
+			timestamp: '1457428026000',
 			testCases: [{
 				location: 'https://github.com/user/repo/tree/master/tests/',
 				name: 'Test Case',
 				status: 'ko',
-				timestamp: 'Tue, 08 Mar 2016 09:07:06 GMT',
+				timestamp: '1457428026000',
 				message: 'some failure message'
 			}]
 		});
