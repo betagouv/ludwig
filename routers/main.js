@@ -8,7 +8,13 @@ import {TestsService} from '../services/testsService';
 import moment from 'moment';
 
 import config from '../ludwig-conf.js';
-const testsService = new TestsService(config.mongo);
+import mongoose from 'mongoose';
+mongoose.connect(config.mongo.uri, config.mongo.options);
+
+const testsService = new TestsService();
+
+import {HistoryController} from '../controllers/historyController';
+const historyController = new HistoryController();
 
 passport.serializeUser((user, done) => {
 	done(null, user);
@@ -62,6 +68,17 @@ router.get('/listTests', (req, res) => {
 			}
 		} else {
 			res.render('ko');
+		}
+	});
+});
+
+router.get('/history', (req, res) => {
+	const testName = req.query.testName;
+	historyController.collectTestHistoryDataForTest(testName, (err, dataToFeedToTemplateEngine) => {
+		if(err){
+			res.render('ko');
+		} else {
+			res.render('testHistory', dataToFeedToTemplateEngine);
 		}
 	});
 });

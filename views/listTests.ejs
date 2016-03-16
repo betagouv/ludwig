@@ -28,24 +28,36 @@
                     <th>Statut</th>
                     <th>Nom du test</th>
                     <th>Temps</th>
+                    <th>Historique</th>
                 </tr>
                 </thead>
                 <tbody>
                 <% testSuite.testCases.forEach(function(testCase){ %>
                 <tr>
                     <td>
+                        <p style="text-align:center">
                         <span class="glyphicon <%= testCase.status === 'ok' ? 'glyphicon-ok' : 'glyphicon-remove' %>"></span>
+                        </p>
                     </td>
                     <td>
                         <div><a href="<%= testCase.location %>"><%= testCase.name %></a></div>
                         <% if(testCase.status === 'ko') { %>
-                            <div class="alert alert-danger"><span class="failureDetailsTitle">Détails de l'erreur</span><p>
-                                    <%= testCase.message %>
-                                </p></div>
-                        <%}%>
+                        <div class="alert alert-danger"><span class="failureDetailsTitle">Détails de l'erreur</span>
+                            <p>
+                                <%= testCase.message %>
+                            </p></div>
+                        <% } %>
                     </td>
                     <td>
+                        <p style="text-align:right">
                         <%= testCase.time %>s
+                        </p>
+                    </td>
+                    <td>
+                        <p style="text-align: center;">
+                            <a href="/history?testName=<%= testCase.name %>"><span
+                                        class="glyphicon glyphicon-time"></span></a>
+                        </p>
                     </td>
                 </tr>
                 <% }) %>
