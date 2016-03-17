@@ -17,5 +17,9 @@ module.exports = {
 			createContent:'https://api.github.com/repos/user/repo/contents/',
 			createPullRequest:'https://api.github.com/repos/user/repo/pulls'
 		}
+	},
+	mongo:{
+		uri:'mongodb://host/database-name',
+		options:{}
 	}
 };
