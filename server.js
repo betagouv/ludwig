@@ -31,8 +31,8 @@ app.use('/', require('./routers/main'));
 
 app.listen(config.port, config.ip, function () {
 	console.log('Express server listening on %s:%d, in %s mode', config.ip, config.port, app.get('env'));
-	if(process.env.npm_config_ludwig_testFeatures) {
-		console.info('CAUTION : Test features are enabled. If you are trying to run a production instance, you should probably disable this by setting the appropriate npm configuration (ludwig:testFeatures)');
+	if(process.env.NODE_ENV === 'development') {
+		console.info('CAUTION : Test features are enabled. If you are trying to run a production instance, you should probably disable this by setting the appropriate environment (by setting the NODE_ENV environment variable to "production", for example)');
 	}
 });
 

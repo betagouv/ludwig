@@ -59,7 +59,7 @@ L'application peut embarquer le widget directement ou se le faire servir par le 
 Une fois cet ajout fait, le widget est disponible sous le nom `Ludwig` (qui est une classe, pour accéder aux fonctionnalités, il faut donc l'instancier en passant par un `new Ludwig(configuration)`, avec `configuration` un objet contenant la configuration du widget se basant sur l'exemple fourni par `ludwig-sample.js`)
 
 ### L'API du widget
-Le widget embarque sa propre configuration pour les diverses URLs à appeler pour une tâche ou l'autre. Rien à faire de ce côté ci donc. 
+Le widget doit être initialisé avec sa configuration pour les diverses URLs à appeler pour une tâche ou l'autre. La configuration suit la même organisation que celle côté serveur. 
 
 Aujourd'hui, le widget met à disposition plusieurs fonctions :
 
@@ -74,7 +74,12 @@ Il est possible de préciser à la méthode une fonction personnalisée pour sé
 
 ### Configurer
 
-Le fichier de configuration utilisé par l'API se trouve à la racine. Il permet de configurer les endpoints de l'API Github à utiliser, mais surtout les clefs API pour le repository de l'application qui va utiliser Ludwig.
+Le fichier de configuration utilisé par l'API se trouve à la racine. Il permet de configurer les endpoints de l'API Github à utiliser.
+
+La configuration des clefs d'API github se fait par `npm config`. Il faut saisir les clefs suivantes :
+
+* ludwig:clientID : Client ID à utiliser pour requêter l'API GitHub
+* ludwig:clientSecret : Client Secret à utiliser pour requêter l'API GitHub
 
 _Note :_ Un fichier `ludwig-sample.js` se trouve à la racine du projet.
 

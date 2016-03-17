@@ -43,8 +43,7 @@
   "config": {
     "clientID": "client ID you'll need to set via npm (key = ludwig:clientID): https://docs.npmjs.com/cli/config",
     "clientSecret": "client secret you'll need to set via npm (key = ludwig:clientSecret): https://docs.npmjs.com/cli/config",
-    "AccessControlAllowOrigin": "url pattern for CORS configuration (key = ludwig:AccessControlAllowOrigin)",
-    "testFeatures": "enable testing features or not (key = ludwig:testFeatures)"
+    "AccessControlAllowOrigin": "url pattern for CORS configuration (key = ludwig:AccessControlAllowOrigin)"
   },
   "files": [
     "controllers",

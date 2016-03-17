@@ -35,7 +35,7 @@ passport.use('github', new Strategy({
 }));
 
 // /test route not even declared if not explicitly enabled in configuration
-if (process.env.npm_config_ludwig_testFeatures) {
+if (process.env.NODE_ENV === 'development') {
 	router.get('/test', (req, res) => {
 		res.render('test');
 	});
