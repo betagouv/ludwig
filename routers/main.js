@@ -8,8 +8,6 @@ import {TestsService} from '../services/testsService';
 import moment from 'moment';
 
 import config from '../ludwig-conf.js';
-//import mongoose from 'mongoose';
-//mongoose.connect(config.mongo.uri, config.mongo.options);
 
 const testsService = new TestsService();
 

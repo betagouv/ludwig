@@ -81,6 +81,13 @@ La configuration des clefs d'API github se fait par `npm config`. Il faut saisir
 * ludwig:clientID : Client ID à utiliser pour requêter l'API GitHub
 * ludwig:clientSecret : Client Secret à utiliser pour requêter l'API GitHub
 
+Deux autres paramètres sont configurés par clefs de configuration NPM : 
+
+* ludwig:sessionSecret : Le secret qui sera utilisé pour les cookies de session
+* ludwig:AccessControlAllowOrigin : Le paramétrage CORS de l'application (pour permettre que l'application qui intègre le widget puisse interagir avec l'instance Ludwig, par exemple)
+
+Pour automatiser l'enregistrement de toutes les clefs de pconfiguration npm, un script est disponible dans `./scripts/setupNPMVariables.sh`
+
 _Note :_ Un fichier `ludwig-sample.js` se trouve à la racine du projet.
 
 ### Lancer
