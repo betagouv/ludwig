@@ -59,19 +59,19 @@ _Note :_ Cette configuration est packagée avec le widget à distribuer, il est 
 * `prefix` : préfixe du fichier qui sera créé lors de la suggestion
 * `ludwigCreateSuggestionURL` : L'URL Ludwig à joindre pour créer une suggestion en passant par les APIs authentifiées GitHub
 * `web`
-** `acceptedTestsPath` : l'URL où l'on peut consulter les tests acceptés par l'équipe
-** `addPath` : suffixe d'URL accolé à repo_url pour ajouter une nouvelle demande
-** `suggestedTestsPath` : L'URL qui présente les suggestions non validées
+    * `acceptedTestsPath` : l'URL où l'on peut consulter les tests acceptés par l'équipe
+    * `addPath` : suffixe d'URL accolé à repo_url pour ajouter une nouvelle demande
+    * `suggestedTestsPath` : L'URL qui présente les suggestions non validées
 * `commitReferenceToBranchFrom` : 
 * `github` (configuration pour appeler les APIs GitHub
-** `callback_url_`:  L'URL de callback configurée dans le repo qui contient les tests de sorte à ce que Ludwig puisse en modifier le contenu (et créer des Pull Requests)
-** `apiEndpoints`
-*** `createRef` : Création d'une nouvelle référence [https://developer.github.com/v3/git/refs/](https://developer.github.com/v3/git/refs/)
-*** `createContent` : Création d'un nouveau fichier [https://developer.github.com/v3/repos/contents/](https://developer.github.com/v3/repos/contents/)
-*** `createPullRequest` : Création d'une pull request [https://developer.github.com/v3/pulls/](https://developer.github.com/v3/pulls/)
+    * `callback_url_`:  L'URL de callback configurée dans le repo qui contient les tests de sorte à ce que Ludwig puisse en modifier le contenu (et créer des Pull Requests)
+    * `apiEndpoints`
+        * `createRef` : Création d'une nouvelle référence [https://developer.github.com/v3/git/refs/](https://developer.github.com/v3/git/refs/)
+        * `createContent` : Création d'un nouveau fichier [https://developer.github.com/v3/repos/contents/](https://developer.github.com/v3/repos/contents/)
+        * `createPullRequest` : Création d'une pull request [https://developer.github.com/v3/pulls/](https://developer.github.com/v3/pulls/)
 * `mongo` 
-** `uri` : l'URI de la base de données où seront stockées les informations de session et les suites de tests
-** `options` : éventuelles options à passer à mongoose (comme indiqué [ici](http://mongoosejs.com/docs/connections.html))
+    * `uri` : l'URI de la base de données où seront stockées les informations de session et les suites de tests
+    * `options` : éventuelles options à passer à mongoose (comme indiqué [ici](http://mongoosejs.com/docs/connections.html))
 
 _Note :_ Le fichier `ludwig-conf-sample.js` se trouve à la racine du projet.
 
