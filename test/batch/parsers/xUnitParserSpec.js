@@ -23,7 +23,7 @@ describe('XUnit Parser', () => {
 		xUnitParser.parse('./filename.xunitreport', callback);
 		//assert
 		assert.equal(callback.calledOnce, true);
-		assert.deepEqual(callback.getCall(0).args, [null, null]);
+		assert.deepEqual(callback.getCall(0).args, [ null, null ]);
 	});
 
 	it('should return a testSuite with one ok test included in it if xUnitReport contains one test case', () => {
@@ -40,13 +40,13 @@ describe('XUnit Parser', () => {
 			tests: 1,
 			failures: 0,
 			timestamp: '1457428026000',
-			testCases: [{
+			testCases: [ {
 				location: 'https://github.com/user/repo/tree/master/tests/test spec location',
 				name: 'Test Case',
 				status: 'ok',
 				time:'0.02',
 				timestamp: '1457428026000'
-			}]
+			} ]
 		});
 	});
 
@@ -77,7 +77,7 @@ describe('XUnit Parser', () => {
 					status: 'ok',
 					time:'0.02',
 					timestamp: '1457428026000'
-				}]
+				} ]
 		});
 	});
 
@@ -95,14 +95,14 @@ describe('XUnit Parser', () => {
 			tests: 1,
 			failures: 1,
 			timestamp: '1457428026000',
-			testCases: [{
+			testCases: [ {
 				location: 'https://github.com/user/repo/tree/master/tests/',
 				name: 'Test Case',
 				status: 'ko',
 				time: '0.02',
 				timestamp: '1457428026000',
 				message: 'some failure message'
-			}]
+			} ]
 		});
 	});
 

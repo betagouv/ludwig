@@ -2,11 +2,11 @@ import {TestsService} from '../services/testsService';
 import config from '../ludwig-conf.js';
 
 class HistoryController {
-	constructor(){
+	constructor() {
 	}
 
 	getTestsService() {
-		if(!this.testsService){
+		if(!this.testsService) {
 			this.testsService = new TestsService(config.mongo);
 		}
 		return this.testsService;
@@ -22,9 +22,7 @@ class HistoryController {
 				const location = testList[0] ? testList[0].location : 'N/A';
 				callback(null, {testLocation: location, testList: testList, testName: testName});
 			});
-		}
-
-		else {
+		} else {
 			callback({message:'No test name'});
 		}
 	}

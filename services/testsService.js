@@ -15,17 +15,26 @@ class TestsService {
 			});
 	}
 
+	testCaseModel() {
+		return TestCaseModel;
+	}
+
 	getTestHistoryByName(testName, callback) {
-		TestCaseModel.find({name: testName})
+		this.testCaseModel().find({name: testName})
 			.sort({timestamp: -1})
 			.exec((err, data) => {
-				data.forEach((testCase) => {
-					const date = new Date();
-					date.setTime(testCase.timestamp);
-					testCase.formattedTimestamp =  moment(date).format('DD/MM/YYYY à hh:mm:ss');
-				});
-				callback(err, data);
+				const enrichedData = this.addFormattedTimestamps(data);
+				callback(err, enrichedData);
 			});
+	};
+
+	addFormattedTimestamps(testCaseList) {
+		testCaseList.forEach((testCase) => {
+			const date = new Date();
+			date.setTime(testCase.timestamp);
+			testCase.formattedTimestamp = moment(date).format('DD/MM/YYYY à hh:mm:ss');
+		});
+		return testCaseList;
 	};
 }
 

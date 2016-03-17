@@ -1,7 +1,6 @@
-/*global describe it beforeEach*/
-import {from, time, summary, failure, extras, tests} from '../../../batch/parsers/parsed';
+/*global describe it*/
+import {time, summary, failure, extras, tests} from '../../../batch/parsers/parsed';
 import {assert} from 'chai';
-import sinon from 'sinon';
 
 describe('xUnit parsed data decorator', () => {
 	describe('time', () => {
@@ -46,7 +45,7 @@ describe('xUnit parsed data decorator', () => {
 		it('should return an object containing sys-output contents (such if node exists and is not an object)', () => {
 			//setup
 			//action
-			const actual = extras({'system-out': ['some output']});
+			const actual = extras({'system-out': [ 'some output' ]});
 			//assert
 			assert.deepEqual(actual, {output: 'some output'});
 		});
@@ -54,7 +53,7 @@ describe('xUnit parsed data decorator', () => {
 		it('should return an object containing an empty sys-output value if the first output node encountered contains an object', () => {
 			//setup
 			//action
-			const actual = extras({'system-out': [{some: 'output'}]});
+			const actual = extras({'system-out': [ {some: 'output'} ]});
 			//assert
 			assert.deepEqual(actual, {output: ''});
 		});
@@ -62,7 +61,7 @@ describe('xUnit parsed data decorator', () => {
 		it('should return an object containing sys-error contents (such if node exists and is not an object)', () => {
 			//setup
 			//action
-			const actual = extras({'system-err': ['some error']});
+			const actual = extras({'system-err': [ 'some error' ]});
 			//assert
 			assert.deepEqual(actual, {errors: 'some error'});
 		});
@@ -70,7 +69,7 @@ describe('xUnit parsed data decorator', () => {
 		it('should return an object containing an empty sys-error value if the first error node encountered contains an object', () => {
 			//setup
 			//action
-			const actual = extras({'system-err': [{some: 'error'}]});
+			const actual = extras({'system-err': [ {some: 'error'} ]});
 			//assert
 			assert.deepEqual(actual, {errors: ''});
 		});
@@ -82,32 +81,32 @@ describe('xUnit parsed data decorator', () => {
 			//action
 			const actual = tests({});
 			//assert
-			assert.deepEqual(actual, []);
+			assert.deepEqual(actual, [ ]);
 		});
 
 		it('should return exactly one test if there is only one testcase to analyze (testcase is a success)', () => {
 			//setup
-			const testCases = [{$: {name: 'test name', time: '0.023', classname: 'class name'}}];
+			const testCases = [ {$: {name: 'test name', time: '0.023', classname: 'class name'}} ];
 			//action
 			const actual = tests(testCases);
 			//assert
-			assert.deepEqual(actual, [{
+			assert.deepEqual(actual, [ {
 				'classname': 'class name',
 				'name': 'test name',
 				'time': '0.02'
-			}]);
+			} ]);
 		});
 
 		it('should return exactly one test if there is only one testcase to analyze (testcase is an error)', () => {
 			//setup
-			const testCases = [{
+			const testCases = [ {
 				$: {name: 'test name', time: '0.023', classname: 'class name'},
-				failure: [{$: {type: 'failure type', message: 'failure message'}, _: {raw: 'data'}}]
-			}];
+				failure: [ {$: {type: 'failure type', message: 'failure message'}, _: {raw: 'data'}} ]
+			} ];
 			//action
 			const actual = tests(testCases);
 			//assert
-			assert.deepEqual(actual, [{
+			assert.deepEqual(actual, [ {
 				'classname': 'class name',
 				'name': 'test name',
 				'time': '0.02',
@@ -116,7 +115,7 @@ describe('xUnit parsed data decorator', () => {
 					raw: {raw: 'data'},
 					type: 'failure type'
 				}
-			}]);
+			} ]);
 		});
 	});
 });

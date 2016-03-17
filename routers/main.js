@@ -75,7 +75,7 @@ router.get('/listTests', (req, res) => {
 router.get('/history', (req, res) => {
 	const testName = req.query.testName;
 	historyController.collectTestHistoryDataForTest(testName, (err, dataToFeedToTemplateEngine) => {
-		if(err){
+		if(err) {
 			res.render('ko');
 		} else {
 			res.render('testHistory', dataToFeedToTemplateEngine);
