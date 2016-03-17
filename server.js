@@ -1,7 +1,11 @@
 'use strict';
 var express = require('express'), path = require('path');
 var session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
+const appConfiguration = require('./ludwig-conf');
+const mongoose = require('mongoose');
+mongoose.connect(appConfiguration.mongo.uri, appConfiguration.mongo.options);
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -14,15 +18,24 @@ var config = {
 };
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, '/dist')));
+
+if(!process.env.npm_config_ludwig_sessionSecret) {
+	console.err('Session secret not defined! Ludwig server will not start until this is fixed!');
+	process.exit(1);
+}
+
 app.use(session({
-	secret: 'we will need to be able to configure this'
+	secret: process.env.npm_config_ludwig_sessionSecret,
+	resave:false,
+	saveUninitialized:false,
+	store:new MongoStore({mongooseConnection:mongoose.connection})
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req, res, next) {
-	res.header('Access-Control-Allow-Origin', process.env.npm_package_config_AccessControlAllowOrigin);
+	res.header('Access-Control-Allow-Origin', process.env.npm_config_ludwig_AccessControlAllowOrigin);
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 	next();
 });
