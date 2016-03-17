@@ -1,4 +1,5 @@
 node_modules
+,vagrant
 reportexamples
 npm-debug.log
 .DS_Store
