@@ -17,8 +17,9 @@ On s'appuie sur Github et ses APIs pour minimiser les outils. Ludwig simplifie l
 
 Pour installer Ludwig et le lancer, vous aurez besoin de :
 
-* [nodejs/npm](https://nodejs.org)
-* [webpack](http://webpack.github.io)
+* [NodeJS/NPM](https://nodejs.org)
+* [Webpack](http://webpack.github.io)
+* [MongoDB](http://www.mongodb.org)
 
 ## Utiliser le widget dans une application
 
@@ -89,6 +90,42 @@ user@host$ npm start
 user@host$ node server.js
 user@host$ pm2 start pm2.conf.json
 ```
+
+## Consulter le rapport des derniers tests
+
+### Description générale
+Il est possible d'alimenter une base de données avec des rapports de tests afin de présenter aux contributeurs l'état des tests de l'application et son historique.
+
+Pour pouvoir visualiser ces rapports, il faut tout d'abord alimenter la base de données de l'application. Cela se fait en utilisant l'utilitaire d'alimentation : 
+
+```
+user@host$ npm run insertTestReportData <fichier.xunit.xml>
+```
+
+Pour l'instant Ludwig accepte les rapports au format JUnit avec une suite de tests à la racine. Pour éviter d'insérer deux fois le même rapport, on considère que la propriété "timestamp" de la suite de tests est une clef unique (et l'importeur déclenchera une erreur si l'on tente d'insérer deux rapports avec le même timestamp, ce qui semble être une approche raisonnable pour un unique projet).
+
+### Où trouver ce rapport?
+
+Le rapport peut être trouvé à l'adresse suivante : `/listTests`
+
+### Comment générer un rapport pour Ludwig?
+
+Pour l'instant, les rapports que Ludwig est capable de traiter doivent suivre le format xUnit (avec un bloc testsuite juste sous la racine). Quelques consignes pour profiter des fonctionnalités comme le lien direct vers le fichier source d'un test :
+
+Pour déterminer l'URL du fichier source d'un test, Ludwig se base sur
+ 
+* L'URL de base du dépôt où se trouvent les tests (dans la configuration c'est la propriété "baseUrl")
+* Le chemin permettant d'atteindre, sur le dépôt, le répertoire contenant les fichiers de test
+* Le nom du fichier de test lié au test à consulter doit être renseigné dans l'attribut "classname" de chacun des testcases
+
+Les informations générales (tests ok, en échec, date des tests, temps pris par la campagne de tests ...) se trouvent dans les propriétés de la suite de tests.
+
+* name : Le nom de la campagne de test
+* time : Le temps pris par tous les tests
+* timestamp : L'heure à laquelle la campagne de tests s'est terminée
+* tests : Le nombre total de tests
+* errors : Les tests en erreur (cassés, le problème est technique)
+* failures : Les échecs (les tests ont échoué car le comportement observé n'est plus celui attendu par les tests)
 
 ## Notes sur la configuration
 

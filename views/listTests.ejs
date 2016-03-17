@@ -3,6 +3,7 @@
     <meta charset="utf-8">
     <title>Liste des tests de l'application</title>
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/ludwig.css" rel="stylesheet"/>
 </head>
 <body>
 
@@ -10,9 +11,11 @@
 <div class="container">
     <h1>Les tests de l'application : Résumé</h1>
 
+    <% if (testSuite) { %>
     <div class="bs-example" data-example-id="table-within-panel">
         <div class="panel panel-default">
-            <div class="panel-heading">Les tests pour la campagne "<%=testSuite.name%>" réalisés le <%= formattedTimestamp %></div>
+            <div class="panel-heading">Les tests pour la campagne "<%= testSuite.name %>" réalisés
+                le <%= formattedTimestamp %></div>
             <div class="panel-body"><p>
                     Nombre total de tests : <%= testSuite.testCases.length %>
                 </p>
@@ -24,21 +27,51 @@
                 <tr>
                     <th>Statut</th>
                     <th>Nom du test</th>
+                    <th>Temps</th>
+                    <th>Historique</th>
                 </tr>
                 </thead>
                 <tbody>
                 <% testSuite.testCases.forEach(function(testCase){ %>
                 <tr>
                     <td>
+                        <p style="text-align:center">
                         <span class="glyphicon <%= testCase.status === 'ok' ? 'glyphicon-ok' : 'glyphicon-remove' %>"></span>
+                        </p>
                     </td>
-                    <td><%= testCase.name %></td>
+                    <td>
+                        <div><a href="<%= testCase.location %>"><%= testCase.name %></a></div>
+                        <% if(testCase.status === 'ko') { %>
+                        <div class="alert alert-danger"><span class="failureDetailsTitle">Détails de l'erreur</span>
+                            <p>
+                                <%= testCase.message %>
+                            </p></div>
+                        <% } %>
+                    </td>
+                    <td>
+                        <p style="text-align:right">
+                        <%= testCase.time %>s
+                        </p>
+                    </td>
+                    <td>
+                        <p style="text-align: center;">
+                            <a href="/history?testName=<%= testCase.name %>"><span
+                                        class="glyphicon glyphicon-time"></span></a>
+                        </p>
+                    </td>
                 </tr>
                 <% }) %>
                 </tbody>
             </table>
         </div>
     </div>
+    <% } else { %>
+    <div class="bs-example" data-example-id="table-within-panel">
+        <div class="panel panel-default">
+            <div class="panel-heading">Pas de campagnes de test enregistrées pour l'instant</div>
+        </div>
+    </div>
+    <% } %>
 </div>
 
 <footer class="footer">

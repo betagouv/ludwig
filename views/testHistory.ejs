@@ -1,0 +1,55 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Historique d'un test</title>
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/ludwig.css" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- Begin page content -->
+<div class="container">
+    <% if (testList && testList.length) { %>
+    <div class="bs-example" data-example-id="table-within-panel">
+        <div class="panel panel-default">
+            <div class="panel-heading">Historique du test "<%= testName %>"</div>
+            <div class="panel-body">
+                <p>Informations: </p>
+                <ul>
+                    <li><a href="<%= testLocation %>">Lien vers le test</a></li>
+                </ul>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Statut</th>
+                    <th>Date du test</th>
+                    <th>Temps</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% testList.forEach(function(testCase){ %>
+                <tr>
+                    <td>
+                        <span class="glyphicon <%= testCase.status === 'ok' ? 'glyphicon-ok' : 'glyphicon-remove' %>"></span>
+                    </td>
+                    <td>
+                        Le <%= testCase.formattedTimestamp %>
+                    </td>
+                    <td>
+                        <%= testCase.time %>s
+                    </td>
+                </tr>
+                <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <% } else { %>
+    <div class="bs-example" data-example-id="table-within-panel">
+        <div class="panel panel-default">
+            <div class="panel-heading">Aucun historique disponible pour ce test</div>
+        </div>
+    </div>
+    <% } %>
+</div>

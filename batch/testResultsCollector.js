@@ -1,24 +1,22 @@
 import {XUnitParser} from './parsers/xUnitParser';
 import mongoose from 'mongoose';
 import {TestSuiteModel} from '../models/testSuiteModel';
-import {TestCaseModel} from '../models/testcaseModel';
+import {TestCaseModel} from '../models/testCaseModel';
 
 
 class TestResultsCollector {
 	constructor(configuration) {
-		this.options = configuration.mongo.options;
-		this.mongoUri = configuration.mongo.uri;
-		this.mongoConnection = mongoose.connect(this.mongoUri, this.options);
+		this.configuration = configuration;
+		mongoose.connect(configuration.mongo.uri, configuration.mongo.options);
 	}
 
 	saveFromXUnitData(xUnitFilePath, callback) {
-		const parser = new XUnitParser();
+		const parser = new XUnitParser(this.configuration);
 		parser.parse(xUnitFilePath, (errors, parsedTestSuiteData) => {
-
 			let testSuite = new TestSuiteModel({
 				name: parsedTestSuiteData.name,
 				failures: parsedTestSuiteData.failures,
-				timestamp: new Date(parsedTestSuiteData.timestamp).getTime()
+				timestamp: parsedTestSuiteData.timestamp
 			});
 
 			testSuite.save((err, testSuiteSavedData) => {

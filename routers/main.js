@@ -8,7 +8,13 @@ import {TestsService} from '../services/testsService';
 import moment from 'moment';
 
 import config from '../ludwig-conf.js';
-const testsService = new TestsService(config.mongo);
+import mongoose from 'mongoose';
+mongoose.connect(config.mongo.uri, config.mongo.options);
+
+const testsService = new TestsService();
+
+import {HistoryController} from '../controllers/historyController';
+const historyController = new HistoryController();
 
 passport.serializeUser((user, done) => {
 	done(null, user);
@@ -53,11 +59,26 @@ router.get('/github_callback', passport.authenticate('github', {failureRedirect:
 router.get('/listTests', (req, res) => {
 	testsService.getMostRecentTestSuite((err, mostRecentTestSuite) => {
 		if(!err) {
-			var date = new Date();
-			date.setTime(mostRecentTestSuite.timestamp);
-			res.render('listTests', {testSuite:mostRecentTestSuite, formattedTimestamp:moment(date).format('YYYY/MM/DD à HH:mm:ss')});
+			if(mostRecentTestSuite) {
+				var date = new Date();
+				date.setTime(mostRecentTestSuite.timestamp);
+				res.render('listTests', {testSuite:mostRecentTestSuite, formattedTimestamp:moment(date).format('YYYY/MM/DD à HH:mm:ss')});
+			} else {
+				res.render('listTests', {testSuite:null});
+			}
 		} else {
 			res.render('ko');
+		}
+	});
+});
+
+router.get('/history', (req, res) => {
+	const testName = req.query.testName;
+	historyController.collectTestHistoryDataForTest(testName, (err, dataToFeedToTemplateEngine) => {
+		if(err) {
+			res.render('ko');
+		} else {
+			res.render('testHistory', dataToFeedToTemplateEngine);
 		}
 	});
 });
