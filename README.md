@@ -117,15 +117,11 @@ Pour automatiser l'enregistrement de toutes les clefs de pconfiguration npm, un 
 
 ### Lancer
 
-C'est une application NodeJS qui ne demande rien de particulier. Une fois ses dépendances installées, Ludwig peut ensuite être démarré comme bon vous semble :
-
 **Attention**, il faut avoir créé les **fichiers de configuration du widget et de l'API avant** de dérouler ces étapes.
 
 ```
-user@host$ npm install # installer / packager
-user@host$ npm start
-user@host$ node server.js
-user@host$ pm2 start pm2.conf.json
+$ npm install # installer / packager
+$ npm start
 ```
 
 ### Consulter le rapport des derniers tests
