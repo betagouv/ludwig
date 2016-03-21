@@ -48,7 +48,7 @@ Pour installer Ludwig et le lancer, vous aurez besoin de :
 ### Configurer le widget
 
 Le widget s'instancie avec en unique paramètre un objet contenant les informations nécessaires pour joindre le dépôt Github de votre projet. Il faut donc s'occuper de cette configuration avant de déployer le widget.
-Le plus simple est de se baser sur le fichier `ludwig-conf.js` (le serveur et le widget partagent le même fichier de configuration), puis d'exécuter `webpack` à la racine du répertoire de l'application. Un fichier `bundle.js` est généré. Il contient le widget.
+Le plus simple est de se baser sur le fichier `ludwig-conf.js` (le serveur et le widget partagent le même fichier de configuration), puis d'exécuter `npm run build` à la racine du répertoire de l'application. Un fichier `bundle.js` est généré. Il contient le widget.
 
 _Note :_ Cette configuration est packagée avec le widget à distribuer, il est inutile de la charger à part.
 
