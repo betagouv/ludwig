@@ -115,8 +115,6 @@ Deux autres paramètres sont configurés par clefs de configuration NPM :
 
 Pour automatiser l'enregistrement de toutes les clefs de pconfiguration npm, un script est disponible dans `./scripts/setupNPMVariables.sh`
 
-_Note :_ Un fichier `ludwig-conf-sample.js` se trouve à la racine du projet.
-
 ### Lancer
 
 C'est une application NodeJS qui ne demande rien de particulier. Une fois ses dépendances installées, Ludwig peut ensuite être démarré comme bon vous semble :
