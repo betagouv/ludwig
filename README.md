@@ -90,12 +90,12 @@ Le widget doit être initialisé avec sa configuration pour les diverses URLs à
 
 Aujourd'hui, le widget met à disposition plusieurs fonctions :
 
-* generateSuggestionURL(currentState, expectedResult [, customSuggestionFormatter] ) : Génère une URL permettant d'ajouter un fichier correspondant à une suggestion. L'état collecté par l'application ainsi que le résultat attendu seront sérialisés dans la requête. 
+* `generateSuggestionURL(currentState, expectedResult [, customSuggestionFormatter] )` : Génère une URL permettant d'ajouter un fichier correspondant à une suggestion. L'état collecté par l'application ainsi que le résultat attendu seront sérialisés dans la requête.
 Il est possible de préciser à la méthode une fonction personnalisée pour sérialiser le template, l'état et le résultat attendu. Cette fonction doit prendre 3 paramètres et renvoyer une chaîne de caractères (qui sera ensuite échappée par Ludwig)
-* generateSuggestionName() : Génère un nom de suggestion qui se base sur le préfixe configuré et la date courante.
-* acceptedTestsURL() : Génère l'URL permettant d'accéder à la liste des tests acceptés.
-* suggestedTestsURL() : Génère l'URL permettant de consulter les suggestions de tests.
-* generateLudwigSuggestionEndpointURL(suggestionTitle, suggestionDescription, currentState, expectedResult) : Crée le lien qui permet de contacter l'API Ludwig pour créer une nouvelle suggestion. Cela permet de fournir un titre et une description en plus de l'état et du résultat attendu. 
+* `generateSuggestionName()` : Génère un nom de suggestion qui se base sur le préfixe configuré et la date courante.
+* `acceptedTestsURL()` : Génère l'URL permettant d'accéder à la liste des tests acceptés.
+* `suggestedTestsURL()` : Génère l'URL permettant de consulter les suggestions de tests.
+* `generateLudwigSuggestionEndpointURL(suggestionTitle, suggestionDescription, currentState, expectedResult)` : Crée le lien qui permet de contacter l'API Ludwig pour créer une nouvelle suggestion. Cela permet de fournir un titre et une description en plus de l'état et du résultat attendu.
 
 ## Configurer et lancer le serveur Ludwig
 
@@ -151,20 +151,20 @@ Le rapport peut être trouvé à l'adresse suivante : `/listTests`.
 
 Pour l'instant, les rapports que Ludwig est capable de traiter doivent suivre le format xUnit (avec un bloc testsuite juste sous la racine). Quelques consignes pour profiter des fonctionnalités comme le lien direct vers le fichier source d'un test :
 
-Pour déterminer l'URL du fichier source d'un test, Ludwig se base sur
- 
-* L'URL de base du dépôt où se trouvent les tests (dans la configuration c'est la propriété "baseUrl")
-* Le chemin permettant d'atteindre, sur le dépôt, le répertoire contenant les fichiers de test
-* Le nom du fichier de test lié au test à consulter doit être renseigné dans l'attribut "classname" de chacun des testcases
+Pour déterminer l'URL du fichier source d'un test, Ludwig se base sur :
+
+* L'URL de base du dépôt où se trouvent les tests (dans la configuration c'est la propriété `baseUrl`).
+* Le chemin permettant d'atteindre, sur le dépôt, le répertoire contenant les fichiers de test.
+* Le nom du fichier de test lié au test à consulter doit être renseigné dans l'attribut `classname` de chacun des cas de test.
 
 Les informations générales (tests ok, en échec, date des tests, temps pris par la campagne de tests…) se trouvent dans les propriétés de la suite de tests.
 
-* name : Le nom de la campagne de test
-* time : Le temps pris par tous les tests
-* timestamp : L'heure à laquelle la campagne de tests s'est terminée
-* tests : Le nombre total de tests
-* errors : Les tests en erreur (cassés, le problème est technique)
-* failures : Les échecs (les tests ont échoué car le comportement observé n'est plus celui attendu par les tests)
+* `name` : Le nom de la campagne de test
+* `time` : Le temps pris par tous les tests
+* `timestamp` : L'heure à laquelle la campagne de tests s'est terminée
+* `tests` : Le nombre total de tests
+* `errors` : Les tests en erreur (cassés, le problème est technique)
+* `failures` : Les échecs (les tests ont échoué car le comportement observé n'est plus celui attendu par les tests)
 
 ## Notes sur la configuration
 
