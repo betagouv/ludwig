@@ -139,7 +139,7 @@ Pour pouvoir visualiser ces rapports, il faut tout d'abord alimenter la base de 
 user@host$ npm run insertTestReportData <fichier.xunit.xml>
 ```
 
-Pour l'instant Ludwig accepte les rapports au format JUnit avec une suite de tests à la racine. Pour éviter d'insérer deux fois le même rapport, on considère que la propriété "timestamp" de la suite de tests est une clef unique (et l'importeur déclenchera une erreur si l'on tente d'insérer deux rapports avec le même timestamp, ce qui semble être une approche raisonnable pour un unique projet).
+Pour l'instant Ludwig accepte les rapports au format xUnit avec une suite de tests à la racine. Pour éviter d'insérer deux fois le même rapport, on considère que la propriété "timestamp" de la suite de tests est une clef unique (et l'importeur déclenchera une erreur si l'on tente d'insérer deux rapports avec le même timestamp, ce qui semble être une approche raisonnable pour un unique projet).
 
 #### Où trouver ce rapport ?
 
