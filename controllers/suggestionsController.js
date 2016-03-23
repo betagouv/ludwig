@@ -25,7 +25,7 @@ class SuggestionsController {
 		const newBranchName = BRANCH_PREFIX + now;
 
 		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, title, description, state)) {
-			self.githubHelper().getHeadReferenceForBranch( (err, masterRef) => {
+			self.githubHelper().getHeadReferenceForBranch( 'master', (err, masterRef) => {
 				if(!err) {
 					self.githubHelper().createReference(accessToken, newBranchName, masterRef, (err) => {
 						if (!err) {

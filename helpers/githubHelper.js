@@ -71,8 +71,7 @@ class GithubHelper {
 					let branchRef = null;
 					responseBody.forEach((singleReference) => {
 						if (singleReference.ref === `refs/heads/${requestedBranch}`) {
-							branchRef = singleReference.sha;
-							return;
+							branchRef = singleReference.object.sha;
 						}
 					});
 					if (branchRef) {

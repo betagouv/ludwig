@@ -155,7 +155,7 @@ describe('Github Helper', () => {
 			const config = [ {
 				pattern: 'https://api.github.com/(.*)',
 				get: () => {
-					return {res: {body: [ {ref:'refs/heads/foobar', sha:'shacode for foobar'} ]}};
+					return {res: {body: [ {ref:'refs/heads/foobar', object:{sha:'shacode for foobar'}} ]}};
 				},
 				fixtures: (match) => {
 					if (match[1] === 'repos/user/reponame/git/refs') {
