@@ -2,7 +2,6 @@ import {GithubHelper} from '../helpers/githubHelper';
 const FILE_NAME_PREFIX = 'suggestion';
 const BRANCH_PREFIX = 'suggestion';
 const _githubHelper = new GithubHelper();
-import config from '../ludwig-conf';
 
 class SuggestionsController {
 	constructor() {
@@ -24,19 +23,24 @@ class SuggestionsController {
 		const self = this;
 		const now = (new Date()).getTime();
 		const newBranchName = BRANCH_PREFIX + now;
-		const commitReferenceToBranchFrom = config.commitReferenceToBranchFrom;
 
 		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, title, description, state)) {
-			self.githubHelper().createReference(accessToken, newBranchName, commitReferenceToBranchFrom, (err) => {
-				if (!err) {
-					const testFileName = FILE_NAME_PREFIX + now + '.txt';
-					const stateStringBuffer = new Buffer(state);
-					const base64FileContents = stateStringBuffer.toString('base64');
-					self.githubHelper().createContent(accessToken, testFileName, newBranchName, description, base64FileContents, ( err ) => {
+			self.githubHelper().getHeadReferenceForBranch( (err, masterRef) => {
+				if(!err) {
+					self.githubHelper().createReference(accessToken, newBranchName, masterRef, (err) => {
 						if (!err) {
-							self.githubHelper().createPullRequest(newBranchName, title, description, accessToken, ( err, newPullRequestData ) => {
+							const testFileName = FILE_NAME_PREFIX + now + '.txt';
+							const stateStringBuffer = new Buffer(state);
+							const base64FileContents = stateStringBuffer.toString('base64');
+							self.githubHelper().createContent(accessToken, testFileName, newBranchName, description, base64FileContents, (err) => {
 								if (!err) {
-									res.render('ok', {pullRequestURL: newPullRequestData.body.html_url});
+									self.githubHelper().createPullRequest(newBranchName, title, description, accessToken, (err, newPullRequestData) => {
+										if (!err) {
+											res.render('ok', {pullRequestURL: newPullRequestData.body.html_url});
+										} else {
+											self.renderErrorPage(res);
+										}
+									});
 								} else {
 									self.renderErrorPage(res);
 								}

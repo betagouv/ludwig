@@ -24,15 +24,10 @@ describe('suggestionController', () => {
 			//setup
 			const accessToken = 'access token', title = 'title', description = 'description';
 			const mockedGithubHelper = {
-				createReference: (accessToken, newBranchName, commitReferenceToBranchFrom, callback) => {
-					callback(null, {});
-				},
-				createContent: (accessToken, testFileName, newBranchName, description, base64FileContents, callback) => {
-					callback(null, {});
-				},
-				createPullRequest: (newBranchName, title, description, accessToken, callback) => {
-					callback(null, {body: {url: 'API URL for pull request', html_url: 'HTML URL for pull request'}});
-				}
+				createReference: sinon.stub().yields(null, {}),
+				createContent: sinon.stub().yields(null, {}),
+				createPullRequest: sinon.stub().yields(null, {body: {url: 'API URL for pull request', html_url: 'HTML URL for pull request'}}),
+				getHeadReferenceForBranch: sinon.stub().yields(null, 'branchReferenceSHA')
 			};
 			const state = 'some custom data so that b64 keeps quiet';
 			sinon.stub(suggestionsController, 'githubHelper').returns(mockedGithubHelper);
@@ -40,6 +35,10 @@ describe('suggestionController', () => {
 			suggestionsController.createPullRequest(accessToken, title, description, state, res);
 			//assert
 			assert.equal(res.render.calledOnce, true);
+			assert.equal(mockedGithubHelper.createReference.calledOnce, true);
+			assert.equal(mockedGithubHelper.createPullRequest.calledOnce, true);
+			assert.equal(mockedGithubHelper.createContent.calledOnce, true);
+			assert.equal(mockedGithubHelper.getHeadReferenceForBranch.calledOnce, true);
 			assert.deepEqual(res.render.getCall(0).args, [ 'ok', {pullRequestURL: 'HTML URL for pull request'} ]);
 		});
 
@@ -88,7 +87,8 @@ describe('suggestionController', () => {
 			const createContentSpy = sinon.spy();
 			sinon.stub(suggestionsController, 'githubHelper').returns({
 				createReference: sinon.stub().yields({error: true}),
-				createContent: createContentSpy
+				createContent: createContentSpy,
+				getHeadReferenceForBranch: sinon.stub().yields(null, 'branchReferenceSHA')
 			});
 			//action
 			suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res);
@@ -104,7 +104,8 @@ describe('suggestionController', () => {
 			sinon.stub(suggestionsController, 'githubHelper').returns({
 				createReference: sinon.stub().yields(null, {data: true}),
 				createContent: sinon.stub().yields({error:true}),
-				createPullRequest:createPullRequestSpy
+				createPullRequest:createPullRequestSpy,
+				getHeadReferenceForBranch: sinon.stub().yields(null, 'branchReferenceSHA')
 			});
 			//action
 			suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res);
@@ -120,7 +121,8 @@ describe('suggestionController', () => {
 			const githubHelperStub = {
 				createReference: sinon.stub().yields(null, {data: true}),
 				createContent: sinon.stub().yields(null, {data: true}),
-				createPullRequest: sinon.stub().yields({error: true})
+				createPullRequest: sinon.stub().yields({error: true}),
+				getHeadReferenceForBranch: sinon.stub().yields(null, 'branchReferenceSHA')
 			};
 			sinon.stub(suggestionsController, 'githubHelper').returns(githubHelperStub);
 			//action
@@ -128,6 +130,22 @@ describe('suggestionController', () => {
 			//assert
 			assert.equal(res.render.calledOnce, true);
 			assert.equal(githubHelperStub.createPullRequest.calledOnce, true);
+
+			assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+		});
+
+		it('should return an error if we cannot get a branch reference for specified branch', () => {
+			//setup
+			const githubHelperStub = {
+				createReference: sinon.spy(),
+				getHeadReferenceForBranch: sinon.stub().yields({message:'error getting references'})
+			};
+			sinon.stub(suggestionsController, 'githubHelper').returns(githubHelperStub);
+			//action
+			suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res);
+			//assert
+			assert.equal(res.render.calledOnce, true);
+			assert.equal(githubHelperStub.createReference.called, false);
 
 			assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
 		});
