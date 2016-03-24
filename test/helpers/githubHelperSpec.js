@@ -23,14 +23,6 @@ describe('Github Helper', () => {
 					'url': 'https://api.github.com/repos/user/reponame/pulls/19'
 				};
 			}
-
-			if (match[1].match(/repos\/user\/reponame\/contents\/.*/)) {
-				return {};
-			}
-
-			if (match[1] === 'repos/user/reponame/git/refs') {
-				return {};
-			}
 			return {};
 		}
 	} ];
@@ -99,10 +91,7 @@ describe('Github Helper', () => {
 				get: () => {
 					throw new Error('Can\'t retrieve references');
 				},
-				fixtures: (match) => {
-					if (match[1] === 'repos/user/reponame/git/refs') {
-						return {};
-					}
+				fixtures: () => {
 					return {};
 				}
 			} ];
@@ -131,10 +120,7 @@ describe('Github Helper', () => {
 				get: () => {
 					return {body: []};
 				},
-				fixtures: (match) => {
-					if (match[1] === 'repos/user/reponame/git/refs') {
-						return {};
-					}
+				fixtures: () => {
 					return {};
 				}
 			} ];
@@ -163,10 +149,7 @@ describe('Github Helper', () => {
 				get: () => {
 					return {body: [ {ref:'refs/heads/foobar', object:{sha:'shacode for foobar'}} ]};
 				},
-				fixtures: (match) => {
-					if (match[1] === 'repos/user/reponame/git/refs') {
-						return {};
-					}
+				fixtures: () => {
 					return {};
 				}
 			} ];
