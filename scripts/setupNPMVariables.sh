@@ -1,10 +1,10 @@
 #!/bin/bash
 
-echo "Github API ClientID ?"
+echo "Github API ClientID?"
 read clientID
 npm config set ludwig:clientID "$clientID"
 
-echo "Github API ClientSecret ?"
+echo "Github API ClientSecret?"
 read clientSecret
 npm config set ludwig:clientSecret "$clientSecret"
 
