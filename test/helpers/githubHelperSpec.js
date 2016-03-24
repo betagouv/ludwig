@@ -40,20 +40,22 @@ describe('Github Helper', () => {
 	});
 
 	describe('createPullRequest', () => {
-		it('should send an OK response if pull request was created on configured repo', () => {
+		it('should send an OK response if pull request was created on configured repo', (done) => {
 			//setup
 			const superagentMock = require('superagent-mock')(request, config);
 			sinon.stub(githubHelper, 'agent').returns(request);
-			const head = 'head', title = 'PR title', body = 'PR body', accessToken = 'access token 12434', callback = sinon.spy();
+			const head = 'head', title = 'PR title', body = 'PR body', accessToken = 'access token 12434';
 			sinon.stub(githubHelper, 'config').returns({createPullRequest: 'https://api.github.com/repos/user/reponame/pulls'});
 			//action
-			githubHelper.createPullRequest(head, title, body, accessToken, callback);
+			const createPRPromise = githubHelper.createPullRequest(head, title, body, accessToken);
 			//assert
-			assert.equal(callback.calledOnce, true);
-			assert.deepEqual(callback.getCall(0).args[1], {
-				'url': 'https://api.github.com/repos/user/reponame/pulls/19'
+			createPRPromise.then( (data) => {
+				assert.deepEqual(data, {
+					'url': 'https://api.github.com/repos/user/reponame/pulls/19'
+				});
+				superagentMock.unset();
+				done();
 			});
-			superagentMock.unset();
 		});
 	});
 	describe('createPullRequestRequestBody', () => {
@@ -90,7 +92,7 @@ describe('Github Helper', () => {
 	});
 
 	describe('getHeadReferenceForBranch', () => {
-		it('should callback in a KO state if an error occurred when retrieving refs list', () => {
+		it('should return a rejected promise if an error occurred when retrieving refs list', (done) => {
 			//setup
 			const config = [ {
 				pattern: 'https://api.github.com/(.*)',
@@ -106,26 +108,28 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			const callbackSpy = sinon.spy();
 			sinon.stub(githubHelper, 'agent').returns(request);
 			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
 			//action
-			githubHelper.getHeadReferenceForBranch('', callbackSpy);
+			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('');
 			//assert
-			assert.equal(callbackSpy.calledOnce, true);
-			assert.deepEqual(callbackSpy.getCall(0).args, [ {
-				message: 'Not able to retrieve references',
-				details: 'Can\'t retrieve references'
-			} ]);
-			superagentMock.unset();
+			getHeadReferencesForBranchPromise.catch( (message) => {
+				assert.deepEqual(message, {
+					message: 'Not able to retrieve references',
+					details: 'Can\'t retrieve references'
+				});
+				superagentMock.unset();
+				done();
+			});
+
 		});
 
-		it('should callback in a KO state if no reference for requested branch foobar was found', () => {
+		it('should return a rejected promise if no reference for requested branch foobar was found', (done) => {
 			//setup
 			const config = [ {
 				pattern: 'https://api.github.com/(.*)',
 				get: () => {
-					return {res: {body: []}};
+					return {body: []};
 				},
 				fixtures: (match) => {
 					if (match[1] === 'repos/user/reponame/git/refs') {
@@ -136,26 +140,28 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			const callbackSpy = sinon.spy();
 			sinon.stub(githubHelper, 'agent').returns(request);
 			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
 			//action
-			githubHelper.getHeadReferenceForBranch('foobarbaz', callbackSpy);
+			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobarbaz');
 			//assert
-			assert.equal(callbackSpy.calledOnce, true);
-			assert.deepEqual(callbackSpy.getCall(0).args, [ {
-				message: 'Required branch not found',
-				details: 'Reference searched for : refs/heads/foobarbaz'
-			} ]);
-			superagentMock.unset();
+			getHeadReferencesForBranchPromise.catch( (message) => {
+				assert.deepEqual(message, {
+					message: 'Required branch not found',
+					details: 'Reference searched for : refs/heads/foobarbaz'
+				});
+				superagentMock.unset();
+
+				done();
+			});
 		});
 
-		it('should callback in an OK state w/ the sha reference of the branch looked up', () => {
+		it('should return a resolved promise w/ the sha reference of the branch looked up', (done) => {
 			//setup
 			const config = [ {
 				pattern: 'https://api.github.com/(.*)',
 				get: () => {
-					return {res: {body: [ {ref:'refs/heads/foobar', object:{sha:'shacode for foobar'}} ]}};
+					return {body: [ {ref:'refs/heads/foobar', object:{sha:'shacode for foobar'}} ]};
 				},
 				fixtures: (match) => {
 					if (match[1] === 'repos/user/reponame/git/refs') {
@@ -166,15 +172,16 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			const callbackSpy = sinon.spy();
 			sinon.stub(githubHelper, 'agent').returns(request);
 			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
 			//action
-			githubHelper.getHeadReferenceForBranch('foobar', callbackSpy);
+			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobar');
 			//assert
-			assert.equal(callbackSpy.calledOnce, true);
-			assert.deepEqual(callbackSpy.getCall(0).args, [ null, 'shacode for foobar' ]);
-			superagentMock.unset();
+			getHeadReferencesForBranchPromise.then( (data) => {
+				assert.deepEqual(data, 'shacode for foobar' );
+				superagentMock.unset();
+				done();
+			});
 		});
 	});
 });

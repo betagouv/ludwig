@@ -20,46 +20,35 @@ class SuggestionsController {
 	 @param res: An expressjs Response object to get back to the user
 	 */
 	createPullRequest(accessToken, title, description, state, res) {
-		const self = this;
 		const now = (new Date()).getTime();
+		const githubHelper = this.githubHelper();
 		const newBranchName = BRANCH_PREFIX + now;
 
 		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, title, description, state)) {
-			self.githubHelper().getHeadReferenceForBranch( 'master', (err, masterRef) => {
-				if(!err) {
-					self.githubHelper().createReference(accessToken, newBranchName, masterRef, (err) => {
-						if (!err) {
-							const testFileName = FILE_NAME_PREFIX + now + '.txt';
-							const stateStringBuffer = new Buffer(state);
-							const base64FileContents = stateStringBuffer.toString('base64');
-							self.githubHelper().createContent(accessToken, testFileName, newBranchName, description, base64FileContents, (err) => {
-								if (!err) {
-									self.githubHelper().createPullRequest(newBranchName, title, description, accessToken, (err, newPullRequestData) => {
-										if (!err) {
-											res.render('ok', {pullRequestURL: newPullRequestData.body.html_url});
-										} else {
-											self.renderErrorPage(res);
-										}
-									});
-								} else {
-									self.renderErrorPage(res);
-								}
-							});
-						} else {
-							self.renderErrorPage(res);
-						}
-					});
-				} else {
-					self.renderErrorPage(res);
-				}
+			const pullRequestFlowPromise = githubHelper.getHeadReferenceForBranch('master');
+
+			return pullRequestFlowPromise.then( (headerReference) => {
+				return githubHelper.createReference(accessToken, newBranchName, headerReference);
+			})
+			.then( () => {
+				const testFileName = FILE_NAME_PREFIX + now + '.txt';
+				const stateStringBuffer = new Buffer(state);
+				const base64FileContents = stateStringBuffer.toString('base64');
+				return githubHelper.createContent(accessToken, testFileName, newBranchName, description, base64FileContents);
+			})
+			.then( () => {
+				return githubHelper.createPullRequest(newBranchName, title, description, accessToken);
+			})
+			.then( (newPullRequestData) => {
+				res.render('ok', {pullRequestURL: newPullRequestData.body.html_url});
+			})
+			.catch( (reason) => {
+				console.error(reason);
+				res.render('ko');
 			});
 		} else {
-			self.renderErrorPage(res);
+			res.render('ko');
 		}
-	}
-
-	renderErrorPage(res) {
-		res.render('ko');
 	}
 }
 
