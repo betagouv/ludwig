@@ -53,7 +53,6 @@
     "routers",
     "views",
     "server.js",
-    "ludwig-conf.js",
     "scripts",
     "webpack.config.js"
   ],
