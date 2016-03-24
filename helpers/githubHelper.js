@@ -75,7 +75,7 @@ class GithubHelper {
 
 					const responseBody = response.body;
 					if (responseBody && Array.isArray(responseBody)) {
-						let branchRef = null;
+						let branchRef;
 						responseBody.forEach((singleReference) => {
 							if (singleReference.ref === `refs/heads/${requestedBranch}`) {
 								branchRef = singleReference.object.sha;
@@ -86,11 +86,11 @@ class GithubHelper {
 						} else {
 							reject({
 								message: 'Required branch not found',
-								details: `Reference searched for : refs/heads/${requestedBranch}`
+								details: `Reference searched for: refs/heads/${requestedBranch}`
 							});
 						}
 					} else {
-						reject({message: 'Not able to retrieve references', details: err? err.message : ''});
+						reject({message: 'Not able to retrieve references', details: err && err.message});
 					}
 				});
 		});

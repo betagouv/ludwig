@@ -23,7 +23,7 @@ describe('suggestionController', () => {
 		it('should render the ok page if all remote calls work without errors', (done) => {
 			//setup
 			const accessToken = 'access token', title = 'title', description = 'description';
-			var res = {render:sinon.spy()};
+			const res = {render:sinon.spy()};
 			const mockedGithubHelper = {
 				getHeadReferenceForBranch: sinon.stub().returns(Promise.resolve('branchedReferenceSHA')),
 				createReference: sinon.stub().returns(Promise.resolve({})),

@@ -31,7 +31,7 @@ class SuggestionsController {
 				return githubHelper.createReference(accessToken, newBranchName, headerReference);
 			})
 			.then( () => {
-				const testFileName = FILE_NAME_PREFIX + now + '.txt';
+				const testFileName = `${FILE_NAME_PREFIX}${now}.txt`;
 				const stateStringBuffer = new Buffer(state);
 				const base64FileContents = stateStringBuffer.toString('base64');
 				return githubHelper.createContent(accessToken, testFileName, newBranchName, description, base64FileContents);

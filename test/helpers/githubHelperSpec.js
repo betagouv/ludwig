@@ -134,7 +134,7 @@ describe('Github Helper', () => {
 			getHeadReferencesForBranchPromise.catch( (message) => {
 				assert.deepEqual(message, {
 					message: 'Required branch not found',
-					details: 'Reference searched for : refs/heads/foobarbaz'
+					details: 'Reference searched for: refs/heads/foobarbaz'
 				});
 				superagentMock.unset();
 
