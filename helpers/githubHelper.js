@@ -1,18 +1,20 @@
 'use strict';
-let superAgent = require('superagent');
-const githubConfig = {
-	referencesEndpoint:'https://api.github.com/repos/hoshin/git-api-tests/git/refs',
-	createContent:'https://api.github.com/repos/hoshin/git-api-tests/contents/',
-	createPullRequest:'https://api.github.com/repos/hoshin/git-api-tests/pulls'
-};
+import superAgent from 'superagent';
+import configuration from '../ludwig-conf';
+
+const GITHUB_API_REPO_URL_PREFIX = 'https://api.github.com/repos/';
 
 class GithubHelper {
 	constructor() {
-
+		this.githubConfig = {
+			referencesEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/git/refs`,
+			createContent: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/contents/`,
+			createPullRequest: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/pulls`
+		};
 	}
 
 	config() {
-		return githubConfig;
+		return this.githubConfig;
 	}
 
 	agent() {
@@ -72,7 +74,6 @@ class GithubHelper {
 			this.agent()
 				.get(this.config().referencesEndpoint)
 				.end((err, response) => {
-
 					const responseBody = response.body;
 					if (responseBody && Array.isArray(responseBody)) {
 						let branchRef;
