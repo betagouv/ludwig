@@ -2,6 +2,8 @@ import fs from 'fs';
 import xml2js from 'xml2js';
 import {from, time} from './parsed';
 
+const GITHUB_REPO_URL='https://github.com/';
+
 class XUnitParser {
 	constructor(configuration) {
 		this.configuration = configuration;
@@ -18,7 +20,7 @@ class XUnitParser {
 			name: testCaseXMLObject.name,
 			status: 'ok',
 			timestamp: `${parsedData.suite.timestamp}`,
-			location:`${this.configuration.repoUrl}${this.configuration.acceptedTestsLocation}/${testCaseXMLObject.classname}`,
+			location:`${GITHUB_REPO_URL}${this.configuration.repository}${this.configuration.acceptedTestsLocation}/${testCaseXMLObject.classname}`,
 			time:time(testCaseXMLObject.time)
 		};
 		if(testCaseXMLObject.failure){

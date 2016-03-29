@@ -47,12 +47,9 @@ Pour installer Ludwig et le lancer, vous aurez besoin de :
 
 ### Configurer le widget
 
-Le widget s'instancie avec en unique paramètre un objet contenant les informations nécessaires pour joindre le dépôt Github de votre projet. Il faut donc s'occuper de cette configuration avant de déployer le widget.
-Le plus simple est de se baser sur le fichier `ludwig-conf.js` (le serveur et le widget partagent le même fichier de configuration), puis d'exécuter `npm run build` à la racine du répertoire de l'application. Un fichier `bundle.js` est généré. Il contient le widget.
+Le widget s'instancie avec en unique paramètre un objet contenant les informations nécessaires pour joindre le dépôt Github de votre projet.
 
-_Note :_ Cette configuration est packagée avec le widget à distribuer, il est inutile de la charger à part.
-
-#### Détail des entrées du fichier de configuration du widget
+#### Détail des entrées de la configuration du widget
 
 * `repoUrl` : l'URL Github principale du dépôt de l'application
 * `template` : un template (URLencoded) à utiliser pour remplir le fichier créé avec la suggestion
@@ -60,19 +57,8 @@ _Note :_ Cette configuration est packagée avec le widget à distribuer, il est 
 * `ludwigCreateSuggestionURL` : l'URL Ludwig à joindre pour créer une suggestion en passant par les APIs authentifiées GitHub
 * `web`
     * `acceptedTestsPath` : l'URL où l'on peut consulter les tests acceptés par l'équipe
-    * `addPath` : suffixe d'URL accolé à repo_url pour ajouter une nouvelle demande
+    * `addPath` : suffixe d'URL accollé à repoUrl pour ajouter une nouvelle demande
     * `suggestedTestsPath` : l'URL qui présente les suggestions non validées
-* `github` (configuration pour appeler les APIs GitHub)
-    * `authentication_callback_`:  L'URL de callback configurée dans le repo qui contient les tests de sorte à ce que Ludwig puisse en modifier le contenu (et créer des Pull Requests)
-    * `apiEndpoints`
-        * `createRef` : création d'une nouvelle référence [https://developer.github.com/v3/git/refs/](https://developer.github.com/v3/git/refs/)
-        * `createContent` : création d'un nouveau fichier [https://developer.github.com/v3/repos/contents/](https://developer.github.com/v3/repos/contents/)
-        * `createPullRequest` : création d'une pull request [https://developer.github.com/v3/pulls/](https://developer.github.com/v3/pulls/)
-* `mongo`
-    * `uri` : l'URI de la base de données où seront stockées les informations de session et les suites de tests
-    * `options` : éventuelles options à passer à mongoose (comme indiqué [ici](http://mongoosejs.com/docs/connections.html))
-
-_Note :_ Le fichier `ludwig-conf-sample.js` se trouve à la racine du projet.
 
 ### Ajouter le widget
 
@@ -82,7 +68,9 @@ L'application peut embarquer le widget directement ou se le faire servir par le 
 <script type="text/javascript" src="http://url.ludwig/bundle.js" charset="utf-8">
 ```
 
-Une fois cet ajout fait, le widget est disponible sous le nom `Ludwig` (qui est une classe, pour accéder aux fonctionnalités, il faut donc l'instancier en passant par un `new Ludwig(configuration)`, avec `configuration` un objet contenant la configuration du widget se basant sur l'exemple fourni par `ludwig-conf-sample.js`)
+Une fois cet ajout fait, le widget est disponible sous le nom `Ludwig` (qui est une classe, pour accéder aux fonctionnalités, il faut donc l'instancier en passant par un `new Ludwig(configuration)`, avec `configuration` un objet contenant la configuration du widget telle que définie plus haut).
+
+_Note: Le widget "prêt à servir" à jour est présent dans le répertoire `dist` du module publié.
 
 ### L'API du widget
 Le widget doit être initialisé avec sa configuration pour les diverses URLs à appeler pour une tâche ou l'autre. La configuration suit la même organisation que celle côté serveur.
@@ -90,7 +78,8 @@ Le widget doit être initialisé avec sa configuration pour les diverses URLs à
 Aujourd'hui, le widget met à disposition plusieurs fonctions :
 
 * `generateSuggestionURL(currentState, expectedResult [, customSuggestionFormatter] )` : Génère une URL permettant d'ajouter un fichier correspondant à une suggestion. L'état collecté par l'application ainsi que le résultat attendu seront sérialisés dans la requête.
-Il est possible de préciser à la méthode une fonction personnalisée pour sérialiser le template, l'état et le résultat attendu. Cette fonction doit prendre 3 paramètres et renvoyer une chaîne de caractères (qui sera ensuite échappée par Ludwig)
+Il est possible de préciser à la méthode une fonction personnalisée pour sérialiser le template, l'état et le résultat attendu. Cette fonction doit prendre 3 paramètres et renvoyer une chaîne de caractères (qui sera ensuite échappée par Ludwig).
+**ATTENTION** : Cette utilisation est limitée par GitHub pour les URIs trop longues (~8000 caractères). L'API retournera une erreur si la longueur totale de l'URI générée par le widget dépasse cette taille.
 * `generateSuggestionName()` : Génère un nom de suggestion qui se base sur le préfixe configuré et la date courante.
 * `acceptedTestsURL()` : Génère l'URL permettant d'accéder à la liste des tests acceptés.
 * `suggestedTestsURL()` : Génère l'URL permettant de consulter les suggestions de tests.
@@ -100,9 +89,9 @@ Il est possible de préciser à la méthode une fonction personnalisée pour sé
 
 ### Configurer
 
-Le fichier de configuration utilisé par l'API se trouve à la racine. Il permet de configurer les endpoints de l'API Github à utiliser.
+Le fichier de configuration utilisé par l'application se trouve à la racine. Il permet de configurer l'accès à une base de données mongo (pour stocker les rapports de tests) ainsi que quelques informations sur le dépôt GitHub où sont publiés les fichiers de tests et où l'on va créer des pull requests pour les demandes de nouveaux tests.
 
-La configuration des clefs d'API github se fait par `npm config`. Il faut saisir les clefs suivantes :
+La configuration des clefs d'API GitHub se fait par `npm config`. Il faut saisir les clefs suivantes :
 
 * ludwig:clientID : Client ID à utiliser pour requêter l'API GitHub
 * ludwig:clientSecret : Client Secret à utiliser pour requêter l'API GitHub
@@ -112,11 +101,24 @@ Deux autres paramètres sont configurés par clefs de configuration NPM :
 * ludwig:sessionSecret : Le secret qui sera utilisé pour les cookies de session
 * ludwig:AccessControlAllowOrigin : Le paramétrage CORS de l'application (pour permettre que l'application qui intègre le widget puisse interagir avec l'instance Ludwig, par exemple)
 
-Pour automatiser l'enregistrement de toutes les clefs de pconfiguration npm, un script est disponible dans `./scripts/setupNPMVariables.sh`
+Pour automatiser l'enregistrement de toutes les clefs de pconfiguration npm, un script est disponible dans `./scripts/setupNPMVariables.sh`. Cela reste partiellement manuel mais aucune clef n'est oubliée et cela devrait éviter les fautes de frappe.
+
+### Détail de la configuration de l'application 
+
+Un fichier exemple `ludwig-conf-sample.js` est présent à la racine du projet, renommé en `ludwig-conf.js` et édité pour y mettre les informations correspondant à votre dépôt / votre base de données il devrait permettre à votre instance de se lancer et de communiquer avec les APIs GitHub.
+
+* `repository`: Le dépôt GitHub où sont versionnés les tests (sous la forme `<utilisateur>/<nom du dépôt>`
+* `acceptedTestsLocation`: Le chemin dans le dép&ot GitHub où trouver le répertoire contenant les tests (ex: `/treee/master/tests` si le répertoire `tests` est à la racine du dépôt et que c'est celui que l'on souhaite utiliser)
+* `github`:
+    * `branchToCreatePullRequestsFor`: La branche de travail (par défaut : master)
+    * `authenticationCallback`: L'URL de callback que GitHub doit appeler lors d'une authentification
+* `mongo` (cette section correspond à ce que l'on trouve dans la documentation de [mongoose](http://mongoosejs.com/docs/api.html#index_Mongoose-connect)):
+    * `uri`: L'URI de connexion 
+    * `options`: Les options que l'on souhaite passer à mongoose
 
 ### Lancer
 
-**Attention**, il faut avoir créé les **fichiers de configuration du widget et de l'API avant** de dérouler ces étapes.
+**Attention**, il faut avoir créé le **fichier de configuration de l'application** de dérouler ces étapes.
 
 ```
 $ npm install # installer / packager
@@ -161,10 +163,10 @@ Les informations générales (tests ok, en échec, date des tests, temps pris pa
 
 ## Notes sur la configuration
 
-En l'état, vous devez créer les fichiers de configuration du widget et de l'API (dont un example, `ludwig-conf-sample.js` est fourni à la racine), le serveur d'API refusera de démarrer sans sa configuration.
+En l'état, vous devez créer le fichier de configuration de l'application (dont un example, `ludwig-conf-sample.js` est fourni à la racine), le serveur refusera de démarrer sans sa configuration.
 
 Le fichier `sample` est là pour qu'il ne reste plus qu'à remplir les blancs et le renommer pour avoir une configuration qui permette de packager / démarrer.
 
-## Tester l'API
+## Tester l'application
 
-Il existe aujourd'hui une page qui permet de directement tester l'API dans un navigateur, elle est exposée dans `/test`.
+Il existe aujourd'hui une page qui permet de directement tester l'application dans un navigateur, elle est exposée dans `/test`. Il n'est pas recommandé d'exposer cet endpoint. Pour éviter cela, il suffit de lancer l'application avec un dans son environnement la variable `NODE_ENV` définie à autre chose que `development` (qui est la valeur par défaut).

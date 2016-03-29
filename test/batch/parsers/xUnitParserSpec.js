@@ -9,7 +9,8 @@ describe('XUnit Parser', () => {
 	beforeEach(()=> {
 		xUnitParser = new XUnitParser({
 			repoUrl: 'https://github.com/user/repo',
-			acceptedTestsLocation: '/tree/master/tests'
+			acceptedTestsLocation: '/tree/master/tests',
+			repository:'user/repo'
 		});
 	});
 

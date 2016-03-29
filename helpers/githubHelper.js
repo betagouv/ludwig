@@ -9,7 +9,8 @@ class GithubHelper {
 		this.githubConfig = {
 			referencesEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/git/refs`,
 			createContent: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/contents/`,
-			createPullRequest: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/pulls`
+			createPullRequest: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/pulls`,
+			repository:configuration.repository
 		};
 	}
 
