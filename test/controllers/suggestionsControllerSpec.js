@@ -193,5 +193,48 @@ describe('suggestionController', () => {
 			});
 		});
 
+		it('should use the "not_master" branch to create pull requests for if branch "not_master" is specified', (done) => {
+			//setup
+			const githubHelperStub = {
+				createReference: sinon.spy(),
+				getHeadReferenceForBranch: sinon.stub().returns(Promise.reject({}))
+			};
+			sinon.stub(suggestionsController, 'githubHelper', {
+				get: () => {
+					return githubHelperStub;
+				}
+			});
+			//action
+			const createPRPromise = suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res, 'not_master');
+			//assert
+			createPRPromise.then(() => {
+				assert.equal(githubHelperStub.getHeadReferenceForBranch.calledOnce, true);
+				assert.deepEqual(githubHelperStub.getHeadReferenceForBranch.getCall(0).args, [ 'not_master' ]);
+
+				done();
+			});
+		});
+
+		it('should use the "master" branch to create pull requests for if no branch is specified', (done) => {
+			//setup
+			const githubHelperStub = {
+				createReference: sinon.spy(),
+				getHeadReferenceForBranch: sinon.stub().returns(Promise.reject({}))
+			};
+			sinon.stub(suggestionsController, 'githubHelper', {
+				get: () => {
+					return githubHelperStub;
+				}
+			});
+			//action
+			const createPRPromise = suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res);
+			//assert
+			createPRPromise.then(() => {
+				assert.equal(githubHelperStub.getHeadReferenceForBranch.calledOnce, true);
+				assert.deepEqual(githubHelperStub.getHeadReferenceForBranch.getCall(0).args, [ 'master' ]);
+
+				done();
+			});
+		});
 	});
 });

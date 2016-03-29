@@ -75,9 +75,9 @@ describe('Github Helper', () => {
 	describe('createReferenceRequestBody', () => {
 		it('should generate a correctly constructed reference creation request body', () => {
 			//setup
-			const newBranchName = 'newBranchName', commitReferenceToBranchFrom = 'commit sha1 reference to branch from';
+			const newBranchName = 'newBranchName', 	branchToCreatePullRequestsFor = 'commit sha1 reference to branch from';
 			//action
-			const actual = githubHelper.createReferenceRequestBody(newBranchName, commitReferenceToBranchFrom);
+			const actual = githubHelper.createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor );
 			//assert
 			assert.equal(actual, '{"ref":"refs/heads/newBranchName", "sha":"commit sha1 reference to branch from"}');
 		});

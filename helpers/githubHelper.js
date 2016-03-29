@@ -53,15 +53,15 @@ class GithubHelper {
 		});
 	}
 
-	createReferenceRequestBody(newBranchName, commitReferenceToBranchFrom) {
-		return `{"ref":"refs/heads/${newBranchName}", "sha":"${commitReferenceToBranchFrom}"}`;
+	createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor) {
+		return `{"ref":"refs/heads/${newBranchName}", "sha":"${branchToCreatePullRequestsFor}"}`;
 	}
 
-	createReference(accessToken, newBranchName, commitReferenceToBranchFrom) {
+	createReference(accessToken, newBranchName, branchToCreatePullRequestsFor) {
 		return new Promise( (resolve) => {
 			this.agent()
 				.post(this.config().referencesEndpoint)
-				.send(this.createReferenceRequestBody(newBranchName, commitReferenceToBranchFrom))
+				.send(this.createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createReferenceResult) => {
 					resolve(createReferenceResult);

@@ -19,12 +19,12 @@ class SuggestionsController {
 	 @param state: (urlencoded JSON string) The state we want to record
 	 @param res: An expressjs Response object to get back to the user
 	 */
-	createPullRequest(accessToken, title, description, state, res) {
+	createPullRequest(accessToken, title, description, state, res, branchToCreatePullRequestsTo) {
 		const now = (new Date()).getTime();
 		const newBranchName = BRANCH_PREFIX + now;
 
 		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, title, description, state)) {
-			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch('master');
+			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch(branchToCreatePullRequestsTo || 'master');
 
 			return pullRequestFlowPromise
 				.then(headerReference => this.githubHelper.createReference(accessToken, newBranchName, headerReference))
