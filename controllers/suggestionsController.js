@@ -7,7 +7,7 @@ class SuggestionsController {
 	constructor() {
 	}
 
-	githubHelper() {
+	get githubHelper() {
 		return _githubHelper;
 	}
 
@@ -21,21 +21,20 @@ class SuggestionsController {
 	 */
 	createPullRequest(accessToken, title, description, state, res) {
 		const now = (new Date()).getTime();
-		const githubHelper = this.githubHelper();
 		const newBranchName = BRANCH_PREFIX + now;
 
 		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, title, description, state)) {
-			const pullRequestFlowPromise = githubHelper.getHeadReferenceForBranch('master');
+			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch('master');
 
 			return pullRequestFlowPromise
-				.then(headerReference => githubHelper.createReference(accessToken, newBranchName, headerReference))
+				.then(headerReference => this.githubHelper.createReference(accessToken, newBranchName, headerReference))
 				.then(() => {
 					const testFileName = `${FILE_NAME_PREFIX}${now}.txt`;
 					const stateStringBuffer = new Buffer(state);
 					const base64FileContents = stateStringBuffer.toString('base64');
-					return githubHelper.createContent(accessToken, testFileName, newBranchName, description, base64FileContents);
+					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, description, base64FileContents);
 				})
-				.then(() => githubHelper.createPullRequest(newBranchName, title, description, accessToken))
+				.then(() => this.githubHelper.createPullRequest(newBranchName, title, description, accessToken))
 				.then(newPullRequestData => res.render('ok', {pullRequestURL: newPullRequestData.body.html_url}))
 				.catch(reason => {
 					console.error(reason);
