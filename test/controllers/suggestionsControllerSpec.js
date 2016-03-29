@@ -188,7 +188,7 @@ describe('suggestionController', () => {
 				assert.equal(res.render.calledOnce, true);
 				assert.equal(githubHelperStub.createReference.called, false);
 
-				assert.deepEqual(res.render.getCall(0).args, ['ko']);
+				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
 				done();
 			});
 		});
