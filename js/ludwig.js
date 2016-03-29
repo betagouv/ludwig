@@ -1,4 +1,6 @@
 'use strict';
+const MAX_URI_LENGTH = 8000;
+
 class Ludwig {
 	constructor(configuration) {
 		this.repoUrl = configuration.repoUrl;
@@ -19,6 +21,17 @@ class Ludwig {
 		}
 		return result;
 	}
+
+	validateSuggestionURL(suggestionURL) {
+		function suggestionURLIsEitherEmptyOrTooLong(suggestion) {
+			return !suggestion || suggestion.length > MAX_URI_LENGTH;
+		}
+
+		if(suggestionURLIsEitherEmptyOrTooLong(suggestionURL)) {
+			return false;
+		}
+		return true;
+	}
 	/*
 	 @returns the URL to call to create a pull request
 	 */
@@ -35,6 +48,9 @@ class Ludwig {
 			suggestionURL+=encodeURIComponent(this.defaultSuggestionFormatter(this.template, currentState, expectedResult));
 		}
 
+		if(!this.validateSuggestionURL(suggestionURL)) {
+			throw new Error('Resulting URI is invalid. It\'s either too long for GitHub (you probably want to use Ludwig\'s WS in that case), or empty (check with the developer of your service)');
+		}
 		return suggestionURL;
 	}
 
