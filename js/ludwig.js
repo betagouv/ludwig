@@ -7,11 +7,10 @@ class Ludwig {
 		this.web = configuration.web;
 		this.template = configuration.template;
 		this.prefix = configuration.prefix;
-		this.expectedTemplate = configuration.expectedTemplate;
 		this.ludwigCreateSuggestionURL = configuration.ludwigCreateSuggestionURL;
 	}
 
-	defaultSuggestionFormatter(template, currentState, expectedResult)  {
+	defaultSuggestionFormatter(currentState, expectedResult)  {
 		let result = this.template;
 		if (currentState) {
 			result += `\r\n${JSON.stringify(currentState, null, '\t')}`;
@@ -40,12 +39,12 @@ class Ludwig {
 
 		if(customSuggestionFormatter) {
 			if(typeof customSuggestionFormatter === 'function') {
-				suggestionURL+=encodeURIComponent(customSuggestionFormatter(this.template, currentState, expectedResult));
+				suggestionURL+=encodeURIComponent(customSuggestionFormatter(currentState, expectedResult));
 			} else {
 				throw new Error('customSuggestionFormatter expected to be a clojure');
 			}
 		} else {
-			suggestionURL+=encodeURIComponent(this.defaultSuggestionFormatter(this.template, currentState, expectedResult));
+			suggestionURL+=encodeURIComponent(this.defaultSuggestionFormatter(currentState, expectedResult));
 		}
 
 		if(!this.validateSuggestionURL(suggestionURL)) {
