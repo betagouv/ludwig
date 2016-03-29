@@ -2,13 +2,12 @@ import {GithubHelper} from '../helpers/githubHelper';
 const FILE_NAME_PREFIX = 'suggestion';
 const BRANCH_PREFIX = 'suggestion';
 const _githubHelper = new GithubHelper();
-import config from '../ludwig-conf';
 
 class SuggestionsController {
 	constructor() {
 	}
 
-	githubHelper() {
+	get githubHelper() {
 		return _githubHelper;
 	}
 
@@ -21,41 +20,29 @@ class SuggestionsController {
 	 @param res: An expressjs Response object to get back to the user
 	 */
 	createPullRequest(accessToken, title, description, state, res) {
-		const self = this;
 		const now = (new Date()).getTime();
 		const newBranchName = BRANCH_PREFIX + now;
-		const commitReferenceToBranchFrom = config.commitReferenceToBranchFrom;
 
 		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, title, description, state)) {
-			self.githubHelper().createReference(accessToken, newBranchName, commitReferenceToBranchFrom, (err) => {
-				if (!err) {
-					const testFileName = FILE_NAME_PREFIX + now + '.txt';
+			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch('master');
+
+			return pullRequestFlowPromise
+				.then(headerReference => this.githubHelper.createReference(accessToken, newBranchName, headerReference))
+				.then(() => {
+					const testFileName = `${FILE_NAME_PREFIX}${now}.txt`;
 					const stateStringBuffer = new Buffer(state);
 					const base64FileContents = stateStringBuffer.toString('base64');
-					self.githubHelper().createContent(accessToken, testFileName, newBranchName, description, base64FileContents, ( err ) => {
-						if (!err) {
-							self.githubHelper().createPullRequest(newBranchName, title, description, accessToken, ( err, newPullRequestData ) => {
-								if (!err) {
-									res.render('ok', {pullRequestURL: newPullRequestData.body.html_url});
-								} else {
-									self.renderErrorPage(res);
-								}
-							});
-						} else {
-							self.renderErrorPage(res);
-						}
-					});
-				} else {
-					self.renderErrorPage(res);
-				}
-			});
+					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, description, base64FileContents);
+				})
+				.then(() => this.githubHelper.createPullRequest(newBranchName, title, description, accessToken))
+				.then(newPullRequestData => res.render('ok', {pullRequestURL: newPullRequestData.body.html_url}))
+				.catch(reason => {
+					console.error(reason);
+					res.render('ko');
+				});
 		} else {
-			self.renderErrorPage(res);
+			res.render('ko');
 		}
-	}
-
-	renderErrorPage(res) {
-		res.render('ko');
 	}
 }
 
