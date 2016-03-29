@@ -18,7 +18,7 @@ class XUnitParser {
 			name: testCaseXMLObject.name,
 			status: 'ok',
 			timestamp: `${parsedData.suite.timestamp}`,
-			location:`${this.configuration.repoUrl}${this.configuration.web.accepted_tests_path}/${testCaseXMLObject.classname}`,
+			location:`${this.configuration.repoUrl}${this.configuration.acceptedTestsLocation}/${testCaseXMLObject.classname}`,
 			time:time(testCaseXMLObject.time)
 		};
 		if(testCaseXMLObject.failure){

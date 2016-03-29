@@ -9,9 +9,7 @@ describe('XUnit Parser', () => {
 	beforeEach(()=> {
 		xUnitParser = new XUnitParser({
 			repoUrl: 'https://github.com/user/repo',
-			web: {
-				accepted_tests_path: '/tree/master/tests'
-			}
+			acceptedTestsLocation: '/tree/master/tests'
 		});
 	});
 
@@ -44,7 +42,7 @@ describe('XUnit Parser', () => {
 				location: 'https://github.com/user/repo/tree/master/tests/test spec location',
 				name: 'Test Case',
 				status: 'ok',
-				time:'0.02',
+				time: '0.02',
 				timestamp: '1457428026000'
 			} ]
 		});
@@ -69,13 +67,13 @@ describe('XUnit Parser', () => {
 					location: 'https://github.com/user/repo/tree/master/tests/',
 					name: 'Test Case',
 					status: 'ok',
-					time:'0.02',
+					time: '0.02',
 					timestamp: '1457428026000'
 				}, {
 					location: 'https://github.com/user/repo/tree/master/tests/',
 					name: 'Test Case 2',
 					status: 'ok',
-					time:'0.02',
+					time: '0.02',
 					timestamp: '1457428026000'
 				} ]
 		});
