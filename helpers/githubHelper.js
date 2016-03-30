@@ -22,10 +22,10 @@ class GithubHelper {
 		return superAgent;
 	}
 
-	createPullRequestRequestBody(head, title, body) {
+	createPullRequestRequestBody(head, title, body, baseBranch) {
 		const pullRequestBody = {
 			head:`refs/heads/${head}`,
-			base:'master',
+			base:baseBranch || 'master',
 			title:title,
 			body:body
 		};
@@ -36,7 +36,7 @@ class GithubHelper {
 		return new Promise( (resolve, reject) => {
 			this.agent()
 				.post(this.config().createPullRequest)
-				.send(this.createPullRequestRequestBody(head, title, body))
+				.send(this.createPullRequestRequestBody(head, title, body, configuration.github.branchToCreatePullRequestsFor))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createPRResult) => {
 					if(err) {

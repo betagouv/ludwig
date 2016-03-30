@@ -12,13 +12,22 @@ describe('Github Helper', () => {
 	});
 
 	describe('createPullRequestRequestBody', () => {
-		it('should generate a correctly constructed pull request request body', () => {
+		it('should generate a correctly constructed pull request request body using the default branch (master) if none is specified', () => {
 			//setup
 			const head = 'submitterBranch', title = 'PR title', body = 'PR body';
 			//action
 			const actual = githubHelper.createPullRequestRequestBody(head, title, body);
 			//assert
 			assert.equal(actual, '{"head":"refs/heads/submitterBranch","base":"master","title":"PR title","body":"PR body"}');
+		});
+
+		it('should generate a correctly constructed pull request request body using a custom branch (foobar)', () => {
+			//setup
+			const head = 'submitterBranch', title = 'PR title', body = 'PR body';
+			//action
+			const actual = githubHelper.createPullRequestRequestBody(head, title, body, 'foobar');
+			//assert
+			assert.equal(actual, '{"head":"refs/heads/submitterBranch","base":"foobar","title":"PR title","body":"PR body"}');
 		});
 	});
 
