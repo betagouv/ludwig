@@ -6,50 +6,11 @@ import request from 'superagent';
 
 describe('Github Helper', () => {
 	let githubHelper;
-	const config = [ {
-		pattern: 'https://api.github.com/(.*)',
-		post: (match, data) => {
-			return data;
-		},
-		put: (match, data) => {
-			return data;
-		},
-		get: () => {
-			return {res: {body: {}}};
-		},
-		fixtures: (match) => {
-			if (match[1] === 'repos/user/reponame/pulls') {
-				return {
-					'url': 'https://api.github.com/repos/user/reponame/pulls/19'
-				};
-			}
-			return {};
-		}
-	} ];
 
 	beforeEach(() => {
 		githubHelper = new GithubHelper();
 	});
 
-	describe('createPullRequest', () => {
-		it('should send an OK response if pull request was created on configured repo', (done) => {
-			//setup
-			const superagentMock = require('superagent-mock')(request, config);
-			sinon.stub(githubHelper, 'agent').returns(request);
-			const head = 'head', title = 'PR title', body = 'PR body', accessToken = 'access token 12434';
-			sinon.stub(githubHelper, 'config').returns({createPullRequest: 'https://api.github.com/repos/user/reponame/pulls'});
-			//action
-			const createPRPromise = githubHelper.createPullRequest(head, title, body, accessToken);
-			//assert
-			createPRPromise.then( (data) => {
-				assert.deepEqual(data, {
-					'url': 'https://api.github.com/repos/user/reponame/pulls/19'
-				});
-				superagentMock.unset();
-				done();
-			});
-		});
-	});
 	describe('createPullRequestRequestBody', () => {
 		it('should generate a correctly constructed pull request request body', () => {
 			//setup
@@ -80,6 +41,162 @@ describe('Github Helper', () => {
 			const actual = githubHelper.createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor );
 			//assert
 			assert.equal(actual, '{"ref":"refs/heads/newBranchName","sha":"commit sha1 reference to branch from"}');
+		});
+	});
+
+	describe('createPullrequest', () => {
+		it('should return a resolved promise if API call went on with no issues', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				post: () => {
+					return {ok:'some data', statusCode:201} ;
+				},
+				fixtures: () => {
+					return {};
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent').returns(request);
+			sinon.stub(githubHelper, 'config').returns({createPullRequest: 'https://api.github.com/repos/user/reponame/pulls'});
+			//action
+			const createPullRequestPromise = githubHelper.createPullRequest('head', 'title', 'body', 'accessToken');
+			//assert
+			createPullRequestPromise.then( (data) => {
+				assert.deepEqual(data, {ok : 'some data', statusCode:201} );
+				superagentMock.unset();
+				done();
+			});
+		});
+
+		it('should return a rejected promise if an error was thrown during the API call', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				post: () => {
+					throw new Error('some PR error message');
+				},
+				fixtures: () => {
+					return {};
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent').returns(request);
+			sinon.stub(githubHelper, 'config').returns({createPullRequest: 'https://api.github.com/repos/user/reponame/pulls'});
+			//action
+			const createPullRequestPromise = githubHelper.createPullRequest('head', 'title', 'body', 'accessToken');
+			//assert
+			createPullRequestPromise.catch( (message) => {
+				assert.deepEqual(message.message, 'some PR error message' );
+				superagentMock.unset();
+				done();
+			});
+		});
+	});
+
+	describe('createContent', () => {
+		it('should return a resolved promise if API call went on with no issues', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				put: () => {
+					return {ok:'some data'} ;
+				},
+				fixtures: () => {
+					return {};
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent').returns(request);
+			sinon.stub(githubHelper, 'config').returns({createContent: 'https://api.github.com/repos/user/reponame/pulls'});
+			//action
+			const createContentPromise = githubHelper.createContent('accessToken', 'testFileName', 'branchName', 'commitMessage', 'b64FC==');
+			//assert
+			createContentPromise.then( (data) => {
+				assert.deepEqual(data, {ok : 'some data'} );
+				superagentMock.unset();
+				done();
+			});
+		});
+
+		it('should return a rejected promise if API call threw an error', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				put: () => {
+					throw new Error('some content error message');
+				},
+				fixtures: () => {
+					return {};
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent').returns(request);
+			sinon.stub(githubHelper, 'config').returns({createContent: 'https://api.github.com/repos/user/reponame/pulls'});
+			//action
+			const createContentPromise = githubHelper.createContent('accessToken', 'testFileName', 'branchName', 'commitMessage', 'b64FC==');
+			//assert
+			createContentPromise.catch( (message) => {
+				assert.deepEqual(message.message, 'some content error message' );
+				superagentMock.unset();
+				done();
+			});
+		});
+	});
+
+	describe('createReferenceForBranch', () => {
+		it('should return a resolved promise if there is no error', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				post: () => {
+					return {ok:'some data', statusCode:201} ;
+				},
+				fixtures: () => {
+					return {};
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent').returns(request);
+			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
+			//action
+			const createReferencePromise = githubHelper.createReference('accessToken', 'newBranchName', 'master');
+			//assert
+			createReferencePromise.then( (data) => {
+				assert.deepEqual(data, {ok : 'some data', statusCode:201} );
+				superagentMock.unset();
+				done();
+			});
+		});
+
+		it('should return a rejected promise if an error is triggered during the call', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				post: () => {
+					throw new Error('some new error');
+				},
+				fixtures: () => {
+					return {};
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent').returns(request);
+			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
+			//action
+			const createReferencePromise = githubHelper.createReference('accessToken', 'newBranchName', 'master');
+			//assert
+			createReferencePromise.catch( (message) => {
+				assert.deepEqual(message.message, 'some new error' );
+				superagentMock.unset();
+				done();
+			});
 		});
 	});
 
@@ -118,7 +235,7 @@ describe('Github Helper', () => {
 			const config = [ {
 				pattern: 'https://api.github.com/(.*)',
 				get: () => {
-					return {body: []};
+					return {body: [], statusCode:200};
 				},
 				fixtures: () => {
 					return {};
@@ -142,12 +259,40 @@ describe('Github Helper', () => {
 			});
 		});
 
+		it('should return a rejected promise if call succeeded but the returned body is not an array', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				get: () => {
+					return {statusCode:200};
+				},
+				fixtures: () => {
+					return {};
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent').returns(request);
+			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
+			//action
+			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobarbaz');
+			//assert
+			getHeadReferencesForBranchPromise.catch( (message) => {
+				assert.deepEqual(message, {
+					message: 'Not able to retrieve references',
+					details: 'Body does not contain references list'
+				});
+				superagentMock.unset();
+				done();
+			});
+		});
+
 		it('should return a resolved promise w/ the sha reference of the branch looked up', (done) => {
 			//setup
 			const config = [ {
 				pattern: 'https://api.github.com/(.*)',
 				get: () => {
-					return {body: [ {ref:'refs/heads/foobar', object:{sha:'shacode for foobar'}} ]};
+					return {body: [ {ref:'refs/heads/foobar', object:{sha:'shacode for foobar'}} ], statusCode:200};
 				},
 				fixtures: () => {
 					return {};

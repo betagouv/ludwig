@@ -33,13 +33,17 @@ class GithubHelper {
 	}
 
 	createPullRequest(head, title, body, accessToken) {
-		return new Promise( (resolve) => {
+		return new Promise( (resolve, reject) => {
 			this.agent()
 				.post(this.config().createPullRequest)
 				.send(this.createPullRequestRequestBody(head, title, body))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createPRResult) => {
-					resolve(createPRResult);
+					if(err) {
+						reject({message:err.message, details:err});
+					} else {
+						resolve(createPRResult);
+					}
 				});
 		});
 	}
@@ -55,13 +59,18 @@ class GithubHelper {
 	}
 
 	createContent(accessToken, testFileName, branchName, commitMessage, base64FileContents) {
-		return new Promise( (resolve) => {
+		return new Promise( (resolve, reject) => {
 			this.agent()
 				.put(`${this.config().createContent}${testFileName}`)
 				.send(this.createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createCommitResult) => {
-					resolve(createCommitResult);
+					if(err) {
+						console.error(err);
+						reject({message:err.message, details:err});
+					} else {
+						resolve(createCommitResult);
+					}
 				});
 		});
 	}
@@ -82,7 +91,8 @@ class GithubHelper {
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createReferenceResult) => {
 					if(err) {
-						reject({message:err.message});
+						console.error(err);
+						reject({message:err.message, details:err});
 					} else {
 						resolve(createReferenceResult);
 					}
@@ -95,24 +105,28 @@ class GithubHelper {
 			this.agent()
 				.get(this.config().referencesEndpoint)
 				.end((err, response) => {
-					const responseBody = response.body;
-					if (responseBody && Array.isArray(responseBody)) {
-						let branchRef;
-						responseBody.forEach((singleReference) => {
-							if (singleReference.ref === `refs/heads/${requestedBranch}`) {
-								branchRef = singleReference.object.sha;
-							}
-						});
-						if (branchRef) {
-							resolve(branchRef);
-						} else {
-							reject({
-								message: 'Required branch not found',
-								details: `Reference searched for: refs/heads/${requestedBranch}`
-							});
-						}
-					} else {
+					if(err) {
 						reject({message: 'Not able to retrieve references', details: err && err.message});
+					} else {
+						const responseBody = response.body;
+						if (responseBody && Array.isArray(responseBody)) {
+							let branchRef;
+							responseBody.forEach((singleReference) => {
+								if (singleReference.ref === `refs/heads/${requestedBranch}`) {
+									branchRef = singleReference.object.sha;
+								}
+							});
+							if (branchRef) {
+								resolve(branchRef);
+							} else {
+								reject({
+									message: 'Required branch not found',
+									details: `Reference searched for: refs/heads/${requestedBranch}`
+								});
+							}
+						} else {
+							reject({message: 'Not able to retrieve references', details: 'Body does not contain references list'});
+						}
 					}
 				});
 		});
