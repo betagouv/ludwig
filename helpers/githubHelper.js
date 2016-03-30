@@ -23,7 +23,13 @@ class GithubHelper {
 	}
 
 	createPullRequestRequestBody(head, title, body) {
-		return `{"head":"refs/heads/${head}", "base":"master", "title":"${title}", "body":"${body}"}`;
+		const pullRequestBody = {
+			head:`refs/heads/${head}`,
+			base:'master',
+			title:title,
+			body:body
+		};
+		return JSON.stringify(pullRequestBody);
 	}
 
 	createPullRequest(head, title, body, accessToken) {
@@ -32,14 +38,20 @@ class GithubHelper {
 				.post(this.config().createPullRequest)
 				.send(this.createPullRequestRequestBody(head, title, body))
 				.set('Authorization', `token ${accessToken}`)
-				.end((err, dataToReturn) => {
-					resolve(dataToReturn);
+				.end((err, createPRResult) => {
+					resolve(createPRResult);
 				});
 		});
 	}
 
 	createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents) {
-		return `{"path":"${testFileName}", "branch":"${branchName}", "message":"${commitMessage}", "content":"${base64FileContents}"}`;
+		const contentRequestBodyJSON = {
+			path:testFileName,
+			branch:branchName,
+			message:commitMessage,
+			content:base64FileContents
+		};
+		return JSON.stringify(contentRequestBodyJSON);
 	}
 
 	createContent(accessToken, testFileName, branchName, commitMessage, base64FileContents) {
@@ -55,17 +67,25 @@ class GithubHelper {
 	}
 
 	createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor) {
-		return `{"ref":"refs/heads/${newBranchName}", "sha":"${branchToCreatePullRequestsFor}"}`;
+		const referenceRequestJSONBody = {
+			ref:`refs/heads/${newBranchName}`,
+			sha:branchToCreatePullRequestsFor
+		};
+		return JSON.stringify(referenceRequestJSONBody);
 	}
 
 	createReference(accessToken, newBranchName, branchToCreatePullRequestsFor) {
-		return new Promise( (resolve) => {
+		return new Promise( (resolve, reject) => {
 			this.agent()
 				.post(this.config().referencesEndpoint)
 				.send(this.createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createReferenceResult) => {
-					resolve(createReferenceResult);
+					if(err) {
+						reject({message:err.message});
+					} else {
+						resolve(createReferenceResult);
+					}
 				});
 		});
 	}

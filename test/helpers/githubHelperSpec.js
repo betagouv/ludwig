@@ -57,7 +57,7 @@ describe('Github Helper', () => {
 			//action
 			const actual = githubHelper.createPullRequestRequestBody(head, title, body);
 			//assert
-			assert.equal(actual, '{"head":"refs/heads/submitterBranch", "base":"master", "title":"PR title", "body":"PR body"}');
+			assert.equal(actual, '{"head":"refs/heads/submitterBranch","base":"master","title":"PR title","body":"PR body"}');
 		});
 	});
 
@@ -68,7 +68,7 @@ describe('Github Helper', () => {
 			//action
 			const actual = githubHelper.createContentRequestBody(suggestionFileName, branchName, commitMessage, base64FileContents);
 			//assert
-			assert.equal(actual, '{"path":"path for the suggestion file", "branch":"branch to commit to", "message":"commit message", "content":"Base64 Contents"}');
+			assert.equal(actual, '{"path":"path for the suggestion file","branch":"branch to commit to","message":"commit message","content":"Base64 Contents"}');
 		});
 	});
 
@@ -79,7 +79,7 @@ describe('Github Helper', () => {
 			//action
 			const actual = githubHelper.createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor );
 			//assert
-			assert.equal(actual, '{"ref":"refs/heads/newBranchName", "sha":"commit sha1 reference to branch from"}');
+			assert.equal(actual, '{"ref":"refs/heads/newBranchName","sha":"commit sha1 reference to branch from"}');
 		});
 	});
 
