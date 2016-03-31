@@ -51,14 +51,11 @@ Le widget s'instancie avec en unique paramètre un objet contenant les informati
 
 #### Détail des entrées de la configuration du widget
 
-* `repoUrl` : l'URL Github principale du dépôt de l'application
+* `repo` : L'indicateur du dépôt github de l'application (ex: https://github.com/**sgmap/ludwig**)
+* `branch` : La branche où créer des nouvelles demandes / où consulter la liste de tests
 * `template` : un template (URLencoded) à utiliser pour remplir le fichier créé avec la suggestion
 * `prefix` : préfixe du fichier qui sera créé lors de la suggestion
 * `ludwigCreateSuggestionURL` : l'URL Ludwig à joindre pour créer une suggestion en passant par les APIs authentifiées GitHub
-* `web`
-    * `acceptedTestsPath` : l'URL où l'on peut consulter les tests acceptés par l'équipe
-    * `addPath` : suffixe d'URL accollé à repoUrl pour ajouter une nouvelle demande
-    * `suggestedTestsPath` : l'URL qui présente les suggestions non validées
 
 ### Ajouter le widget
 
