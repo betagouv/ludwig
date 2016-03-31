@@ -4,12 +4,12 @@
     <title>Test page</title>
 </head>
 <body>
-<script type="text/javascript" src="http://localhost:3000/bundle.js" charset="utf-8">
+<script type="text/javascript" src="http://localhost:3000/ludwig.js" charset="utf-8">
 </script>
 <script>
     var configuration = {
         repoUrl: 'https://github.com/hoshin/git-api-tests',
-        template: 'some+basic+template',
+        template: 'some+basic+template\r\nwith\r\n\tmultiple indented lines\r\n===============================================================================================================',
         prefix: 'test-ludwig',
         expectedTemplate: '{\r\n\t"data":"123",\r\n\t"toBe":{\r\n\t\t"used":1, \r\n\t\t"as":"template for expected state"\r\n\t}\r\n}',
         ludwigCreateSuggestionURL: 'http://localhost:3000/createSuggestion',
@@ -39,7 +39,6 @@
     }
 
     function createSuggestion() {
-
         window.open(ludwig.generateSuggestionURL(currentState))
     }
 

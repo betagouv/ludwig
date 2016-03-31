@@ -62,10 +62,10 @@ Le widget s'instancie avec en unique paramètre un objet contenant les informati
 
 ### Ajouter le widget
 
-L'application peut embarquer le widget directement ou se le faire servir par le backend Ludwig. Dans le premier cas, il faut que l'application embarque le fichier `bundle.js` généré dans l'étape précédente. Dans le second cas on va retrouver ce fichier à `$URL_DE_L_APPLI/bundle.js`.
+L'application peut embarquer le widget directement ou se le faire servir par le backend Ludwig. Dans le premier cas, il faut que l'application embarque le fichier `ludwig.js` généré dans l'étape précédente. Dans le second cas on va retrouver ce fichier à `$URL_DE_L_APPLI/ludwig.js`.
 
 ```html
-<script type="text/javascript" src="http://url.ludwig/bundle.js" charset="utf-8">
+<script type="text/javascript" src="http://url.ludwig/ludwig.js" charset="utf-8">
 ```
 
 Une fois cet ajout fait, le widget est disponible sous le nom `Ludwig` (qui est une classe, pour accéder aux fonctionnalités, il faut donc l'instancier en passant par un `new Ludwig(configuration)`, avec `configuration` un objet contenant la configuration du widget telle que définie plus haut).

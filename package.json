@@ -48,7 +48,7 @@
   },
   "files": [
     "controllers",
-    "dist/bundle.js",
+    "dist/ludwig.js",
     "helpers",
     "routers",
     "views",

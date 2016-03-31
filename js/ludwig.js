@@ -8,6 +8,7 @@ class Ludwig {
 		this.template = configuration.template;
 		this.prefix = configuration.prefix;
 		this.ludwigCreateSuggestionURL = configuration.ludwigCreateSuggestionURL;
+		this.expectedTemplate = configuration.expectedTemplate || '';
 	}
 
 	defaultSuggestionFormatter(currentState, expectedResult)  {
