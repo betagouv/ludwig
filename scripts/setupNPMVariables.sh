@@ -15,3 +15,7 @@ npm config set ludwig:sessionSecret "$sessionSecret"
 echo "CORS Allow-Origin?"
 read cors
 npm config set ludwig:AccessControlAllowOrigin "$cors"
+
+echo "Authorized user API access token"
+read accessToken
+npm config set ludwig:accessToken "$accessToken"

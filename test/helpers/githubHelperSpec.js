@@ -40,6 +40,32 @@ describe('Github Helper', () => {
 			//assert
 			assert.equal(actual, '{"path":"path for the suggestion file","branch":"branch to commit to","message":"commit message","content":"Base64 Contents"}');
 		});
+
+		it('should include author information if present, and use the 1st email if more than 1 is available', () => {
+			//setup
+			const suggestionFileName = 'path for the suggestion file', branchName = 'branch to commit to', commitMessage = 'commit message', base64FileContents = 'Base64 Contents';
+			//action
+			const actual = githubHelper.createContentRequestBody(suggestionFileName, branchName, commitMessage, base64FileContents, {username:'authorName', emails:[ {value:'authorEmail'}, {value:'someOtherEmail'} ]});
+			//assert
+			assert.equal(actual, '{"path":"path for the suggestion file","branch":"branch to commit to","message":"commit message","content":"Base64 Contents","author":{"name":"authorName","email":"authorEmail"}}');
+		});
+
+		const authorBadInfoVariationsTests = [
+			{title:'the author user name is missing', authorData:{emails:[ {value:'authorEmail'} ]}},
+			{title:'the author email is missing (email not public)', authorData:{username:'authorName'}},
+			{title:'the author email is missing (empty emails array)', authorData:{username:'authorName', emails:[]}}
+		];
+
+		authorBadInfoVariationsTests.forEach((testCase) => {
+			it(`should not include author information if ${testCase.title}`, () => {
+				//setup
+				const suggestionFileName = 'path for the suggestion file', branchName = 'branch to commit to', commitMessage = 'commit message', base64FileContents = 'Base64 Contents';
+				//action
+				const actual = githubHelper.createContentRequestBody(suggestionFileName, branchName, commitMessage, base64FileContents, testCase.authorData);
+				//assert
+				assert.equal(actual, '{"path":"path for the suggestion file","branch":"branch to commit to","message":"commit message","content":"Base64 Contents"}');
+			});
+		});
 	});
 
 	describe('createReferenceRequestBody', () => {
@@ -56,7 +82,7 @@ describe('Github Helper', () => {
 	describe('createPullrequest', () => {
 		it('should return a resolved promise if API call went on with no issues', (done) => {
 			//setup
-			const config = [ {
+			const superAgentConfig = [ {
 				pattern: 'https://api.github.com/(.*)',
 				post: () => {
 					return {ok:'some data', statusCode:201} ;
@@ -66,13 +92,23 @@ describe('Github Helper', () => {
 				}
 			} ];
 
-			const superagentMock = require('superagent-mock')(request, config);
-			sinon.stub(githubHelper, 'agent').returns(request);
-			sinon.stub(githubHelper, 'config').returns({createPullRequest: 'https://api.github.com/repos/user/reponame/pulls'});
+			const superagentMock = require('superagent-mock')(request, superAgentConfig);
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {createPullRequest: 'https://api.github.com/repos/user/reponame/pulls'};
+				}
+			});
+
 			//action
 			const createPullRequestPromise = githubHelper.createPullRequest('head', 'title', 'body', 'accessToken');
 			//assert
 			createPullRequestPromise.then( (data) => {
+				console.log(data);
 				assert.deepEqual(data, {ok : 'some data', statusCode:201} );
 				superagentMock.unset();
 				done();
@@ -92,8 +128,16 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			sinon.stub(githubHelper, 'agent').returns(request);
-			sinon.stub(githubHelper, 'config').returns({createPullRequest: 'https://api.github.com/repos/user/reponame/pulls'});
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {createPullRequest: 'https://api.github.com/repos/user/reponame/pulls'};
+				}
+			});
 			//action
 			const createPullRequestPromise = githubHelper.createPullRequest('head', 'title', 'body', 'accessToken');
 			//assert
@@ -119,13 +163,24 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			sinon.stub(githubHelper, 'agent').returns(request);
-			sinon.stub(githubHelper, 'config').returns({createContent: 'https://api.github.com/repos/user/reponame/pulls'});
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {createContent: 'https://api.github.com/repos/user/reponame/pulls'};
+				}
+			});
+			sinon.stub(githubHelper, 'createContentRequestBody').returns(sinon.spy());
 			//action
-			const createContentPromise = githubHelper.createContent('accessToken', 'testFileName', 'branchName', 'commitMessage', 'b64FC==');
+			const createContentPromise = githubHelper.createContent('accessToken', 'testFileName', 'branchName', 'commitMessage', 'b64FC==',  {username:'authorName', emails:[ {value:'email1'} ]});
 			//assert
 			createContentPromise.then( (data) => {
 				assert.deepEqual(data, {ok : 'some data'} );
+				assert.equal(githubHelper.createContentRequestBody.calledOnce, true);
+				assert.deepEqual(githubHelper.createContentRequestBody.getCall(0).args, [ 'testFileName', 'branchName', 'commitMessage', 'b64FC==', {username:'authorName', emails:[ {value:'email1'} ]} ]);
 				superagentMock.unset();
 				done();
 			});
@@ -144,8 +199,16 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			sinon.stub(githubHelper, 'agent').returns(request);
-			sinon.stub(githubHelper, 'config').returns({createContent: 'https://api.github.com/repos/user/reponame/pulls'});
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {createContent: 'https://api.github.com/repos/user/reponame/pulls'};
+				}
+			});
 			//action
 			const createContentPromise = githubHelper.createContent('accessToken', 'testFileName', 'branchName', 'commitMessage', 'b64FC==');
 			//assert
@@ -171,8 +234,16 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			sinon.stub(githubHelper, 'agent').returns(request);
-			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'};
+				}
+			});
 			//action
 			const createReferencePromise = githubHelper.createReference('accessToken', 'newBranchName', 'master');
 			//assert
@@ -196,8 +267,16 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			sinon.stub(githubHelper, 'agent').returns(request);
-			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'};
+				}
+			});
 			//action
 			const createReferencePromise = githubHelper.createReference('accessToken', 'newBranchName', 'master');
 			//assert
@@ -223,8 +302,16 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			sinon.stub(githubHelper, 'agent').returns(request);
-			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'};
+				}
+			});
 			//action
 			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('');
 			//assert
@@ -252,8 +339,16 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			sinon.stub(githubHelper, 'agent').returns(request);
-			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'};
+				}
+			});
 			//action
 			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobarbaz');
 			//assert
@@ -281,8 +376,16 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			sinon.stub(githubHelper, 'agent').returns(request);
-			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'};
+				}
+			});
 			//action
 			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobarbaz');
 			//assert
@@ -309,8 +412,16 @@ describe('Github Helper', () => {
 			} ];
 
 			const superagentMock = require('superagent-mock')(request, config);
-			sinon.stub(githubHelper, 'agent').returns(request);
-			sinon.stub(githubHelper, 'config').returns({referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'});
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'};
+				}
+			});
 			//action
 			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobar');
 			//assert

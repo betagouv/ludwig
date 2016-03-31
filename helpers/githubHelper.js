@@ -14,11 +14,11 @@ class GithubHelper {
 		};
 	}
 
-	config() {
+	get config() {
 		return this.githubConfig;
 	}
 
-	agent() {
+	get agent() {
 		return superAgent;
 	}
 
@@ -34,8 +34,8 @@ class GithubHelper {
 
 	createPullRequest(head, title, body, accessToken) {
 		return new Promise( (resolve, reject) => {
-			this.agent()
-				.post(this.config().createPullRequest)
+			this.agent
+				.post(this.config.createPullRequest)
 				.send(this.createPullRequestRequestBody(head, title, body, configuration.github.branchToCreatePullRequestsFor))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createPRResult) => {
@@ -48,21 +48,33 @@ class GithubHelper {
 		});
 	}
 
-	createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents) {
+	createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents, authorData) {
 		const contentRequestBodyJSON = {
 			path:testFileName,
 			branch:branchName,
 			message:commitMessage,
 			content:base64FileContents
 		};
+
+		function authorDataContainsRequiredInformation() {
+			return authorData && authorData.username && Array.isArray(authorData.emails) && authorData.emails.length;
+		}
+
+		if(authorDataContainsRequiredInformation()) {
+			const author = {
+				name:authorData.username,
+				email:authorData.emails[ 0 ].value
+			};
+			contentRequestBodyJSON.author = author;
+		}
 		return JSON.stringify(contentRequestBodyJSON);
 	}
 
-	createContent(accessToken, testFileName, branchName, commitMessage, base64FileContents) {
+	createContent(accessToken, testFileName, branchName, commitMessage, base64FileContents, authorData) {
 		return new Promise( (resolve, reject) => {
-			this.agent()
-				.put(`${this.config().createContent}${testFileName}`)
-				.send(this.createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents))
+			this.agent
+				.put(`${this.config.createContent}${testFileName}`)
+				.send(this.createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents, authorData))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createCommitResult) => {
 					if(err) {
@@ -85,8 +97,8 @@ class GithubHelper {
 
 	createReference(accessToken, newBranchName, branchToCreatePullRequestsFor) {
 		return new Promise( (resolve, reject) => {
-			this.agent()
-				.post(this.config().referencesEndpoint)
+			this.agent
+				.post(this.config.referencesEndpoint)
 				.send(this.createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createReferenceResult) => {
@@ -102,8 +114,8 @@ class GithubHelper {
 
 	getHeadReferenceForBranch(requestedBranch) {
 		return new Promise( (resolve, reject) => {
-			this.agent()
-				.get(this.config().referencesEndpoint)
+			this.agent
+				.get(this.config.referencesEndpoint)
 				.end((err, response) => {
 					if(err) {
 						reject({message: 'Not able to retrieve references', details: err && err.message});

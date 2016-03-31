@@ -50,19 +50,22 @@ router.get('/createSuggestion',
 
 router.get('/github_callback', passport.authenticate('github', {failureRedirect: '/authKO'}), (req, res) => {
 	const suggestionsController = new SuggestionsController();
-	suggestionsController.createPullRequest(req.session.passport.user.accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branchToCreatePullRequestsFor);
+	suggestionsController.createPullRequest(process.env.npm_config_ludwig_accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branchToCreatePullRequestsFor);
 });
 
 
 router.get('/listTests', (req, res) => {
 	testsService.getMostRecentTestSuite((err, mostRecentTestSuite) => {
-		if(!err) {
-			if(mostRecentTestSuite) {
+		if (!err) {
+			if (mostRecentTestSuite) {
 				var date = new Date();
 				date.setTime(mostRecentTestSuite.timestamp);
-				res.render('listTests', {testSuite:mostRecentTestSuite, formattedTimestamp:moment(date).format('YYYY/MM/DD à HH:mm:ss')});
+				res.render('listTests', {
+					testSuite: mostRecentTestSuite,
+					formattedTimestamp: moment(date).format('YYYY/MM/DD à HH:mm:ss')
+				});
 			} else {
-				res.render('listTests', {testSuite:null});
+				res.render('listTests', {testSuite: null});
 			}
 		} else {
 			res.render('ko');
@@ -73,7 +76,7 @@ router.get('/listTests', (req, res) => {
 router.get('/history', (req, res) => {
 	const testName = req.query.testName;
 	historyController.collectTestHistoryDataForTest(testName, (err, dataToFeedToTemplateEngine) => {
-		if(err) {
+		if (err) {
 			res.render('ko');
 		} else {
 			res.render('testHistory', dataToFeedToTemplateEngine);

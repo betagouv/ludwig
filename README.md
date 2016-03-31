@@ -75,14 +75,11 @@ _Note: Le widget "prêt à servir" à jour est présent dans le répertoire `dis
 ### L'API du widget
 Le widget doit être initialisé avec sa configuration pour les diverses URLs à appeler pour une tâche ou l'autre. La configuration suit la même organisation que celle côté serveur.
 
-Aujourd'hui, le widget met à disposition plusieurs fonctions :
+Son API complète est documentée dans [un document à part](./documentation/widgetAPI.md)
+On notera cependant 2 fonctions principales:
 
-* `generateSuggestionURL(currentState, expectedResult [, customSuggestionFormatter] )` : Génère une URL permettant d'ajouter un fichier correspondant à une suggestion. L'état collecté par l'application ainsi que le résultat attendu seront sérialisés dans la requête.
-Il est possible de préciser à la méthode une fonction personnalisée pour sérialiser le template, l'état et le résultat attendu. Cette fonction doit prendre 2 paramètres (état courant et résultat attendu) et renvoyer une chaîne de caractères (qui sera ensuite échappée par Ludwig).
+* `generateSuggestionURL(currentState, expectedResult [, customSuggestionFormatter] )` : Génère une URL permettant d'ajouter un fichier correspondant à une suggestion.
 **ATTENTION** : Cette utilisation est limitée par GitHub pour les URIs trop longues (~8000 caractères). L'API retournera une erreur si la longueur totale de l'URI générée par le widget dépasse cette taille.
-* `generateSuggestionName()` : Génère un nom de suggestion qui se base sur le préfixe configuré et la date courante.
-* `acceptedTestsURL()` : Génère l'URL permettant d'accéder à la liste des tests acceptés.
-* `suggestedTestsURL()` : Génère l'URL permettant de consulter les suggestions de tests.
 * `generateLudwigSuggestionEndpointURL(suggestionTitle, suggestionDescription, currentState, expectedResult)` : Crée le lien qui permet de contacter l'API Ludwig pour créer une nouvelle suggestion. Cela permet de fournir un titre et une description en plus de l'état et du résultat attendu.
 
 ## Configurer et lancer le serveur Ludwig
@@ -91,19 +88,8 @@ Il est possible de préciser à la méthode une fonction personnalisée pour sé
 
 Le fichier de configuration utilisé par l'application se trouve à la racine. Il permet de configurer l'accès à une base de données mongo (pour stocker les rapports de tests) ainsi que quelques informations sur le dépôt GitHub où sont publiés les fichiers de tests et où l'on va créer des pull requests pour les demandes de nouveaux tests.
 
-La configuration des clefs d'API GitHub se fait par `npm config`. Il faut saisir les clefs suivantes :
 
-* ludwig:clientID : Client ID à utiliser pour requêter l'API GitHub
-* ludwig:clientSecret : Client Secret à utiliser pour requêter l'API GitHub
-
-Deux autres paramètres sont configurés par clefs de configuration NPM :
-
-* ludwig:sessionSecret : Le secret qui sera utilisé pour les cookies de session
-* ludwig:AccessControlAllowOrigin : Le paramétrage CORS de l'application (pour permettre que l'application qui intègre le widget puisse interagir avec l'instance Ludwig, par exemple)
-
-Pour automatiser l'enregistrement de toutes les clefs de pconfiguration npm, un script est disponible dans `./scripts/setupNPMVariables.sh`. Cela reste partiellement manuel mais aucune clef n'est oubliée et cela devrait éviter les fautes de frappe.
-
-### Détail de la configuration de l'application 
+#### Détail de la configuration générale de l'application 
 
 Un fichier exemple `ludwig-conf-sample.js` est présent à la racine du projet, renommé en `ludwig-conf.js` et édité pour y mettre les informations correspondant à votre dépôt / votre base de données il devrait permettre à votre instance de se lancer et de communiquer avec les APIs GitHub.
 
@@ -115,10 +101,33 @@ Un fichier exemple `ludwig-conf-sample.js` est présent à la racine du projet, 
 * `mongo` (cette section correspond à ce que l'on trouve dans la documentation de [mongoose](http://mongoosejs.com/docs/api.html#index_Mongoose-connect)):
     * `uri`: L'URI de connexion 
     * `options`: Les options que l'on souhaite passer à mongoose
+    
+#### Configuration des secrets
+Afin que votre application puisse utiliser les APIs GitHub (et en particulier connecter le contributeur lorsqu'il tente de soumettre un cas de test) votre instance de Ludwig doit être enregistrée.
+Cela se fait par le biais de [cette page](https://github.com/settings/applications/new). Une fois le formulaire présenté rempli et validé, GitHub vous fournira le clientID et le clientSecret dont vous avez besoin.
 
-### Lancer
+_Note: Pour correctement renseigner le champ `Authorization callback URL`, il faut fournir une URL de type `<URI de la machine Ludwig>/github_callback`
 
-**Attention**, il faut avoir créé le **fichier de configuration de l'application** de dérouler ces étapes.
+La configuration des clefs d'API GitHub se fait par `npm config`. Il faut enregistrer les clefs suivantes :
+
+* `ludwig:clientID` : Client ID à utiliser pour requêter l'API GitHub
+* `ludwig:clientSecret` : Client Secret à utiliser pour requêter l'API GitHub
+* `ludwig:accessToken` : Un access token de compte ayant le droit de créer des commits sur le dépôt du projet (celui du mainteneur principal par exemple). Un guide est disponible [ici](https://help.github.com/articles/creating-an-access-token-for-command-line-use/). 
+_Note: Dans le cas qui nous intéresse pour le jeton d'accès, il faut en créer un avec le scope "repo" et ne pas sélectionner les autres.
+
+Les clientID et clientSecret doivent être créés au préalable par le responsable du dépôt qui sera modifié de sorte à permettre à Ludwig d'accéder au dépôt et d'y faire des modifications.
+
+Deux autres paramètres sont configurés par clefs de configuration NPM :
+
+* `ludwig:sessionSecret` : Le secret qui sera utilisé pour signer le cookie de session (et éviter qu'il soit manipulé)
+* `ludwig:AccessControlAllowOrigin` : Le pattern d'URLs autorisées pour une utilisation cross-domain (si le widget et l'application Ludwig sont sur des machines avec des domaines différents)
+
+Pour automatiser l'enregistrement de toutes les clefs de configuration npm, un script est disponible dans `./scripts/setupNPMVariables.sh`. Cela reste partiellement manuel mais aucune clef n'est oubliée et cela devrait éviter les fautes de frappe.
+
+### Lancer le serveur Ludwig
+
+**Attention**, il faut avoir créé le **fichier de configuration de l'application**.
+Le fichier `ludwg-conf-sample.js` est là pour qu'il ne reste plus qu'à remplir les blancs et le renommer en `ludwig-conf,js` pour avoir une configuration qui permette de démarrer le serveur.
 
 ```
 $ npm install # installer / packager
@@ -142,7 +151,7 @@ Pour l'instant Ludwig accepte les rapports au format xUnit avec une suite de tes
 
 Le rapport peut être trouvé à l'adresse suivante : `/listTests`.
 
-#### Comment générer un rapport pour Ludwig ?
+#### Comment enregistrer un rapport pour Ludwig ?
 
 Pour l'instant, les rapports que Ludwig est capable de traiter doivent suivre le format xUnit (avec un bloc testsuite juste sous la racine). Quelques consignes pour profiter des fonctionnalités comme le lien direct vers le fichier source d'un test :
 
@@ -160,12 +169,6 @@ Les informations générales (tests ok, en échec, date des tests, temps pris pa
 * `tests` : Le nombre total de tests
 * `errors` : Les tests en erreur (cassés, le problème est technique)
 * `failures` : Les échecs (les tests ont échoué car le comportement observé n'est plus celui attendu par les tests)
-
-## Notes sur la configuration
-
-En l'état, vous devez créer le fichier de configuration de l'application (dont un example, `ludwig-conf-sample.js` est fourni à la racine), le serveur refusera de démarrer sans sa configuration.
-
-Le fichier `sample` est là pour qu'il ne reste plus qu'à remplir les blancs et le renommer pour avoir une configuration qui permette de packager / démarrer.
 
 ## Tester l'application
 

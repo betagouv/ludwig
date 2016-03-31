@@ -15,15 +15,15 @@ describe('suggestionController', () => {
 			description: 'description',
 			state: 'state'
 		};
-		let res = {render: sinon.spy()};
+		let res = {};
 		beforeEach(()=> {
-			res = {render: sinon.spy()};
+			res = {render: sinon.spy(), req:{session:{passport:{user:{}}}}};
 		});
 
 		it('should render the ok page if all remote calls work without errors', (done) => {
 			//setup
 			const accessToken = 'access token', title = 'title', description = 'description';
-			const res = {render: sinon.spy()};
+			const res = {render: sinon.spy(), req:{session:{passport:{user:{}}}}};
 			const mockedGithubHelper = {
 				getHeadReferenceForBranch: sinon.stub().returns(Promise.resolve('branchedReferenceSHA')),
 				createReference: sinon.stub().returns(Promise.resolve({})),
@@ -166,6 +166,31 @@ describe('suggestionController', () => {
 				assert.equal(githubHelperStub.createPullRequest.calledOnce, true);
 
 				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+				done();
+			});
+		});
+
+		it('should create a commit using the logged in user session data (username and email)', (done) => {
+			//setup
+			const githubHelperStub = {
+				createReference: sinon.stub().returns(Promise.resolve({data: true})),
+				createContent: sinon.stub().returns(Promise.reject({error: true})),
+				createPullRequest: sinon.spy(),
+				getHeadReferenceForBranch: sinon.stub().returns(Promise.resolve('branchReferenceSHA'))
+			};
+			sinon.stub(suggestionsController, 'githubHelper', {
+				get: () => {
+					return githubHelperStub;
+				}
+			});
+			const customRes = {render:sinon.spy(),req:{session:{passport:{user:{username:'user name', emails:[ {value:'user@mail'} ]}}}}};
+			//action
+			const createPRPromise = suggestionsController.createPullRequest('accessToken', 'title', 'description', 'state', customRes);
+			//assert
+			createPRPromise.then(() => {
+				assert.equal(githubHelperStub.createContent.calledOnce, true);
+				assert.deepEqual(githubHelperStub.createContent.getCall(0).args[5], {username:'user name', emails:[ {value:'user@mail'} ]});
+
 				done();
 			});
 		});
