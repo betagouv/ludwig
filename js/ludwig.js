@@ -4,9 +4,11 @@ const GITHUB_URL = 'https://github.com';
 
 class Ludwig {
 	constructor(configuration) {
+		if(!configuration.repo) {
+			throw new Error('"repo" field in configuration is mandatory');
+		}
 		this.repo = configuration.repo;
-		this.branch = configuration.branch;
-		
+		this.branch = configuration.branch || 'master';
 		this.template = configuration.template;
 		this.prefix = configuration.prefix;
 		this.ludwigCreateSuggestionURL = configuration.ludwigCreateSuggestionURL;

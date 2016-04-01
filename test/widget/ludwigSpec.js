@@ -6,7 +6,39 @@ import {Ludwig} from '../../js/ludwig';
 describe('Widget : Sugestion link retrieval', () => {
 	let ludwig;
 	beforeEach(() => {
-		ludwig = new Ludwig({});
+		ludwig = new Ludwig({repo:'foobar'});
+	});
+
+	describe('constructor', () =>{
+		it('should set branch to default to "master" if none is provided', () => {
+			//setup
+			//action
+			ludwig = new Ludwig({repo:'foobar'});
+			//assert
+			assert.equal(ludwig.branch, 'master');
+		});
+
+		it('should set branch property to foobar, if foobar is provided as branch name', () => {
+			//setup
+
+			//action
+			ludwig = new Ludwig({repo:'foobar', branch:'foobar'});
+			//assert
+			assert.equal(ludwig.branch, 'foobar');
+		});
+
+
+		it('should throw an error if mandatory "repo" config field seems to be empty', () => {
+			//setup
+			//action
+			try{
+				ludwig = new Ludwig({});
+				assert.fail('constructor without repo field in configuration should throw an error');
+			} catch (error) {
+				//assert
+				assert.equal(error.message, '"repo" field in configuration is mandatory');
+			}
+		});
 	});
 
 	describe('generateSuggestionName', () => {
