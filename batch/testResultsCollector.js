@@ -7,20 +7,26 @@ import {TestCaseModel} from '../models/testCaseModel';
 class TestResultsCollector {
 	constructor(configuration) {
 		this.configuration = configuration;
-		mongoose.connect(configuration.mongo.uri, configuration.mongo.options);
+	}
+
+	connect() {
+		mongoose.connect(this.configuration.mongo.uri, this.configuration.mongo.options);
+	}
+	
+	get parser() {
+		return new XUnitParser(this.configuration);
 	}
 
 	saveFromXUnitData(xUnitFilePath, callback) {
-		const parser = new XUnitParser(this.configuration);
-		parser.parse(xUnitFilePath, (errors, parsedTestSuiteData) => {
+		this.connect();
+		this.parser.parse(xUnitFilePath).then( (parsedTestSuiteData) => {
 			let testSuite = new TestSuiteModel({
 				name: parsedTestSuiteData.name,
 				failures: parsedTestSuiteData.failures,
 				timestamp: parsedTestSuiteData.timestamp
 			});
-
-			testSuite.save((err, testSuiteSavedData) => {
-				if(!err) {
+			testSuite.save((err) => {
+				if (!err) {
 					TestCaseModel.collection.insert(parsedTestSuiteData.testCases, (err, testCases) => {
 						if (!err) {
 							testSuite.testCases = testCases.ops;
@@ -35,6 +41,8 @@ class TestResultsCollector {
 					callback(err);
 				}
 			});
+		}).catch( (errors) => {
+			callback(errors);
 		});
 	}
 }
