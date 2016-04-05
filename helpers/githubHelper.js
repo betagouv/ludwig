@@ -10,7 +10,8 @@ class GithubHelper {
 			referencesEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/git/refs`,
 			createContent: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/contents/`,
 			createPullRequest: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/pulls`,
-			repository:configuration.repository
+			repository:configuration.repository,
+			commitsEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/commits`
 		};
 	}
 
@@ -142,7 +143,27 @@ class GithubHelper {
 					}
 				});
 		});
+	}
+	
+	getFirstCommitForFile(fileName) {
+		const anteChronologicalOrder = (firstCommit, secondCommit) => {
+			const firstDate = new Date(firstCommit.commit.author.date);
+			const secondDate = new Date(secondCommit.commit.author.date);
 
+			return secondDate.getTime()-firstDate.getTime();
+		};
+		return new Promise( (resolve, reject) => {
+			this.agent
+				.get(this.config.commitsEndpoint+'?path='+fileName)
+				.end( (err, response) => {
+					if(!err) {
+						response.body.sort( anteChronologicalOrder );
+						resolve(response.body[0]);
+					} else {
+						reject({message:'Not able to retrieve commit', details:err && err.message});
+					}
+				});
+		} );
 	}
 }
 
