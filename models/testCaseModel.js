@@ -3,8 +3,9 @@ const TestCaseModel = mongoose.model('TestCase', {
 	name: String,
 	status: String,
 	timestamp: String,
-	location:String,
-	message:String,
-	time:Number
+	location: String,
+	message: String,
+	time: Number,
+	author: {name:String, email:String}
 });
 export {TestCaseModel};
