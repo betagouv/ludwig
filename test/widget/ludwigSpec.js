@@ -6,7 +6,39 @@ import {Ludwig} from '../../js/ludwig';
 describe('Widget : Sugestion link retrieval', () => {
 	let ludwig;
 	beforeEach(() => {
-		ludwig = new Ludwig({});
+		ludwig = new Ludwig({repo:'foobar'});
+	});
+
+	describe('constructor', () =>{
+		it('should set branch to default to "master" if none is provided', () => {
+			//setup
+			//action
+			ludwig = new Ludwig({repo:'foobar'});
+			//assert
+			assert.equal(ludwig.branch, 'master');
+		});
+
+		it('should set branch property to foobar, if foobar is provided as branch name', () => {
+			//setup
+
+			//action
+			ludwig = new Ludwig({repo:'foobar', branch:'foobar'});
+			//assert
+			assert.equal(ludwig.branch, 'foobar');
+		});
+
+
+		it('should throw an error if mandatory "repo" config field seems to be empty', () => {
+			//setup
+			//action
+			try{
+				ludwig = new Ludwig({});
+				assert.fail('constructor without repo field in configuration should throw an error');
+			} catch (error) {
+				//assert
+				assert.equal(error.message, '"repo" field in configuration is mandatory');
+			}
+		});
 	});
 
 	describe('generateSuggestionName', () => {
@@ -32,49 +64,49 @@ describe('Widget : Sugestion link retrieval', () => {
 		it('should concatenate the url and template data from the configuration and generate a unique suggestion name', () => {
 			//setup
 			sinon.stub(ludwig, 'validateSuggestionURL').returns(true);
-			ludwig.repoUrl = 'my_url';
-			ludwig.web = {addPath: '/new/master'};
+			ludwig.repo = 'user/repo';
+			ludwig.branch = 'foobar';
 			ludwig.template = 'some+template';
 			ludwig.prefix = 'suggestions/ludwig-suggestion';
 			sinon.stub(ludwig, 'generateSuggestionName').returns('suggestions/ludwig-suggestion-1234');
 			//action
 			let actual = ludwig.generateSuggestionURL();
 			//assert
-			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate');
+			assert.equal(actual, 'https://github.com/user/repo/new/foobar?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate');
 		});
 		it('should append state data if present w/ a linefeed inbetween', () => {
 			//setup
 			sinon.stub(ludwig, 'validateSuggestionURL').returns(true);
-			ludwig.repoUrl = 'my_url';
-			ludwig.web = {addPath: '/new/master'};
+			ludwig.repo = 'user/repo';
+			ludwig.branch = 'foobar';
 			ludwig.template = 'some+template';
 			ludwig.prefix = 'suggestions/ludwig-suggestion';
 			sinon.stub(ludwig, 'generateSuggestionName').returns('suggestions/ludwig-suggestion-1234');
 			//action
 			let actual = ludwig.generateSuggestionURL({some: 'state'});
 			//assert
-			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate%0D%0A%7B%0A%09%22some%22%3A%20%22state%22%0A%7D');
+			assert.equal(actual, 'https://github.com/user/repo/new/foobar?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate%0D%0A%7B%0A%09%22some%22%3A%20%22state%22%0A%7D');
 		});
 
 		it('should append the result to the query if it is given', () => {
 			//setup
 			sinon.stub(ludwig, 'validateSuggestionURL').returns(true);
-			ludwig.repoUrl = 'my_url';
-			ludwig.web = {addPath: '/new/master'};
+			ludwig.repo = 'user/repo';
+			ludwig.branch = 'foobar';
 			ludwig.template = 'some+template';
 			ludwig.prefix = 'suggestions/ludwig-suggestion';
 			sinon.stub(ludwig, 'generateSuggestionName').returns('suggestions/ludwig-suggestion-1234');
 			//action
 			let actual = ludwig.generateSuggestionURL({some: 'state'}, {another: 'result'});
 			//assert
-			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate%0D%0A%7B%0A%09%22some%22%3A%20%22state%22%0A%7D%0D%0A%7B%0A%09%22another%22%3A%20%22result%22%0A%7D');
+			assert.equal(actual, 'https://github.com/user/repo/new/foobar?filename=suggestions/ludwig-suggestion-1234&value=some%2Btemplate%0D%0A%7B%0A%09%22some%22%3A%20%22state%22%0A%7D%0D%0A%7B%0A%09%22another%22%3A%20%22result%22%0A%7D');
 		});
 
 		it('should bypass standard formatting if a clojure is given as 3rd param and format currentState & expectedResult using that clojure instead', () => {
 			//setup
 			sinon.stub(ludwig, 'validateSuggestionURL').returns(true);
-			ludwig.repoUrl = 'my_url';
-			ludwig.web = {addPath: '/new/master'};
+			ludwig.repo = 'user/repo';
+			ludwig.branch = 'foobar';
 			ludwig.template = 'some+template';
 			ludwig.prefix = 'suggestions/ludwig-suggestion';
 			sinon.stub(ludwig, 'generateSuggestionName').returns('suggestions/ludwig-suggestion-1234');
@@ -84,13 +116,13 @@ describe('Widget : Sugestion link retrieval', () => {
 			//action
 			let actual = ludwig.generateSuggestionURL({some: 'state'}, {another: 'result'}, customFormatter);
 			//assert
-			assert.equal(actual, 'my_url/new/master?filename=suggestions/ludwig-suggestion-1234&value=this%20is%20my%20custom%20formatted%20suggestion%20template');
+			assert.equal(actual, 'https://github.com/user/repo/new/foobar?filename=suggestions/ludwig-suggestion-1234&value=this%20is%20my%20custom%20formatted%20suggestion%20template');
 		});
 
 		it('should return an error if given customSuggestionFormatter is not a function', () => {
 			//setup
-			ludwig.repoUrl = 'my_url';
-			ludwig.web = {addPath: '/new/master'};
+			ludwig.repo = 'user/repo';
+			ludwig.branch = 'foobar';
 			ludwig.template = 'some+template';
 			ludwig.prefix = 'suggestions/ludwig-suggestion';
 			sinon.stub(ludwig, 'generateSuggestionName').returns('suggestions/ludwig-suggestion-1234');
@@ -105,8 +137,8 @@ describe('Widget : Sugestion link retrieval', () => {
 
 		it('should throw an error if request URI is invalid. Error message must inform of what is going on.', () => {
 			//setup
-			ludwig.repoUrl = 'my_url';
-			ludwig.web = {addPath: '/new/master'};
+			ludwig.repo = 'user/repo';
+			ludwig.branch = 'foobar';
 			ludwig.template = 'some+template';
 			ludwig.prefix = 'suggestions/ludwig-suggestion';
 			sinon.stub(ludwig, 'validateSuggestionURL').returns(false);
@@ -150,24 +182,23 @@ describe('Widget : Sugestion link retrieval', () => {
 	describe('acceptedTestsURL', () => {
 		it('should concatenate the base URL of the repo and the public URL of the directory in the master branch of the repo where the tests are', () => {
 			//setup
-			ludwig.repoUrl = 'my_url';
-			ludwig.web = {acceptedTestsPath: '/tree/master/tests'};
+			ludwig.repo = 'user/repo';
+			ludwig.branch = 'foobar';
 			//action
 			let actual = ludwig.acceptedTestsURL();
 			//assert
-			assert.equal(actual, 'my_url/tree/master/tests');
+			assert.equal(actual, 'https://github.com/user/repo/tree/foobar/tests');
 		});
 	});
 
-	describe('suggestionsURL', () => {
+	describe('suggestedTestsURL', () => {
 		it('should  concatenate the base URL of the repo and the public URL of the open pull requests', () => {
 			//setup
-			ludwig.repoUrl = 'my_url';
-			ludwig.web = {suggestedTestsPath: '/pulls?utf8=✓&q=is%3Apr+is%3Aopen'};
+			ludwig.repo = 'user/repo';
 			//action
 			let actual = ludwig.suggestedTestsURL();
 			//assert
-			assert.equal(actual, 'my_url/pulls?utf8=✓&q=is%3Apr+is%3Aopen');
+			assert.equal(actual, 'https://github.com/user/repo/pulls?utf8=✓&q=is%3Apr+is%3Aopen');
 		});
 	});
 

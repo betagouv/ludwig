@@ -1,10 +1,14 @@
 'use strict';
 const MAX_URI_LENGTH = 8000;
+const GITHUB_URL = 'https://github.com';
 
 class Ludwig {
 	constructor(configuration) {
-		this.repoUrl = configuration.repoUrl;
-		this.web = configuration.web;
+		if(!configuration.repo) {
+			throw new Error('"repo" field in configuration is mandatory');
+		}
+		this.repo = configuration.repo;
+		this.branch = configuration.branch || 'master';
 		this.template = configuration.template;
 		this.prefix = configuration.prefix;
 		this.ludwigCreateSuggestionURL = configuration.ludwigCreateSuggestionURL;
@@ -36,7 +40,7 @@ class Ludwig {
 	 @returns the URL to call to create a pull request
 	 */
 	generateSuggestionURL(currentState, expectedResult, customSuggestionFormatter) {
-		let suggestionURL = `${this.repoUrl}${this.web.addPath}?filename=${this.generateSuggestionName()}&value=`;
+		let suggestionURL = `${GITHUB_URL}/${this.repo}/new/${this.branch}?filename=${this.generateSuggestionName()}&value=`;
 
 		if(customSuggestionFormatter) {
 			if(typeof customSuggestionFormatter === 'function') {
@@ -86,11 +90,11 @@ class Ludwig {
 	}
 
 	acceptedTestsURL() {
-		return this.repoUrl + this.web.acceptedTestsPath;
+		return `${GITHUB_URL}/${this.repo}/tree/${this.branch}/tests`;
 	}
 
 	suggestedTestsURL() {
-		return this.repoUrl + this.web.suggestedTestsPath;
+		return `${GITHUB_URL}/${this.repo}/pulls?utf8=✓&q=is%3Apr+is%3Aopen`;
 	}
 }
 

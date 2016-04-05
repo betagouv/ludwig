@@ -1,6 +1,6 @@
 {
   "name": "sgmap.ludwig",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "license": "AGPL-3.0",
   "repository": {
     "type": "git",
@@ -64,6 +64,6 @@
     "qualimetry": "istanbul cover _mocha --dir qualimetry/cover -- --compilers js:babel-core/register -R spec test/* test/batch/*",
     "linting": "eslint ./js ./controllers ./routers ./test ./helpers ./*.js",
     "clean": "rm -rf node_modules && rm -rf dist",
-    "insertTestReportData":"babel-node batch/runner.js"
+    "insertTestReportData": "babel-node batch/runner.js"
   }
 }
