@@ -9,6 +9,10 @@ class XUnitParser {
 		this.configuration = configuration;
 	}
 
+	get now() {
+		return new Date();
+	}
+
 	readFile(xUnitFilePath, callback) {
 		fs.readFile(xUnitFilePath, function (err, data) {
 			callback(err, data.toString());
@@ -51,9 +55,12 @@ class XUnitParser {
 									name: parsedData.suite.name,
 									tests: parsedData.suite.summary.tests,
 									failures: parsedData.suite.summary.failures,
-									timestamp: `${parsedData.suite.timestamp}`,
+									timestamp: `${parsedData.suite.timestamp || self.now.getTime()}`,
 									testCases: testCases
 								};
+								if(!parsedData.suite.timestamp) {
+									console.log('Warning : No timestamp was provided for specified test suite, using current system date.');
+								}
 								callback(null, testSuite);
 							} else {
 								callback(null, null);
