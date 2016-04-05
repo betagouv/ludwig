@@ -432,4 +432,112 @@ describe('Github Helper', () => {
 			});
 		});
 	});
+
+	describe('getFirstCommitForFile', () => {
+		it('should return a rejected promise if there was an error reaching out to Github', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				get: () => {
+					throw new Error('Error when reaching Github');
+				},
+				fixtures: () => {
+					return {};
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {commitsEndpoint: 'https://api.github.com/repos/user/reponame/commits'};
+				}
+			});
+			//action
+			const getFirstCommitForFilePromise = githubHelper.getFirstCommitForFile('file/path');
+			//assert
+			getFirstCommitForFilePromise.catch( (message) => {
+				assert.deepEqual(message, {
+					message: 'Not able to retrieve commit',
+					details: 'Error when reaching Github'
+				});
+				superagentMock.unset();
+				done();
+			});
+		});
+		
+		it('should return the only commit data if there is only one commit', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				get: () => {
+					return {body:[ {sha:1, commit:{author:{date:'2016-03-31T09:29:37Z'}}} ]};
+				},
+				fixtures: () => {
+					return {};
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {commitsEndpoint: 'https://api.github.com/repos/user/reponame/commits'};
+				}
+			});
+			//action
+			const getFirstCommitForFilePromise = githubHelper.getFirstCommitForFile('file/path');
+			//assert
+			getFirstCommitForFilePromise.then( (data) => {
+				assert.deepEqual(data, {sha:1, commit:{author:{date:'2016-03-31T09:29:37Z'}}});
+				superagentMock.unset();
+				done();
+			});
+		});
+
+		it('should return the oldest commit data if there are multiple commits (based on author date)', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				get: () => {
+					return {body:[ {sha:1, commit:{author:{date:'2015-03-31T09:29:37Z'}}}, {sha:2, commit:{author:{date:'2016-03-31T09:29:37Z'}}} ]};
+				},
+				fixtures: (match) => {
+					if(match[1] === 'repos/user/reponame/commits?path=file/path') {
+						return {};
+					} else {
+						assert.fail('Not an adequate URL');
+					}
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {commitsEndpoint: 'https://api.github.com/repos/user/reponame/commits'};
+				}
+			});
+			//action
+			const getFirstCommitForFilePromise = githubHelper.getFirstCommitForFile('file/path');
+			//assert
+			getFirstCommitForFilePromise.then( (data) => {
+				assert.deepEqual(data, {sha:2, commit:{author:{date:'2016-03-31T09:29:37Z'}}} );
+				superagentMock.unset();
+				done();
+			});
+		});
+	});
 });
