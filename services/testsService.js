@@ -26,7 +26,7 @@ class TestsService {
 				const enrichedData = this.addFormattedTimestamps(data);
 				callback(err, enrichedData);
 			});
-	};
+	}
 
 	addFormattedTimestamps(testCaseList) {
 		testCaseList.forEach((testCase) => {
@@ -35,7 +35,7 @@ class TestsService {
 			testCase.formattedTimestamp = moment(date).format('DD/MM/YYYY à hh:mm:ss');
 		});
 		return testCaseList;
-	};
+	}
 }
 
 export {TestsService};
