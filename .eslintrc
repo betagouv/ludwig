@@ -1,27 +1,13 @@
 rules:
- indent:
-  - 2
-  - tab
- quotes:
-  - 2
-  - single
- linebreak-style:
-  - 2
-  - unix
- semi:
-  - 2
-  - always
- comma-dangle:
-  - 2
-  - only-multiline
- array-bracket-spacing:
-  - 2
-  - always
- curly:
-  - 2
-  - all
- space-before-blocks: 2
+ array-bracket-spacing: [ 2, always ]
+ comma-dangle: [ 2, only-multiline ]
+ curly: [ 2, all ]
+ indent: [ 2, tab ]
+ linebreak-style: [ 2, unix ]
  no-console: 1
+ quotes: [ 2, single ]
+ semi: [ 2, always ]
+ space-before-blocks: 2
 
 parserOptions: 
  sourceType: module
