@@ -76,7 +76,7 @@ Son API complète est documentée dans [un document à part](./documentation/wid
 On notera cependant 2 fonctions principales:
 
 * `generateSuggestionURL(currentState, expectedResult [, customSuggestionFormatter] )` : Génère une URL permettant d'ajouter un fichier correspondant à une suggestion.
-**ATTENTION** : Cette utilisation est limitée par GitHub pour les URIs trop longues (~8000 caractères). L'API retournera une erreur si la longueur totale de l'URI générée par le widget dépasse cette taille.
+**ATTENTION** : Cette utilisation est limitée par GitHub et par les navigateurs eux-mêmes pour les URLs trop longues. L'API retournera une erreur si la longueur totale de l'URI générée par le widget dépasse une taille compatible avec les navigateurs supportés par Ludwig.
 * `generateLudwigSuggestionEndpointURL(suggestionTitle, suggestionDescription, currentState, expectedResult)` : Crée le lien qui permet de contacter l'API Ludwig pour créer une nouvelle suggestion. Cela permet de fournir un titre et une description en plus de l'état et du résultat attendu.
 
 ## Configurer et lancer le serveur Ludwig
