@@ -127,7 +127,7 @@ Pour automatiser l'enregistrement de toutes les clefs de configuration npm, un s
 Le fichier `ludwig-conf-sample.js` est là pour qu'il ne reste plus qu'à remplir les blancs et le renommer en `ludwig-conf,js` pour avoir une configuration qui permette de démarrer le serveur.
 
 ```
-$ npm install # installer / packager
+$ npm install
 $ npm start
 ```
 
