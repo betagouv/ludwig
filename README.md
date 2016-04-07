@@ -91,7 +91,7 @@ Le fichier de configuration utilisé par l'application se trouve à la racine. I
 Un fichier exemple `ludwig-conf-sample.js` est présent à la racine du projet, renommé en `ludwig-conf.js` et édité pour y mettre les informations correspondant à votre dépôt / votre base de données il devrait permettre à votre instance de se lancer et de communiquer avec les APIs GitHub.
 
 * `repository`: Le dépôt GitHub où sont versionnés les tests (sous la forme `<utilisateur>/<nom du dépôt>`
-* `acceptedTestsLocation`: Le chemin dans le dép&ot GitHub où trouver le répertoire contenant les tests (ex: `/treee/master/tests` si le répertoire `tests` est à la racine du dépôt et que c'est celui que l'on souhaite utiliser)
+* `acceptedTestsLocation`: Le chemin dans le dép&ot GitHub où trouver le répertoire contenant les tests (ex: `/tree/master/tests` si le répertoire `tests` est à la racine du dépôt et que c'est celui que l'on souhaite utiliser)
 * `github`:
     * `branchToCreatePullRequestsFor`: La branche de travail (par défaut : master)
     * `authenticationCallback`: L'URL de callback que GitHub doit appeler lors d'une authentification
@@ -124,7 +124,7 @@ Pour automatiser l'enregistrement de toutes les clefs de configuration npm, un s
 ### Lancer le serveur Ludwig
 
 **Attention**, il faut avoir créé le **fichier de configuration de l'application**.
-Le fichier `ludwg-conf-sample.js` est là pour qu'il ne reste plus qu'à remplir les blancs et le renommer en `ludwig-conf,js` pour avoir une configuration qui permette de démarrer le serveur.
+Le fichier `ludwig-conf-sample.js` est là pour qu'il ne reste plus qu'à remplir les blancs et le renommer en `ludwig-conf,js` pour avoir une configuration qui permette de démarrer le serveur.
 
 ```
 $ npm install # installer / packager
