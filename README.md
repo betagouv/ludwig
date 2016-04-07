@@ -86,7 +86,7 @@ On notera cependant 2 fonctions principales:
 Le fichier de configuration utilisé par l'application se trouve à la racine. Il permet de configurer l'accès à une base de données mongo (pour stocker les rapports de tests) ainsi que quelques informations sur le dépôt GitHub où sont publiés les fichiers de tests et où l'on va créer des pull requests pour les demandes de nouveaux tests.
 
 
-#### Détail de la configuration générale de l'application 
+#### Détail de la configuration générale de l'application
 
 Un fichier exemple `ludwig-conf-sample.js` est présent à la racine du projet, renommé en `ludwig-conf.js` et édité pour y mettre les informations correspondant à votre dépôt / votre base de données il devrait permettre à votre instance de se lancer et de communiquer avec les APIs GitHub.
 
@@ -96,9 +96,9 @@ Un fichier exemple `ludwig-conf-sample.js` est présent à la racine du projet, 
     * `branchToCreatePullRequestsFor`: La branche de travail (par défaut : master)
     * `authenticationCallback`: L'URL de callback que GitHub doit appeler lors d'une authentification
 * `mongo` (cette section correspond à ce que l'on trouve dans la documentation de [mongoose](http://mongoosejs.com/docs/api.html#index_Mongoose-connect)):
-    * `uri`: L'URI de connexion 
+    * `uri`: L'URI de connexion
     * `options`: Les options que l'on souhaite passer à mongoose
-    
+
 #### Configuration des secrets
 Afin que votre application puisse utiliser les APIs GitHub (et en particulier connecter le contributeur lorsqu'il tente de soumettre un cas de test) votre instance de Ludwig doit être enregistrée.
 Cela se fait par le biais de [cette page](https://github.com/settings/applications/new). Une fois le formulaire présenté rempli et validé, GitHub vous fournira le clientID et le clientSecret dont vous avez besoin.
@@ -109,7 +109,7 @@ La configuration des clefs d'API GitHub se fait par `npm config`. Il faut enregi
 
 * `ludwig:clientID` : Client ID à utiliser pour requêter l'API GitHub
 * `ludwig:clientSecret` : Client Secret à utiliser pour requêter l'API GitHub
-* `ludwig:accessToken` : Un access token de compte ayant le droit de créer des commits sur le dépôt du projet (celui du mainteneur principal par exemple). Un guide est disponible [ici](https://help.github.com/articles/creating-an-access-token-for-command-line-use/). 
+* `ludwig:accessToken` : Un access token de compte ayant le droit de créer des commits sur le dépôt du projet (celui du mainteneur principal par exemple). Un guide est disponible [ici](https://help.github.com/articles/creating-an-access-token-for-command-line-use/).
 _Note : Dans le cas qui nous intéresse pour le jeton d'accès, il faut en créer un avec le scope "repo" et ne pas sélectionner les autres._
 
 Les clientID et clientSecret doivent être créés au préalable par le responsable du dépôt qui sera modifié de sorte à permettre à Ludwig d'accéder au dépôt et d'y faire des modifications.
