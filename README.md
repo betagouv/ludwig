@@ -101,7 +101,7 @@ Un fichier exemple `ludwig-conf-sample.js` est présent à la racine du projet, 
 
 #### Configuration des secrets
 Afin que votre application puisse utiliser les APIs GitHub (et en particulier connecter le contributeur lorsqu'il tente de soumettre un cas de test) votre instance de Ludwig doit être enregistrée.
-Cela se fait par le biais de [cette page](https://github.com/settings/applications/new). Une fois le formulaire présenté rempli et validé, GitHub vous fournira le clientID et le clientSecret dont vous avez besoin.
+Cela se fait par le biais de [cette page](https://github.com/settings/applications/new). Une fois le formulaire présenté rempli et validé, GitHub vous fournira le `clientID` et le `clientSecret` dont vous avez besoin.
 
 _Note : Pour correctement renseigner le champ `Authorization callback URL`, il faut fournir une URL de type `<URI de la machine Ludwig>/github_callback`._
 
