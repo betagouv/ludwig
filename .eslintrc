@@ -6,16 +6,17 @@ rules:
  linebreak-style: [ 2, unix ]
  no-console: 1
  no-irregular-whitespace: 2
+ no-trailing-spaces: 2
  quotes: [ 2, single ]
  semi: [ 2, always ]
  space-before-blocks: 2
 
-parserOptions: 
+parserOptions:
  sourceType: module
 
 env:
  node: true
  browser: true
  commonjs: true
- es6: true	
+ es6: true
 extends: 'eslint:recommended'
