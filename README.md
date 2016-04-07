@@ -67,7 +67,7 @@ L'application peut embarquer le widget directement ou se le faire servir par le 
 
 Une fois cet ajout fait, le widget est disponible sous le nom `Ludwig` (qui est une classe, pour accéder aux fonctionnalités, il faut donc l'instancier en passant par un `new Ludwig(configuration)`, avec `configuration` un objet contenant la configuration du widget telle que définie plus haut).
 
-_Note: Le widget "prêt à servir" à jour est présent dans le répertoire `dist` du module publié.
+_Note : Le widget "prêt à servir" à jour est présent dans le répertoire `dist` du module publié._
 
 ### L'API du widget
 Le widget doit être initialisé avec sa configuration pour les diverses URLs à appeler pour une tâche ou l'autre. La configuration suit la même organisation que celle côté serveur.
@@ -103,14 +103,14 @@ Un fichier exemple `ludwig-conf-sample.js` est présent à la racine du projet, 
 Afin que votre application puisse utiliser les APIs GitHub (et en particulier connecter le contributeur lorsqu'il tente de soumettre un cas de test) votre instance de Ludwig doit être enregistrée.
 Cela se fait par le biais de [cette page](https://github.com/settings/applications/new). Une fois le formulaire présenté rempli et validé, GitHub vous fournira le clientID et le clientSecret dont vous avez besoin.
 
-_Note: Pour correctement renseigner le champ `Authorization callback URL`, il faut fournir une URL de type `<URI de la machine Ludwig>/github_callback`
+_Note : Pour correctement renseigner le champ `Authorization callback URL`, il faut fournir une URL de type `<URI de la machine Ludwig>/github_callback`._
 
 La configuration des clefs d'API GitHub se fait par `npm config`. Il faut enregistrer les clefs suivantes :
 
 * `ludwig:clientID` : Client ID à utiliser pour requêter l'API GitHub
 * `ludwig:clientSecret` : Client Secret à utiliser pour requêter l'API GitHub
 * `ludwig:accessToken` : Un access token de compte ayant le droit de créer des commits sur le dépôt du projet (celui du mainteneur principal par exemple). Un guide est disponible [ici](https://help.github.com/articles/creating-an-access-token-for-command-line-use/). 
-_Note: Dans le cas qui nous intéresse pour le jeton d'accès, il faut en créer un avec le scope "repo" et ne pas sélectionner les autres.
+_Note : Dans le cas qui nous intéresse pour le jeton d'accès, il faut en créer un avec le scope "repo" et ne pas sélectionner les autres._
 
 Les clientID et clientSecret doivent être créés au préalable par le responsable du dépôt qui sera modifié de sorte à permettre à Ludwig d'accéder au dépôt et d'y faire des modifications.
 
