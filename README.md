@@ -119,7 +119,7 @@ Deux autres paramètres sont configurés par clefs de configuration NPM :
 * `ludwig:sessionSecret` : Le secret qui sera utilisé pour signer le cookie de session (et éviter qu'il soit manipulé)
 * `ludwig:AccessControlAllowOrigin` : Le pattern d'URLs autorisées pour une utilisation cross-domain (si le widget et l'application Ludwig sont sur des machines avec des domaines différents)
 
-Pour automatiser l'enregistrement de toutes les clefs de configuration npm, un script est disponible dans `./scripts/setupNPMVariables.sh`. Cela reste partiellement manuel mais aucune clef n'est oubliée et cela devrait éviter les fautes de frappe.
+Pour automatiser l'enregistrement de toutes les clefs de configuration NPM, utilisez `npm run setup`. Cela reste partiellement manuel mais aucune clef n'est oubliée et cela devrait éviter les fautes de frappe.
 
 ### Lancer le serveur Ludwig
 

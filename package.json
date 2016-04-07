@@ -64,6 +64,7 @@
     "qualimetry": "istanbul cover _mocha --dir qualimetry/cover -- --compilers js:babel-core/register -R spec test/* test/batch/*",
     "linting": "eslint ./js ./controllers ./routers ./test ./helpers ./*.js",
     "clean": "rm -rf node_modules && rm -rf dist",
-    "insertTestReportData": "babel-node batch/runner.js"
+    "insertTestReportData": "babel-node batch/runner.js",
+    "setup": "./scripts/setupNPMVariables.sh"
   }
 }
