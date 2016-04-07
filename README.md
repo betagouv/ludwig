@@ -8,7 +8,7 @@ Ludwig minimise le temps passé à proposer des corrections sur une fonctionnali
 
 ## Pour les développeurs
 
-On s'appuie sur Github et ses APIs pour minimiser les outils. Ludwig simplifie la gestion des suggestions en s'appuyant sur les _pull requests_.
+On s'appuie sur GitHub et ses APIs pour minimiser les outils. Ludwig simplifie la gestion des suggestions en s'appuyant sur les _pull requests_.
 
 # De quoi est composé Ludwig?
 
@@ -47,11 +47,11 @@ Pour installer Ludwig et le lancer, vous aurez besoin de :
 
 ### Configurer le widget
 
-Le widget s'instancie avec en unique paramètre un objet contenant les informations nécessaires pour joindre le dépôt Github de votre projet.
+Le widget s'instancie avec en unique paramètre un objet contenant les informations nécessaires pour joindre le dépôt GitHub de votre projet.
 
 #### Détail des entrées de la configuration du widget
 
-* `repo` : L'indicateur du dépôt github de l'application (ex: https://github.com/<strong>sgmap/ludwig</strong>)
+* `repo` : L'indicateur du dépôt GitHub de l'application (ex: https://github.com/<strong>sgmap/ludwig</strong>)
 * `branch` : La branche où créer des nouvelles demandes / où consulter la liste de tests
 * `template` : un template (URLencoded) à utiliser pour remplir le fichier créé avec la suggestion
 * `prefix` : préfixe du fichier qui sera créé lors de la suggestion
