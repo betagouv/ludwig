@@ -2,6 +2,7 @@ rules:
  array-bracket-spacing: [ 2, always ]
  comma-dangle: [ 2, only-multiline ]
  curly: [ 2, all ]
+ eol-last: 2
  indent: [ 2, tab ]
  keyword-spacing: 2
  linebreak-style: [ 2, unix ]
