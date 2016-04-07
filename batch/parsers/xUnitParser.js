@@ -27,7 +27,7 @@ class XUnitParser {
 			location:`${GITHUB_REPO_URL}${this.configuration.repository}${this.configuration.acceptedTestsLocation}/${testCaseXMLObject.classname}`,
 			time:time(testCaseXMLObject.time)
 		};
-		if(testCaseXMLObject.failure) {
+		if (testCaseXMLObject.failure) {
 			testCase.status = 'ko';
 			testCase.message = testCaseXMLObject.failure.message;
 		}
@@ -39,10 +39,10 @@ class XUnitParser {
 		this.readFile(xUnitFilePath, (err, data) => {
 			if (!err) {
 				xml2js.parseString(data, function (err, parsedData) {
-					if(err) {
+					if (err) {
 						callback(err);
 					} else {
-						if(parsedData.testsuite.$.tests !== '0') {
+						if (parsedData.testsuite.$.tests !== '0') {
 							parsedData = from(parsedData);
 							parsedData.suite.timestamp = new Date(parsedData.suite.timestamp).getTime();
 							if (parsedData.suite && parsedData.suite.tests) {
@@ -58,7 +58,7 @@ class XUnitParser {
 									timestamp: `${parsedData.suite.timestamp || self.now.getTime()}`,
 									testCases: testCases
 								};
-								if(!parsedData.suite.timestamp) {
+								if (!parsedData.suite.timestamp) {
 									console.log('Warning : No timestamp was provided for specified test suite, using current system date.');
 								}
 								callback(null, testSuite);

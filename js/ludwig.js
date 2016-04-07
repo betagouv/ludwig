@@ -4,7 +4,7 @@ const GITHUB_URL = 'https://github.com';
 
 class Ludwig {
 	constructor(configuration) {
-		if(!configuration.repo) {
+		if (!configuration.repo) {
 			throw new Error('"repo" field in configuration is mandatory');
 		}
 		this.repo = configuration.repo;
@@ -20,7 +20,7 @@ class Ludwig {
 		if (currentState) {
 			result += `\r\n${JSON.stringify(currentState, null, '\t')}`;
 		}
-		if(expectedResult) {
+		if (expectedResult) {
 			result += `\r\n${JSON.stringify(expectedResult, null, '\t')}`;
 		}
 		return result;
@@ -31,7 +31,7 @@ class Ludwig {
 			return !suggestion || suggestion.length > MAX_URI_LENGTH;
 		}
 
-		if(suggestionURLIsEitherEmptyOrTooLong(suggestionURL)) {
+		if (suggestionURLIsEitherEmptyOrTooLong(suggestionURL)) {
 			return false;
 		}
 		return true;
@@ -42,8 +42,8 @@ class Ludwig {
 	generateSuggestionURL(currentState, expectedResult, customSuggestionFormatter) {
 		let suggestionURL = `${GITHUB_URL}/${this.repo}/new/${this.branch}?filename=${this.generateSuggestionName()}&value=`;
 
-		if(customSuggestionFormatter) {
-			if(typeof customSuggestionFormatter === 'function') {
+		if (customSuggestionFormatter) {
+			if (typeof customSuggestionFormatter === 'function') {
 				suggestionURL+=encodeURIComponent(customSuggestionFormatter(currentState, expectedResult));
 			} else {
 				throw new Error('customSuggestionFormatter expected to be a clojure');
@@ -52,7 +52,7 @@ class Ludwig {
 			suggestionURL+=encodeURIComponent(this.defaultSuggestionFormatter(currentState, expectedResult));
 		}
 
-		if(!this.validateSuggestionURL(suggestionURL)) {
+		if (!this.validateSuggestionURL(suggestionURL)) {
 			throw new Error('Resulting URI is invalid. It\'s either too long for GitHub (you probably want to use Ludwig\'s WS in that case), or empty (check with the developer of your service)');
 		}
 		return suggestionURL;

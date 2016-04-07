@@ -6,14 +6,14 @@ class HistoryController {
 	}
 
 	getTestsService() {
-		if(!this.testsService) {
+		if (!this.testsService) {
 			this.testsService = new TestsService(config.mongo);
 		}
 		return this.testsService;
 	}
 
 	collectTestHistoryDataForTest(testName, callback) {
-		if(testName) {
+		if (testName) {
 			this.getTestsService().getTestHistoryByName(testName, (err, data) => {
 				let testList = [];
 				if (!err) {

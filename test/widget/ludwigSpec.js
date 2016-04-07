@@ -31,7 +31,7 @@ describe('Widget : Sugestion link retrieval', () => {
 		it('should throw an error if mandatory "repo" config field seems to be empty', () => {
 			//setup
 			//action
-			try{
+			try {
 				ludwig = new Ludwig({});
 				assert.fail('constructor without repo field in configuration should throw an error');
 			} catch (error) {

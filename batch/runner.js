@@ -7,7 +7,7 @@ const collector = new TestResultsCollector(configuration);
 const filePath = process.argv[2];
 if (filePath) {
 	fs.stat(filePath, (err, stat)  => {
-		if(!err && stat.isFile()) {
+		if (!err && stat.isFile()) {
 			collector.saveFromXUnitData(filePath, (err, data) => {
 				if (err) {
 					console.error('Something wrong happened');

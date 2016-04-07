@@ -19,7 +19,7 @@ var config = {
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, '/dist')));
 
-if(!process.env.npm_config_ludwig_sessionSecret) {
+if (!process.env.npm_config_ludwig_sessionSecret) {
 	console.err('Session secret not defined! Ludwig server will not start until this is fixed!');
 	process.exit(1);
 }
@@ -44,7 +44,7 @@ app.use('/', require('./routers/main'));
 
 app.listen(config.port, config.ip, function () {
 	console.log('Express server listening on %s:%d, in %s mode', config.ip, config.port, app.get('env'));
-	if(process.env.NODE_ENV === 'development') {
+	if (process.env.NODE_ENV === 'development') {
 		console.info('CAUTION : Test features are enabled. If you are trying to run a production instance, you should probably disable this by setting the appropriate environment (by setting the NODE_ENV environment variable to "production", for example)');
 	}
 });

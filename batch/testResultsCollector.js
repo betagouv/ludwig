@@ -20,7 +20,7 @@ class TestResultsCollector {
 			});
 
 			testSuite.save((err, testSuiteSavedData) => {
-				if(!err) {
+				if (!err) {
 					TestCaseModel.collection.insert(parsedTestSuiteData.testCases, (err, testCases) => {
 						if (!err) {
 							testSuite.testCases = testCases.ops;
