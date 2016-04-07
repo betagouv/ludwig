@@ -51,11 +51,11 @@ Le widget s'instancie avec en unique paramètre un objet contenant les informati
 
 #### Détail des entrées de la configuration du widget
 
-* `repo` : L'indicateur du dépôt GitHub de l'application (ex: https://github.com/<strong>sgmap/ludwig</strong>)
-* `branch` : La branche où créer des nouvelles demandes / où consulter la liste de tests
-* `template` : un template à utiliser pour remplir le fichier créé avec la suggestion
-* `prefix` : préfixe du fichier qui sera créé lors de la suggestion
-* `ludwigCreateSuggestionURL` : l'URL Ludwig à joindre pour créer une suggestion en passant par les APIs authentifiées GitHub
+* `repo` : identifiant du dépôt GitHub de l'application (ex : https://github.com/<strong>sgmap/ludwig</strong>).
+* `branch` : branche dans laquelle créer des nouvelles demandes et consulter la liste de tests.
+* `template` : contenu par défaut du fichier créé avec la suggestion.
+* `prefix` : préfixe du fichier qui sera créé lors de la suggestion.
+* `ludwigCreateSuggestionURL` : l'URL Ludwig à joindre pour créer une suggestion en passant par les APIs authentifiées GitHub.
 
 ### Ajouter le widget
 
