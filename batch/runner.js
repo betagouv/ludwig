@@ -8,7 +8,7 @@ const filePath = process.argv[2];
 if (filePath) {
 	fs.stat(filePath, (err, stat)  => {
 		if(!err && stat.isFile()) {
-			collector.saveFromXUnitData(filePath, (err, data) => {
+			collector.saveFromXUnitData(filePath, (err) => {
 				if (err) {
 					console.error('Something wrong happened');
 					console.error(err);
