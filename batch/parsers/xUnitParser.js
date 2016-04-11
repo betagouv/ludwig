@@ -27,7 +27,8 @@ class XUnitParser {
 			location: `${GITHUB_REPO_URL}${this.configuration.repository}${this.configuration.acceptedTestsLocation}/${testCaseXMLObject.classname}`,
 			time: time(testCaseXMLObject.time)
 		};
-		if(testCaseXMLObject.failure) {
+
+		if (testCaseXMLObject.failure) {
 			testCase.status = 'ko';
 			testCase.message = testCaseXMLObject.failure.message;
 		}
