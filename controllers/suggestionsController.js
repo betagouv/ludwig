@@ -12,12 +12,13 @@ class SuggestionsController {
 	}
 
 	/*
-	 This function chains 3 github API calls in order to create a pull request
-	 Right now this lacks error management (it assumes everything goes well from one call to another ... which will probably not be the case at the start)
+	 This function chains 4 github API calls in order to create a pull request
 	 @param accessToken: A valid accessToken to access the github API
 	 @param title: (string) Will be used as a title for the pull request creation
+	 @param description: (urlencoded JSON string) The state we want to record
 	 @param state: (urlencoded JSON string) The state we want to record
 	 @param res: An expressjs Response object to get back to the user
+	 @param branchToCreatePullRequestsTo: the branch to create a pull request for
 	 */
 	createPullRequest(accessToken, title, description, state, res, branchToCreatePullRequestsTo) {
 		const now = (new Date()).getTime();
