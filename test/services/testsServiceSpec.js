@@ -21,13 +21,99 @@ describe('TestsService', () => {
 			} ]);
 	});
 
+	describe('getMostRecentTestSuite', () => {
+		let callbackSpy;
+		const stubbedModel = {
+			find: () => {
+				const find = () => {
+				};
+				find.sort = () => {
+					const sort = () => {
+					};
+					sort.populate = () => {
+						const populate = () => {
+						};
+						populate.exec = (callback) => {
+							callback(null, [ {testCases: [ {author: {name: 'foo'}}, {author: {name: 'bar'}} ] } ]);
+						};
+						return populate;
+					};
+					return sort;
+				};
+				return find;
+			}
+		};
+
+
+		beforeEach( () => {
+			callbackSpy = sinon.spy();
+		});
+
+		it('should not filter results if nameToFilterWith is empty', () => {
+			//setup
+			sinon.stub(testsService, 'testSuiteModel', {
+				get: () => {
+					return stubbedModel;
+				}
+			});
+			//action
+			testsService.getMostRecentTestSuite('', callbackSpy);
+			//assert
+			assert.equal(callbackSpy.calledOnce, true);
+			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testCases: [ {author: {name: 'foo'}}, {author: {name: 'bar'}} ]} ]);
+		});
+
+		it('should not filter results if nameToFilterWith is null', () => {
+			//setup
+			sinon.stub(testsService, 'testSuiteModel', {
+				get: () => {
+					return stubbedModel;
+				}
+			});
+			//action
+			testsService.getMostRecentTestSuite(null, callbackSpy);
+			//assert
+			assert.equal(callbackSpy.calledOnce, true);
+			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testCases: [ {author: {name: 'foo'}}, {author: {name: 'bar'}} ]} ]);
+		});
+
+		it('should only show testCases by "foo" if nameToFilterWith equals foo and there is a testCase where "foo" is an author', () => {
+			//setup
+			sinon.stub(testsService, 'testSuiteModel', {
+				get: () => {
+					return stubbedModel;
+				}
+			});
+			//action
+			testsService.getMostRecentTestSuite('foo', callbackSpy);
+			//assert
+			assert.equal(callbackSpy.calledOnce, true);
+			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testCases: [ {author: {name: 'foo'}} ]} ]);
+		});
+
+		it('should return an empty test case list if nameToFilterWith equals foobar and there no testCase where "foobar" is an author', () => {
+			//setup
+			sinon.stub(testsService, 'testSuiteModel', {
+				get: () => {
+					return stubbedModel;
+				}
+			});
+			//action
+			testsService.getMostRecentTestSuite('foobar', callbackSpy);
+			//assert
+			assert.equal(callbackSpy.calledOnce, true);
+			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testCases: [  ]} ]);
+		});
+	});
+
 	describe('getTestHistoryByName', () => {
 		const testCaseModel = {
 			find: () => {
 				const find = () => {
 				};
 				find.sort = () => {
-					const sort = () => {};
+					const sort = () => {
+					};
 					sort.exec = (callback) => {
 						callback(null, [ {timestamp: 0} ]);
 					};

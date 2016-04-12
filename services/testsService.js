@@ -6,12 +6,23 @@ class TestsService {
 	constructor() {
 	}
 
-	getMostRecentTestSuite(callback) {
-		TestSuiteModel.find({})
+	get testSuiteModel() {
+		return TestSuiteModel;
+	}
+
+	getMostRecentTestSuite(nameToFilterWith, callback) {
+		this.testSuiteModel.find({})
 			.sort({timestamp: -1})
 			.populate('testCases')
 			.exec((err, data) => {
-				callback(err, data[0]);
+				const testSuite = data[0];
+				if (nameToFilterWith) {
+					const filteredTests = testSuite.testCases.filter((testCase) => {
+						return testCase.author.name === nameToFilterWith;
+					});
+					testSuite.testCases = filteredTests;
+				}
+				callback(err, testSuite);
 			});
 	}
 
@@ -26,7 +37,7 @@ class TestsService {
 				const enrichedData = this.addFormattedTimestamps(data);
 				callback(err, enrichedData);
 			});
-	};
+	}
 
 	addFormattedTimestamps(testCaseList) {
 		testCaseList.forEach((testCase) => {
@@ -35,7 +46,7 @@ class TestsService {
 			testCase.formattedTimestamp = moment(date).format('DD/MM/YYYY à hh:mm:ss');
 		});
 		return testCaseList;
-	};
+	}
 }
 
 export {TestsService};

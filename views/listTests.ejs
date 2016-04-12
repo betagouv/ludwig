@@ -14,8 +14,15 @@
     <% if (testSuite) { %>
     <div class="bs-example" data-example-id="table-within-panel">
         <div class="panel panel-default">
-            <div class="panel-heading">Les tests pour la campagne "<%= testSuite.name %>" réalisés
+            <div class="panel-heading"><div style="width:100%">Les tests pour la campagne "<%= testSuite.name %>" réalisés
                 le <%= formattedTimestamp %></div>
+
+                <%if(!mine){%>
+                <button class="btn btn-default" onclick="window.location = '/listTestsConnected'">Voir seulement mes tests (login GitHub requis)</button>
+                <%} else {%>
+                <button class="btn btn-default" onclick="window.location = '/listTests'">Voir tous les tests</button>
+                <%}%>
+            </div>
             <div class="panel-body"><p>
                     Nombre total de tests : <%= testSuite.testCases.length %>
                 </p>
@@ -27,6 +34,7 @@
                 <tr>
                     <th>Statut</th>
                     <th>Nom du test</th>
+                    <th>Auteur du test</th>
                     <th>Temps</th>
                     <th>Historique</th>
                 </tr>
@@ -40,7 +48,7 @@
                         </p>
                     </td>
                     <td>
-                        <div><a href="<%= testCase.location %>"><%= testCase.name %></a></div>
+                        <div><a href="<%= testCase.url %>"><%= testCase.name %></a></div>
                         <% if(testCase.status === 'ko') { %>
                         <div class="alert alert-danger"><span class="failureDetailsTitle">Détails de l'erreur</span>
                             <p>
@@ -48,6 +56,7 @@
                             </p></div>
                         <% } %>
                     </td>
+                    <td><%= testCase.author.name %></td>
                     <td>
                         <p style="text-align:right">
                         <%= testCase.time %>s

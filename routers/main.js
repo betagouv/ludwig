@@ -4,15 +4,14 @@ import passport from 'passport';
 import GithubStrategy from 'passport-github';
 import {SuggestionsController} from '../controllers/suggestionsController';
 const Strategy = GithubStrategy.Strategy;
-import {TestsService} from '../services/testsService';
-import moment from 'moment';
 
 import config from '../ludwig-conf.js';
 
-const testsService = new TestsService();
-
 import {HistoryController} from '../controllers/historyController';
 const historyController = new HistoryController();
+import {ListTestsController} from '../controllers/listTestsController';
+const listTestsController = new ListTestsController();
+
 
 passport.serializeUser((user, done) => {
 	done(null, user);
@@ -44,29 +43,40 @@ router.get('/createSuggestion',
 		req.session.title = req.query.title;
 		req.session.description = req.query.description;
 		req.session.state = req.query.state;
+		req.session.originalUrl = '/createSuggestion';
 		next();
 	},
 	passport.authenticate('github', {scope: [ 'repo' ]}));
 
 router.get('/github_callback', passport.authenticate('github', {failureRedirect: '/authKO'}), (req, res) => {
 	const suggestionsController = new SuggestionsController();
-	suggestionsController.createPullRequest(process.env.npm_config_ludwig_accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branchToCreatePullRequestsFor);
+	if (req.session.originalUrl === '/createSuggestion') {
+		suggestionsController.createPullRequest(process.env.npm_config_ludwig_accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branchToCreatePullRequestsFor);
+	} else {
+		res.redirect(req.session.originalUrl);
+	}
 });
+
+router.get('/listTestsConnected', (req, res, next) => {
+	req.session.originalUrl = '/listTests?filter=mine';
+	if(req.session.passport) {
+		res.redirect('/listTests?filter=mine');
+	} else {
+		next();
+	}
+}, passport.authenticate('github', {scope: [ 'repo' ]}));
 
 
 router.get('/listTests', (req, res) => {
-	testsService.getMostRecentTestSuite((err, mostRecentTestSuite) => {
+	let nameFilter = null;
+	const myTestsOnly = listTestsController.filterMine(req.query['filter'], req.session.passport);
+	if (myTestsOnly) {
+		nameFilter = req.session.passport.user.displayName;
+	}
+	listTestsController.showLatestTestSuite(nameFilter, (err, renderParams) => {
 		if (!err) {
-			if (mostRecentTestSuite) {
-				var date = new Date();
-				date.setTime(mostRecentTestSuite.timestamp);
-				res.render('listTests', {
-					testSuite: mostRecentTestSuite,
-					formattedTimestamp: moment(date).format('YYYY/MM/DD à HH:mm:ss')
-				});
-			} else {
-				res.render('listTests', {testSuite: null});
-			}
+			renderParams.mine = myTestsOnly;
+			res.render('listTests', renderParams);
 		} else {
 			res.render('ko');
 		}
