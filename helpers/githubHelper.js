@@ -149,12 +149,12 @@ class GithubHelper {
 		const anteChronologicalOrder = (firstCommit, secondCommit) => {
 			const firstDate = new Date(firstCommit.commit.author.date);
 			const secondDate = new Date(secondCommit.commit.author.date);
-
-			return secondDate.getTime()-firstDate.getTime();
+			return firstDate.getTime()-secondDate.getTime();
 		};
 		return new Promise( (resolve, reject) => {
 			this.agent
-				.get(this.config.commitsEndpoint+'?path='+fileName)
+			//not a big fan of this (even if it's server to server comms over https) ... but it allows a higher GitHub API limit
+				.get(this.config.commitsEndpoint+'?path='+fileName+`&client_id=${process.env.npm_config_ludwig_clientID}&client_secret=${process.env.npm_config_ludwig_clientSecret}`)
 				.end( (err, response) => {
 					if(!err) {
 						response.body.sort( anteChronologicalOrder );

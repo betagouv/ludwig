@@ -24,7 +24,8 @@ class XUnitParser {
 			name: testCaseXMLObject.name,
 			status: 'ok',
 			timestamp: `${parsedData.suite.timestamp}`,
-			location: `${GITHUB_REPO_URL}${this.configuration.repository}${this.configuration.acceptedTestsLocation}/${testCaseXMLObject.classname}`,
+			url: `${GITHUB_REPO_URL}${this.configuration.repository}/tree/${this.configuration.github.branchToCreatePullRequestsFor}/${testCaseXMLObject.classname}`,
+			location:testCaseXMLObject.classname,
 			time: time(testCaseXMLObject.time)
 		};
 
