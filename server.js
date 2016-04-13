@@ -49,4 +49,4 @@ app.listen(config.port, config.ip, function () {
 	}
 });
 
-exports = module.exports = app;
+module.exports = app;
