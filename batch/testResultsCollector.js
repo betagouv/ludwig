@@ -19,7 +19,7 @@ class TestResultsCollector {
 				timestamp: parsedTestSuiteData.timestamp
 			});
 
-			testSuite.save((err, testSuiteSavedData) => {
+			testSuite.save((err) => {
 				if (!err) {
 					TestCaseModel.collection.insert(parsedTestSuiteData.testCases, (err, testCases) => {
 						if (!err) {

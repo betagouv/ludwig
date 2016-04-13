@@ -1,6 +1,6 @@
 import {GithubHelper} from '../helpers/githubHelper';
-const FILE_NAME_PREFIX = 'suggestion';
-const BRANCH_PREFIX = 'suggestion';
+const FILE_NAME_PREFIX = 'suggestion_';
+const BRANCH_PREFIX = 'ludwig-';
 const _githubHelper = new GithubHelper();
 
 class SuggestionsController {

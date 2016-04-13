@@ -20,7 +20,7 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, '/dist')));
 
 if (!process.env.npm_config_ludwig_sessionSecret) {
-	console.err('Session secret not defined! Ludwig server will not start until this is fixed!');
+	console.error('Session secret not defined! Ludwig server will not start until this is fixed!');
 	process.exit(1);
 }
 
@@ -49,4 +49,4 @@ app.listen(config.port, config.ip, function () {
 	}
 });
 
-exports = module.exports = app;
+module.exports = app;
