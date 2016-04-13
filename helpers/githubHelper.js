@@ -39,7 +39,7 @@ class GithubHelper {
 				.send(this.createPullRequestRequestBody(head, title, body, configuration.github.branch))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createPRResult) => {
-					if(err) {
+					if (err) {
 						reject({message:err.message, details:err});
 					} else {
 						resolve(createPRResult);
@@ -60,7 +60,7 @@ class GithubHelper {
 			return authorData && authorData.username && Array.isArray(authorData.emails) && authorData.emails.length;
 		}
 
-		if(authorDataContainsRequiredInformation()) {
+		if (authorDataContainsRequiredInformation()) {
 			const author = {
 				name:authorData.username,
 				email:authorData.emails[ 0 ].value
@@ -77,7 +77,7 @@ class GithubHelper {
 				.send(this.createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents, authorData))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createCommitResult) => {
-					if(err) {
+					if (err) {
 						console.error(err);
 						reject({message:err.message, details:err});
 					} else {
@@ -102,7 +102,7 @@ class GithubHelper {
 				.send(this.createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createReferenceResult) => {
-					if(err) {
+					if (err) {
 						console.error(err);
 						reject({message:err.message, details:err});
 					} else {
@@ -117,7 +117,7 @@ class GithubHelper {
 			this.agent
 				.get(this.config.referencesEndpoint)
 				.end((err, response) => {
-					if(err) {
+					if (err) {
 						reject({message: 'Not able to retrieve references', details: err && err.message});
 					} else {
 						const responseBody = response.body;
