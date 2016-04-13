@@ -17,7 +17,7 @@ class ListTestsController {
 					date.setTime(mostRecentTestSuite.timestamp);
 					callback(null, {
 						testSuite: mostRecentTestSuite,
-						formattedTimestamp: moment(date).format('YYYY/MM/DD à HH:mm:ss')
+						formattedTimestamp: moment(date).format('DD/MM/YYYY à HH:mm:ss')
 					});
 				} else {
 					callback(null, {testSuite: null});
