@@ -36,7 +36,7 @@ class GithubHelper {
 		return new Promise( (resolve, reject) => {
 			this.agent
 				.post(this.config.createPullRequest)
-				.send(this.createPullRequestRequestBody(head, title, body, configuration.github.branchToCreatePullRequestsFor))
+				.send(this.createPullRequestRequestBody(head, title, body, configuration.github.branch))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createPRResult) => {
 					if(err) {

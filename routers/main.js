@@ -50,7 +50,7 @@ router.get('/createSuggestion',
 
 router.get('/github_callback', passport.authenticate('github', {failureRedirect: '/authKO'}), (req, res) => {
 	const suggestionsController = new SuggestionsController();
-	suggestionsController.createPullRequest(process.env.npm_config_ludwig_accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branchToCreatePullRequestsFor);
+	suggestionsController.createPullRequest(process.env.npm_config_ludwig_accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branch);
 });
 
 router.get('/', (req, res) => {
