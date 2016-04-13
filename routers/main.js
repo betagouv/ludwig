@@ -53,6 +53,9 @@ router.get('/github_callback', passport.authenticate('github', {failureRedirect:
 	suggestionsController.createPullRequest(process.env.npm_config_ludwig_accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branchToCreatePullRequestsFor);
 });
 
+router.get('/', (req, res) => {
+	res.redirect('/listTests');
+});
 
 router.get('/listTests', (req, res) => {
 	testsService.getMostRecentTestSuite((err, mostRecentTestSuite) => {
