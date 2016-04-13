@@ -140,7 +140,7 @@ describe('testResultsCollector', () => {
 			});
 			sinon.stub(testResultsCollector, 'githubHelper', {
 				get:() => {
-					return {getFirstCommitForFile:sinon.stub().returns(Promise.resolve({commit:{}}))};
+					return {getFirstCommitForFile:sinon.stub().returns(Promise.resolve({commit:{author:{foo:'bar'}}, author:{id:1234}}))};
 				}
 			});
 			const testSuiteSave = sinon.stub().yields(null, {some:'data'});
@@ -169,9 +169,9 @@ describe('testResultsCollector', () => {
 				get:() => {
 					return {getFirstCommitForFile:(location) => {
 						if(location === 'location1') {
-							return Promise.resolve({commit:{author:{name:'author1', email:'author1@mail.com'}}});
+							return Promise.resolve({commit:{author:{name:'author1', email:'author1@mail.com'}}, author:{id:1233}});
 						} else {
-							return Promise.resolve({commit:{author:{name:'author2', email:'author2@mail.com'}}});
+							return Promise.resolve({commit:{author:{name:'author2', email:'author2@mail.com'}}, author:{id:1234}});
 						}
 					}};
 				}
@@ -190,12 +190,14 @@ describe('testResultsCollector', () => {
 				assert.equal(stubbedTestSuiteModel.testCases[0].location, 'location1');
 				assert.deepEqual(stubbedTestSuiteModel.testCases[0].author, {
 					name: 'author1',
-					email: 'author1@mail.com'
+					email: 'author1@mail.com',
+					githubId:1233
 				});
 				assert.equal(stubbedTestSuiteModel.testCases[1].location, 'location2');
 				assert.deepEqual(stubbedTestSuiteModel.testCases[1].author, {
 					name: 'author2',
-					email: 'author2@mail.com'
+					email: 'author2@mail.com',
+					githubId:1234
 				});
 				done();
 			});

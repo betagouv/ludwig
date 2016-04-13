@@ -10,15 +10,15 @@ class TestsService {
 		return TestSuiteModel;
 	}
 
-	getMostRecentTestSuite(nameToFilterWith, callback) {
+	getMostRecentTestSuite(userIdToFilterWith, callback) {
 		this.testSuiteModel.find({})
 			.sort({timestamp: -1})
 			.populate('testCases')
 			.exec((err, data) => {
 				const testSuite = data[0];
-				if (nameToFilterWith) {
+				if (userIdToFilterWith) {
 					const filteredTests = testSuite.testCases.filter((testCase) => {
-						return testCase.author.name === nameToFilterWith;
+						return testCase.author.githubId === userIdToFilterWith;
 					});
 					testSuite.testCases = filteredTests;
 				}

@@ -45,6 +45,7 @@ class TestResultsCollector {
 			Promise.all(testCasePromises).then( (values) => {
 				parsedTestSuiteData.testCases.forEach( (value, index) => {
 					value.author = values[index].commit.author;
+					value.author.githubId = values[index].author.id;
 				});
 				testSuiteModel.save((err) => {
 					if (!err) {

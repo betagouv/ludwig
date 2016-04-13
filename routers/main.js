@@ -68,12 +68,12 @@ router.get('/listTestsConnected', (req, res, next) => {
 
 
 router.get('/listTests', (req, res) => {
-	let nameFilter = null;
+	let userIdFIlter = null;
 	const myTestsOnly = listTestsController.filterMine(req.query['filter'], req.session.passport);
 	if (myTestsOnly) {
-		nameFilter = req.session.passport.user.displayName;
+		userIdFIlter = req.session.passport.user.id;
 	}
-	listTestsController.showLatestTestSuite(nameFilter, (err, renderParams) => {
+	listTestsController.showLatestTestSuite(userIdFIlter, (err, renderParams) => {
 		if (!err) {
 			renderParams.mine = myTestsOnly;
 			res.render('listTests', renderParams);

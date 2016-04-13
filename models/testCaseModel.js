@@ -7,6 +7,6 @@ const TestCaseModel = mongoose.model('TestCase', {
 	location: String,
 	message: String,
 	time: Number,
-	author: {name:String, email:String}
+	author: {name:String, email:String, githubId:String}
 });
 export {TestCaseModel};

@@ -71,10 +71,10 @@ describe('ListTestsController', () => {
 			//assert
 			assert.equal(actual, false);
 		});
-		it('should return true if passport data contains GitHUb displayName, and filter is "mine"', () => {
+		it('should return true if passport data contains GitHUb id, and filter is "mine"', () => {
 			//setup
 			//action
-			const actual = listTestsController.filterMine('mine', {user:{displayName:'john doe'}});
+			const actual = listTestsController.filterMine('mine', {user:{id:'1234'}});
 			//assert
 			assert.equal(actual, true);
 		});

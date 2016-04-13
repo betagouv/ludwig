@@ -9,8 +9,8 @@ class ListTestsController {
 	get testsService() {
 		return testsService;
 	}
-	showLatestTestSuite(userNameFilter, callback) {
-		this.testsService.getMostRecentTestSuite(userNameFilter, (err, mostRecentTestSuite) => {
+	showLatestTestSuite(userIdFIlter, callback) {
+		this.testsService.getMostRecentTestSuite(userIdFIlter, (err, mostRecentTestSuite) => {
 			if (!err) {
 				if (mostRecentTestSuite) {
 					var date = new Date();
@@ -29,7 +29,7 @@ class ListTestsController {
 	}
 
 	filterMine(filterName, sessionData) {
-		return (typeof(sessionData) !== 'undefined' && sessionData !== null && filterName === 'mine' && sessionData.user.displayName.length > 0);
+		return (typeof(sessionData) !== 'undefined' && sessionData !== null && filterName === 'mine' && sessionData.user.id.length > 0);
 	}
 }
 

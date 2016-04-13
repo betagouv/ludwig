@@ -34,7 +34,7 @@ describe('TestsService', () => {
 						const populate = () => {
 						};
 						populate.exec = (callback) => {
-							callback(null, [ {testCases: [ {author: {name: 'foo'}}, {author: {name: 'bar'}} ] } ]);
+							callback(null, [ {testCases: [ {author: {githubId: 'foo'}}, {author: {githubId: 'bar'}} ] } ]);
 						};
 						return populate;
 					};
@@ -60,7 +60,7 @@ describe('TestsService', () => {
 			testsService.getMostRecentTestSuite('', callbackSpy);
 			//assert
 			assert.equal(callbackSpy.calledOnce, true);
-			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testCases: [ {author: {name: 'foo'}}, {author: {name: 'bar'}} ]} ]);
+			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testCases: [ {author: {githubId: 'foo'}}, {author: {githubId: 'bar'}} ]} ]);
 		});
 
 		it('should not filter results if nameToFilterWith is null', () => {
@@ -74,7 +74,7 @@ describe('TestsService', () => {
 			testsService.getMostRecentTestSuite(null, callbackSpy);
 			//assert
 			assert.equal(callbackSpy.calledOnce, true);
-			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testCases: [ {author: {name: 'foo'}}, {author: {name: 'bar'}} ]} ]);
+			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testCases: [ {author: {githubId: 'foo'}}, {author: {githubId: 'bar'}} ]} ]);
 		});
 
 		it('should only show testCases by "foo" if nameToFilterWith equals foo and there is a testCase where "foo" is an author', () => {
@@ -88,7 +88,7 @@ describe('TestsService', () => {
 			testsService.getMostRecentTestSuite('foo', callbackSpy);
 			//assert
 			assert.equal(callbackSpy.calledOnce, true);
-			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testCases: [ {author: {name: 'foo'}} ]} ]);
+			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testCases: [ {author: {githubId: 'foo'}} ]} ]);
 		});
 
 		it('should return an empty test case list if nameToFilterWith equals foobar and there no testCase where "foobar" is an author', () => {
