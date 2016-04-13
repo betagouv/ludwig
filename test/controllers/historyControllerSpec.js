@@ -7,7 +7,7 @@ import sinon from 'sinon';
 describe('HistoryController', () => {
 	let historyController = null;
 	beforeEach(() => {
-		historyController = new HistoryController();
+		historyController = new HistoryController({});
 	});
 	it('should callback w/ an error message if no name is specified', () => {
 		//setup

@@ -8,7 +8,7 @@ describe('Github Helper', () => {
 	let githubHelper;
 
 	beforeEach(() => {
-		githubHelper = new GithubHelper();
+		githubHelper = new GithubHelper({github:{}});
 	});
 
 	describe('createPullRequestRequestBody', () => {

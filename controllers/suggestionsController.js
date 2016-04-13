@@ -1,14 +1,17 @@
 import {GithubHelper} from '../helpers/githubHelper';
 const FILE_NAME_PREFIX = 'suggestion_';
 const BRANCH_PREFIX = 'ludwig-';
-const _githubHelper = new GithubHelper();
 
 class SuggestionsController {
-	constructor() {
+	constructor(configuration) {
+		this._configuration = configuration;
 	}
 
 	get githubHelper() {
-		return _githubHelper;
+		if (!this._githubHelper) {
+			this._githubHelper = new GithubHelper(this._configuration);
+		}
+		return this._githubHelper;
 	}
 
 	/*
