@@ -90,7 +90,7 @@ Le fichier de configuration utilisé par l'application se trouve à la racine. I
 
 Un fichier exemple `ludwig-conf-sample.js` est présent à la racine du projet, renommé en `ludwig-conf.js` et édité pour y mettre les informations correspondant à votre dépôt / votre base de données il devrait permettre à votre instance de se lancer et de communiquer avec les APIs GitHub.
 
-* `repository`: Le dépôt GitHub où sont versionnés les tests (sous la forme `<utilisateur>/<nom du dépôt>`
+* `repo`: Le dépôt GitHub où sont versionnés les tests (sous la forme `<utilisateur>/<nom du dépôt>`
 * `acceptedTestsLocation`: Le chemin dans le dép&ot GitHub où trouver le répertoire contenant les tests (ex: `/treee/master/tests` si le répertoire `tests` est à la racine du dépôt et que c'est celui que l'on souhaite utiliser)
 * `github`:
     * `branchToCreatePullRequestsFor`: La branche de travail (par défaut : master)
