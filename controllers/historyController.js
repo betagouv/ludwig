@@ -19,8 +19,8 @@ class HistoryController {
 				if (!err) {
 					testList = data;
 				}
-				const location = testList[0] ? testList[0].location : 'N/A';
-				callback(null, {testLocation: location, testList: testList, testName: testName});
+				
+				callback(null, {testURL: testList[0] && testList[0].url, testList: testList, testName: testName});
 			});
 		} else {
 			callback({message:'No test name'});

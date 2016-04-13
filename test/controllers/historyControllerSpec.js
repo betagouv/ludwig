@@ -19,7 +19,7 @@ describe('HistoryController', () => {
 		assert.deepEqual(callbackSpy.getCall(0).args, [ {message: 'No test name'} ]);
 	});
 
-	it('should callback with an empty test list and testLocation that is "N/A" if no history was found', () => {
+	it('should callback with an empty test list and testLocation that is undefined if no history was found', () => {
 		//setup
 		const callbackSpy = sinon.spy();
 		sinon.stub(historyController, 'getTestsService').returns({
@@ -30,7 +30,7 @@ describe('HistoryController', () => {
 		//assert
 		assert.equal(callbackSpy.calledOnce, true);
 		assert.deepEqual(callbackSpy.getCall(0).args, [ null, {
-			testLocation: 'N/A',
+			testURL: undefined,
 			testList: [],
 			testName: 'some test name'
 		} ]);
@@ -43,7 +43,7 @@ describe('HistoryController', () => {
 			getTestHistoryByName: sinon.stub().yields(null, [ {
 				name: 'some test name',
 				timestamp: 1,
-				location: 'test location'
+				url: 'test location'
 			} ])
 		});
 		//action
@@ -51,8 +51,8 @@ describe('HistoryController', () => {
 		//assert
 		assert.equal(callbackSpy.calledOnce, true);
 		assert.deepEqual(callbackSpy.getCall(0).args, [ null, {
-			testLocation: 'test location',
-			testList: [ {'location': 'test location', name: 'some test name', timestamp: 1} ],
+			testURL: 'test location',
+			testList: [ {url: 'test location', name: 'some test name', timestamp: 1} ],
 			testName: 'some test name'
 		} ]);
 	});
