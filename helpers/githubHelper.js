@@ -1,17 +1,17 @@
 'use strict';
 import superAgent from 'superagent';
-import configuration from '../ludwig-conf';
 
 const GITHUB_API_REPO_URL_PREFIX = 'https://api.github.com/repos/';
 
 class GithubHelper {
-	constructor() {
+	constructor(configuration) {
 		this.githubConfig = {
-			referencesEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/git/refs`,
-			createContent: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/contents/`,
-			createPullRequest: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/pulls`,
-			repository:configuration.repository,
-			commitsEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/commits`
+			referencesEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/git/refs`,
+			createContent: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/contents/`,
+			createPullRequest: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/pulls`,
+			commitsEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/commits`,
+			repository:configuration.repo,
+			github: configuration.github
 		};
 	}
 
@@ -34,13 +34,14 @@ class GithubHelper {
 	}
 
 	createPullRequest(head, title, body, accessToken) {
+		const self = this;
 		return new Promise( (resolve, reject) => {
 			this.agent
 				.post(this.config.createPullRequest)
-				.send(this.createPullRequestRequestBody(head, title, body, configuration.github.branchToCreatePullRequestsFor))
+				.send(this.createPullRequestRequestBody(head, title, body, self.githubConfig.github.branch))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createPRResult) => {
-					if(err) {
+					if (err) {
 						reject({message:err.message, details:err});
 					} else {
 						resolve(createPRResult);
@@ -61,7 +62,7 @@ class GithubHelper {
 			return authorData && authorData.username && Array.isArray(authorData.emails) && authorData.emails.length;
 		}
 
-		if(authorDataContainsRequiredInformation()) {
+		if (authorDataContainsRequiredInformation()) {
 			const author = {
 				name:authorData.username,
 				email:authorData.emails[ 0 ].value
@@ -78,7 +79,7 @@ class GithubHelper {
 				.send(this.createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents, authorData))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createCommitResult) => {
-					if(err) {
+					if (err) {
 						console.error(err);
 						reject({message:err.message, details:err});
 					} else {
@@ -103,7 +104,7 @@ class GithubHelper {
 				.send(this.createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createReferenceResult) => {
-					if(err) {
+					if (err) {
 						console.error(err);
 						reject({message:err.message, details:err});
 					} else {
@@ -118,7 +119,7 @@ class GithubHelper {
 			this.agent
 				.get(this.config.referencesEndpoint)
 				.end((err, response) => {
-					if(err) {
+					if (err) {
 						reject({message: 'Not able to retrieve references', details: err && err.message});
 					} else {
 						const responseBody = response.body;
@@ -144,7 +145,7 @@ class GithubHelper {
 				});
 		});
 	}
-	
+
 	getFirstCommitForFile(fileName) {
 		const anteChronologicalOrder = (firstCommit, secondCommit) => {
 			const firstDate = new Date(firstCommit.commit.author.date);
@@ -156,7 +157,7 @@ class GithubHelper {
 			//not a big fan of this (even if it's server to server comms over https) ... but it allows a higher GitHub API limit
 				.get(this.config.commitsEndpoint+'?path='+fileName+`&client_id=${process.env.npm_config_ludwig_clientID}&client_secret=${process.env.npm_config_ludwig_clientSecret}`)
 				.end( (err, response) => {
-					if(!err) {
+					if (!err) {
 						response.body.sort( anteChronologicalOrder );
 						resolve(response.body[0]);
 					} else {

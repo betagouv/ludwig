@@ -62,8 +62,9 @@
     "start": "babel-node server.js",
     "test": "mocha --compilers js:babel-core/register --recursive ./test/",
     "qualimetry": "istanbul cover _mocha --dir qualimetry/cover -- --compilers js:babel-core/register -R spec test/* test/batch/*",
-    "linting": "eslint ./js ./controllers ./routers ./test ./helpers ./*.js ./batch/*.js ./batch/**/*.js",
+    "lint": "eslint --ignore-pattern=dist --ignore-pattern=qualimetry .",
     "clean": "rm -rf node_modules && rm -rf dist",
-    "insertTestReportData": "babel-node batch/runner.js"
+    "insertTestReportData": "babel-node batch/runner.js",
+    "setup": "./scripts/setupNPMVariables.sh"
   }
 }

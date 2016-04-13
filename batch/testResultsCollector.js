@@ -12,7 +12,7 @@ class TestResultsCollector {
 	connect() {
 		mongoose.connect(this.configuration.mongo.uri, this.configuration.mongo.options);
 	}
-	
+
 	get parser() {
 		return new XUnitParser(this.configuration);
 	}
@@ -22,9 +22,9 @@ class TestResultsCollector {
 	}
 
 	get githubHelper() {
-		return new GithubHelper();
+		return new GithubHelper(this.configuration);
 	}
-	
+
 	createNewTestSuite(parsedTestSuiteData) {
 		return new TestSuiteModel({
 			name: parsedTestSuiteData.name,
@@ -42,6 +42,7 @@ class TestResultsCollector {
 			parsedTestSuiteData.testCases.forEach((testCase) => {
 				testCasePromises.push(githubHelper.getFirstCommitForFile(testCase.location));
 			});
+
 			Promise.all(testCasePromises).then( (values) => {
 				parsedTestSuiteData.testCases.forEach( (value, index) => {
 					value.author = values[index].commit.author;

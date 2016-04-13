@@ -8,7 +8,7 @@ describe('Github Helper', () => {
 	let githubHelper;
 
 	beforeEach(() => {
-		githubHelper = new GithubHelper();
+		githubHelper = new GithubHelper({github:{}});
 	});
 
 	describe('createPullRequestRequestBody', () => {
@@ -469,7 +469,7 @@ describe('Github Helper', () => {
 				done();
 			});
 		});
-		
+
 		it('should return the only commit data if there is only one commit', (done) => {
 			//setup
 			const config = [ {
@@ -511,7 +511,7 @@ describe('Github Helper', () => {
 					return {body:[ {sha:1, commit:{author:{date:'2016-03-31T09:29:37Z'}}}, {sha:2, commit:{author:{date:'2015-03-31T09:29:37Z'}}} ]};
 				},
 				fixtures: (match) => {
-					if(match[1].match(/repos\/user\/reponame\/commits\?path=file\/path&client_id=(.*)&client_secret=(.*)/)) {
+					if (match[1].match(/repos\/user\/reponame\/commits\?path=file\/path&client_id=(.*)&client_secret=(.*)/)) {
 						return {};
 					} else {
 						assert.fail('Not an adequate URL');

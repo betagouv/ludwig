@@ -6,7 +6,7 @@ import {TestResultsCollector} from '../../batch/testResultsCollector';
 describe('testResultsCollector', () => {
 	let testResultsCollector;
 	beforeEach(() => {
-		testResultsCollector = new TestResultsCollector();
+		testResultsCollector = new TestResultsCollector({});
 		testResultsCollector.connect = () => {};//we don't want any db connection happening during those tests, so we might as well disable the connection part
 	});
 	describe('saveFromXUnitData', () => {
@@ -168,7 +168,7 @@ describe('testResultsCollector', () => {
 			sinon.stub(testResultsCollector, 'githubHelper', {
 				get:() => {
 					return {getFirstCommitForFile:(location) => {
-						if(location === 'location1') {
+						if (location === 'location1') {
 							return Promise.resolve({commit:{author:{name:'author1', email:'author1@mail.com'}}, author:{id:1233}});
 						} else {
 							return Promise.resolve({commit:{author:{name:'author2', email:'author2@mail.com'}}, author:{id:1234}});

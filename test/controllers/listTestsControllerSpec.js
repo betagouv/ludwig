@@ -62,7 +62,7 @@ describe('ListTestsController', () => {
 			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testSuite:{testCases:[], name:'foo bar baz', timestamp:0}, formattedTimestamp:'1970/01/01 à 01:00:00'} ]);
 		});
 	});
-	
+
 	describe('filterMine', () => {
 		it('should return false if query filter does not equal "mine"', () => {
 			//setup
@@ -87,3 +87,4 @@ describe('ListTestsController', () => {
 		});
 	});
 });
+

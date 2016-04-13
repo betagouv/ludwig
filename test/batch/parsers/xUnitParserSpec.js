@@ -8,10 +8,9 @@ describe('XUnit Parser', () => {
 
 	beforeEach(()=> {
 		xUnitParser = new XUnitParser({
-			repoUrl: 'https://github.com/user/repo',
-			repository: 'user/repo',
+			repo:'user/repo',
 			github:{
-				branchToCreatePullRequestsFor:'master'
+				branch:'master'
 			}
 		});
 	});

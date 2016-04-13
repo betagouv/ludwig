@@ -14,11 +14,10 @@ describe('TestsService', () => {
 		//action
 		const actual = testsService.addFormattedTimestamps([ {timestamp: 0}, {timestamp: 20000} ]);
 		//assert
-		assert.deepEqual(actual, [
-			{timestamp: 0, formattedTimestamp: '01/01/1970 à 01:00:00'}, {
-				timestamp: 20000,
-				formattedTimestamp: '01/01/1970 à 01:00:20'
-			} ]);
+		assert.equal(actual[0].timestamp, 0);
+		assert.match(actual[0].formattedTimestamp, /^01\/01\/1970 à [0-9]{2}:00:00$/);
+		assert.equal(actual[1].timestamp, 20000);
+		assert.match(actual[1].formattedTimestamp, /^01\/01\/1970 à [0-9]{2}:00:20$/);
 	});
 
 	describe('getMostRecentTestSuite', () => {

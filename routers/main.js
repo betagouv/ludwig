@@ -8,7 +8,8 @@ const Strategy = GithubStrategy.Strategy;
 import config from '../ludwig-conf.js';
 
 import {HistoryController} from '../controllers/historyController';
-const historyController = new HistoryController();
+
+const historyController = new HistoryController(config);
 import {ListTestsController} from '../controllers/listTestsController';
 const listTestsController = new ListTestsController();
 
@@ -49,9 +50,10 @@ router.get('/createSuggestion',
 	passport.authenticate('github', {scope: [ 'repo' ]}));
 
 router.get('/github_callback', passport.authenticate('github', {failureRedirect: '/authKO'}), (req, res) => {
-	const suggestionsController = new SuggestionsController();
+
+	const suggestionsController = new SuggestionsController(config);
 	if (req.session.originalUrl === '/createSuggestion') {
-		suggestionsController.createPullRequest(process.env.npm_config_ludwig_accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branchToCreatePullRequestsFor);
+		suggestionsController.createPullRequest(process.env.npm_config_ludwig_accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branch);
 	} else {
 		res.redirect(req.session.originalUrl);
 	}
@@ -59,13 +61,17 @@ router.get('/github_callback', passport.authenticate('github', {failureRedirect:
 
 router.get('/listTestsConnected', (req, res, next) => {
 	req.session.originalUrl = '/listTests?filter=mine';
-	if(req.session.passport) {
+	if (req.session.passport) {
 		res.redirect('/listTests?filter=mine');
 	} else {
 		next();
 	}
 }, passport.authenticate('github', {scope: [ 'repo' ]}));
 
+
+router.get('/', (req, res) => {
+	res.redirect('/listTests');
+});
 
 router.get('/listTests', (req, res) => {
 	let userIdFIlter = null;
