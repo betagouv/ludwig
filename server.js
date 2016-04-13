@@ -13,7 +13,7 @@ var app = express();
 
 var env = app.get('env');
 var config = {
-	port:env['NODE_PORT'] || 3000,
+	port:process.env.npm_config_ludwig_port || 3000,
 	ip:env['NODE_IP'] || 'localhost'
 };
 app.set('view engine', 'ejs');
