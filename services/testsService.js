@@ -32,7 +32,7 @@ class TestsService {
 		testCaseList.forEach((testCase) => {
 			const date = new Date();
 			date.setTime(testCase.timestamp);
-			testCase.formattedTimestamp = moment(date).format('DD/MM/YYYY à hh:mm:ss');
+			testCase.formattedTimestamp = moment(date).format('DD/MM/YYYY à HH:mm:ss');
 		});
 		return testCaseList;
 	}

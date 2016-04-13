@@ -1,16 +1,16 @@
 'use strict';
 import superAgent from 'superagent';
-import configuration from '../ludwig-conf';
 
 const GITHUB_API_REPO_URL_PREFIX = 'https://api.github.com/repos/';
 
 class GithubHelper {
-	constructor() {
+	constructor(configuration) {
 		this.githubConfig = {
 			referencesEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/git/refs`,
 			createContent: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/contents/`,
 			createPullRequest: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/pulls`,
-			repository:configuration.repo
+			repository:configuration.repo,
+			github: configuration.github
 		};
 	}
 
@@ -33,10 +33,11 @@ class GithubHelper {
 	}
 
 	createPullRequest(head, title, body, accessToken) {
+		const self = this;
 		return new Promise( (resolve, reject) => {
 			this.agent
 				.post(this.config.createPullRequest)
-				.send(this.createPullRequestRequestBody(head, title, body, configuration.github.branch))
+				.send(this.createPullRequestRequestBody(head, title, body, self.githubConfig.github.branch))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createPRResult) => {
 					if (err) {

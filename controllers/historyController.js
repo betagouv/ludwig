@@ -1,13 +1,13 @@
 import {TestsService} from '../services/testsService';
-import config from '../ludwig-conf.js';
 
 class HistoryController {
-	constructor() {
+	constructor(configuration) {
+		this.config = configuration;
 	}
 
 	getTestsService() {
 		if (!this.testsService) {
-			this.testsService = new TestsService(config.mongo);
+			this.testsService = new TestsService(this.config.mongo);
 		}
 		return this.testsService;
 	}

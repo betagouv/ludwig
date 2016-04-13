@@ -12,7 +12,7 @@ import config from '../ludwig-conf.js';
 const testsService = new TestsService();
 
 import {HistoryController} from '../controllers/historyController';
-const historyController = new HistoryController();
+const historyController = new HistoryController(config);
 
 passport.serializeUser((user, done) => {
 	done(null, user);
@@ -49,7 +49,7 @@ router.get('/createSuggestion',
 	passport.authenticate('github', {scope: [ 'repo' ]}));
 
 router.get('/github_callback', passport.authenticate('github', {failureRedirect: '/authKO'}), (req, res) => {
-	const suggestionsController = new SuggestionsController();
+	const suggestionsController = new SuggestionsController(config);
 	suggestionsController.createPullRequest(process.env.npm_config_ludwig_accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branch);
 });
 
