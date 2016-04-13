@@ -7,10 +7,10 @@ const GITHUB_API_REPO_URL_PREFIX = 'https://api.github.com/repos/';
 class GithubHelper {
 	constructor() {
 		this.githubConfig = {
-			referencesEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/git/refs`,
-			createContent: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/contents/`,
-			createPullRequest: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repository}/pulls`,
-			repository:configuration.repository
+			referencesEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/git/refs`,
+			createContent: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/contents/`,
+			createPullRequest: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/pulls`,
+			repository:configuration.repo
 		};
 	}
 
@@ -36,7 +36,7 @@ class GithubHelper {
 		return new Promise( (resolve, reject) => {
 			this.agent
 				.post(this.config.createPullRequest)
-				.send(this.createPullRequestRequestBody(head, title, body, configuration.github.branchToCreatePullRequestsFor))
+				.send(this.createPullRequestRequestBody(head, title, body, configuration.github.branch))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createPRResult) => {
 					if(err) {
