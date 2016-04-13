@@ -1,8 +1,8 @@
 module.exports = {
-	repository: 'github-user/repository',
+	repo: 'github-user/repository',
 	acceptedTestsLocation:'/tree/master/tests',
 	github:{
-		branchToCreatePullRequestsFor:'master',
+		branch:'master',
 		authenticationCallback:'http://authentication.callback.url/github_callback'
 	},
 	mongo:{

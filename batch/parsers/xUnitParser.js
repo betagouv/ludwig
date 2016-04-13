@@ -24,10 +24,10 @@ class XUnitParser {
 			name: testCaseXMLObject.name,
 			status: 'ok',
 			timestamp: `${parsedData.suite.timestamp}`,
-			location:`${GITHUB_REPO_URL}${this.configuration.repository}${this.configuration.acceptedTestsLocation}/${testCaseXMLObject.classname}`,
+			location:`${GITHUB_REPO_URL}${this.configuration.repo}${this.configuration.acceptedTestsLocation}/${testCaseXMLObject.classname}`,
 			time:time(testCaseXMLObject.time)
 		};
-		if(testCaseXMLObject.failure){
+		if(testCaseXMLObject.failure) {
 			testCase.status = 'ko';
 			testCase.message = testCaseXMLObject.failure.message;
 		}
@@ -42,7 +42,7 @@ class XUnitParser {
 					if(err) {
 						callback(err);
 					} else {
-						if(parsedData.testsuite.$.tests !== '0'){
+						if(parsedData.testsuite.$.tests !== '0') {
 							parsedData = from(parsedData);
 							parsedData.suite.timestamp = new Date(parsedData.suite.timestamp).getTime();
 							if (parsedData.suite && parsedData.suite.tests) {
@@ -76,4 +76,4 @@ class XUnitParser {
 		});
 	}
 }
-export {XUnitParser}
+export {XUnitParser};

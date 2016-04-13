@@ -10,7 +10,7 @@ describe('XUnit Parser', () => {
 		xUnitParser = new XUnitParser({
 			repoUrl: 'https://github.com/user/repo',
 			acceptedTestsLocation: '/tree/master/tests',
-			repository:'user/repo'
+			repo:'user/repo'
 		});
 	});
 
