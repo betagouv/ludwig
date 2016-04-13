@@ -19,3 +19,7 @@ npm config set ludwig:AccessControlAllowOrigin "$cors"
 echo "Authorized user API access token"
 read accessToken
 npm config set ludwig:accessToken "$accessToken"
+
+echo "Port for the server to listen to"
+read port
+npm config set ludwig:port "$port"
