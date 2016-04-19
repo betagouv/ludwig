@@ -1,8 +1,8 @@
 import {TestResultsCollector} from './testResultsCollector';
-import configuration from '../ludwig-conf';
+import ludwigConfiguration from '../ludwig-conf';
 import fs from 'fs';
 
-const collector = new TestResultsCollector(configuration);
+const collector = new TestResultsCollector(ludwigConfiguration);
 
 const filePath = process.argv[2];
 if (filePath) {

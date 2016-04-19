@@ -5,8 +5,8 @@ import {TestCaseModel} from '../models/testCaseModel';
 import {GithubHelper} from '../helpers/githubHelper';
 
 class TestResultsCollector {
-	constructor(configuration) {
-		this.configuration = configuration;
+	constructor(ludwigConfiguration) {
+		this.configuration = ludwigConfiguration;
 	}
 
 	connect() {
