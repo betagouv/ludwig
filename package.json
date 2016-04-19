@@ -20,6 +20,7 @@
     "passport": "^0.3.2",
     "passport-github": "^1.1.0",
     "superagent": "^1.7.2",
+    "xml-to-json-promise": "0.0.3",
     "xml2js": "^0.4.16"
   },
   "devDependencies": {

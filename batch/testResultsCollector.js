@@ -36,7 +36,7 @@ class TestResultsCollector {
 	saveFromXUnitData(xUnitFilePath, callback) {
 		this.connect();
 		const githubHelper = this.githubHelper;
-		this.parser.parse(xUnitFilePath).then( (parsedTestSuiteData) => {
+		this.parser.parseTestSuiteFromFile(xUnitFilePath).then( (parsedTestSuiteData) => {
 			const testSuiteModel = this.createNewTestSuite(parsedTestSuiteData);
 			const testCasePromises = [];
 			parsedTestSuiteData.testCases.forEach((testCase) => {

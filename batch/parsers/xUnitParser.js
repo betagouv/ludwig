@@ -1,32 +1,24 @@
-import fs from 'fs';
-import xml2js from 'xml2js';
-import {from, time} from './parsed';
-
-const GITHUB_REPO_URL = 'https://github.com/';
+import xml2jsPromise from 'xml-to-json-promise';
+import {gatherTestSuiteData, normalizeTime} from './testSuiteParserUtils';
+const GITHUB_HOST = 'https://github.com/';
 
 class XUnitParser {
 	constructor(configuration) {
 		this.configuration = configuration;
 	}
 
-	get now() {
-		return new Date();
+	get xml2JSParser() {
+		return xml2jsPromise;
 	}
 
-	readFile(xUnitFilePath, callback) {
-		fs.readFile(xUnitFilePath, function (err, data) {
-			callback(err, data.toString());
-		});
-	}
-
-	parseSingleTestData(testCaseXMLObject, parsedData) {
+	parseSingleTestData(timestamp, testCaseXMLObject) {
 		let testCase = {
 			name: testCaseXMLObject.name,
 			status: 'ok',
-			timestamp: `${parsedData.suite.timestamp}`,
-			url: `${GITHUB_REPO_URL}${this.configuration.repo}/tree/${this.configuration.github.branch}/${testCaseXMLObject.classname}`,
-			location:testCaseXMLObject.classname,
-			time: time(testCaseXMLObject.time)
+			timestamp: timestamp,
+			url: `${GITHUB_HOST}${this.configuration.repo}/tree/${this.configuration.github.branch}/${testCaseXMLObject.classname}`,
+			location: testCaseXMLObject.classname,
+			time: normalizeTime(testCaseXMLObject.time)
 		};
 
 		if (testCaseXMLObject.failure) {
@@ -36,45 +28,29 @@ class XUnitParser {
 		return testCase;
 	}
 
-	parse(xUnitFilePath) {
-		const self = this;
+	parseTestSuiteFromFile(xUnitFilePath) {
 		return new Promise((resolve, reject) => {
-			this.readFile(xUnitFilePath, (err, data) => {
-				if (!err) {
-					xml2js.parseString(data, function (err, parsedData) {
-						if (err) {
-							reject(err);
-						} else {
-							if (parsedData && parsedData.testsuite.$.tests !== '0') {
-								parsedData = from(parsedData);
-								parsedData.suite.timestamp = new Date(parsedData.suite.timestamp).getTime();
-								if (parsedData.suite && parsedData.suite.tests) {
-									const testCases = [];
-									parsedData.suite.tests.forEach((testCaseXMLObject) => {
-										var testCase = self.parseSingleTestData(testCaseXMLObject, parsedData);
-										testCases.push(testCase);
-									});
-									let testSuite = {
-										name: parsedData.suite.name,
-										tests: parsedData.suite.summary.tests,
-										failures: parsedData.suite.summary.failures,
-										timestamp: `${parsedData.suite.timestamp || self.now.getTime()}`,
-										testCases: testCases
-									};
-									if (!parsedData.suite.timestamp) {
-										console.log('Warning : No timestamp was provided for specified test suite, using current system date.');
-									}
-									resolve(testSuite);
-								}
-							} else {
-								resolve(null);
-							}
-						}
-					});
-				} else {
-					reject({message: err.message});
-				}
-			});
+			this.xml2JSParser.xmlFileToJSON(xUnitFilePath)
+				.then((rawParsedData) => {
+					if (!rawParsedData || rawParsedData.testsuite.$.tests == '0') {
+						return resolve(null);
+					}
+					let testSuiteData = gatherTestSuiteData(rawParsedData);
+					if (testSuiteData.suite && testSuiteData.suite.tests) {
+						const testCases = testSuiteData.suite.tests.map(this.parseSingleTestData.bind(this, testSuiteData.suite.timestamp));
+						let testSuite = {
+							name: testSuiteData.suite.name,
+							tests: testSuiteData.suite.summary.tests,
+							failures: testSuiteData.suite.summary.failures,
+							timestamp: testSuiteData.suite.timestamp,
+							testCases: testCases
+						};
+						resolve(testSuite);
+					}
+				})
+				.catch((err) => {
+					reject(err);
+				});
 		});
 	}
 }

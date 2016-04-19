@@ -15,7 +15,7 @@ describe('testResultsCollector', () => {
 			sinon.stub(testResultsCollector, 'parser', {
 				get: () => {
 					return {
-						parse:sinon.stub().returns(Promise.reject({message:'Could not parse xUnit file'}))
+						parseTestSuiteFromFile:sinon.stub().returns(Promise.reject({message:'Could not parse xUnit file'}))
 					};
 				}
 			});
@@ -32,7 +32,7 @@ describe('testResultsCollector', () => {
 			sinon.stub(testResultsCollector, 'parser', {
 				get: () => {
 					return {
-						parse:sinon.stub().returns(Promise.resolve({testCases:[]}))
+						parseTestSuiteFromFile:sinon.stub().returns(Promise.resolve({testCases:[]}))
 					};
 				}
 			});
@@ -55,7 +55,7 @@ describe('testResultsCollector', () => {
 			sinon.stub(testResultsCollector, 'parser', {
 				get: () => {
 					return {
-						parse:sinon.stub().returns(Promise.resolve({testCases:[]}))
+						parseTestSuiteFromFile:sinon.stub().returns(Promise.resolve({testCases:[]}))
 					};
 				}
 			});
@@ -81,7 +81,7 @@ describe('testResultsCollector', () => {
 			sinon.stub(testResultsCollector, 'parser', {
 				get: () => {
 					return {
-						parse:sinon.stub().returns(Promise.resolve({testCases:[]}))
+						parseTestSuiteFromFile:sinon.stub().returns(Promise.resolve({testCases:[]}))
 					};
 				}
 			});
@@ -108,7 +108,7 @@ describe('testResultsCollector', () => {
 			sinon.stub(testResultsCollector, 'parser', {
 				get: () => {
 					return {
-						parse:sinon.stub().returns(Promise.resolve({testCases:[ {} ]}))
+						parseTestSuiteFromFile:sinon.stub().returns(Promise.resolve({testCases:[ {} ]}))
 					};
 				}
 			});
@@ -134,7 +134,7 @@ describe('testResultsCollector', () => {
 			sinon.stub(testResultsCollector, 'parser', {
 				get: () => {
 					return {
-						parse:sinon.stub().returns(Promise.resolve({testCases:[ {} ]}))
+						parseTestSuiteFromFile:sinon.stub().returns(Promise.resolve({testCases:[ {} ]}))
 					};
 				}
 			});
@@ -161,7 +161,7 @@ describe('testResultsCollector', () => {
 			sinon.stub(testResultsCollector, 'parser', {
 				get: () => {
 					return {
-						parse:sinon.stub().returns(Promise.resolve({testCases:[ {location:'location1'}, {location:'location2'}  ]}))
+						parseTestSuiteFromFile:sinon.stub().returns(Promise.resolve({testCases:[ {location:'location1'}, {location:'location2'}  ]}))
 					};
 				}
 			});

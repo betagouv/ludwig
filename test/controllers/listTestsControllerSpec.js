@@ -59,7 +59,6 @@ describe('ListTestsController', () => {
 			listTestsController.showLatestTestSuite(null, callbackSpy);
 			//assert
 			assert.equal(callbackSpy.calledOnce, true);
-			//assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testSuite:{testCases:[], name:'foo bar baz', timestamp:0}, formattedTimestamp:'1970/01/01 à 01:00:00'} ]);
 			assert.equal(callbackSpy.getCall(0).args[0], null);
 			assert.deepEqual(callbackSpy.getCall(0).args[1].testSuite, {testCases:[], name:'foo bar baz', timestamp:0});
 			assert.match(callbackSpy.getCall(0).args[1].formattedTimestamp, /^01\/01\/1970 à [0-9]{2}:00:00$/);
