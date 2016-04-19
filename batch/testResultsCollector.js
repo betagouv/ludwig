@@ -7,6 +7,8 @@ import {GithubHelper} from '../helpers/githubHelper';
 class TestResultsCollector {
 	constructor(ludwigConfiguration) {
 		this.configuration = ludwigConfiguration;
+		this._xUnitParser = new XUnitParser(this.configuration);
+		this._githubHelper = new GithubHelper(this.configuration);
 	}
 
 	connect() {
@@ -14,7 +16,7 @@ class TestResultsCollector {
 	}
 
 	get parser() {
-		return new XUnitParser(this.configuration);
+		return this._xUnitParser;
 	}
 
 	get testCaseModel() {
@@ -22,7 +24,7 @@ class TestResultsCollector {
 	}
 
 	get githubHelper() {
-		return new GithubHelper(this.configuration);
+		return this._githubHelper;
 	}
 
 	createNewTestSuite(parsedTestSuiteData) {
