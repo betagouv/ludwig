@@ -20,7 +20,7 @@ class HistoryController {
 					testList = data;
 				}
 
-				callback(null, {testURL: testList[0] && testList[0].url, testList: testList, testName: testName});
+				callback(null, {testURL: testList[0] && testList[0].url, testList, testName});
 			});
 		} else {
 			callback({message:'No test name'});
