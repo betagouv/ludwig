@@ -1,8 +1,11 @@
 import {TestResultsCollector} from './testResultsCollector';
 import ludwigConfiguration from '../ludwig-conf';
+import mongoose from 'mongoose';
+
 import fs from 'fs';
 
 const collector = new TestResultsCollector(ludwigConfiguration);
+mongoose.connect(ludwigConfiguration.mongo.uri, ludwigConfiguration.mongo.options);
 
 const filePath = process.argv[2];
 if (filePath) {

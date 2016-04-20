@@ -1,5 +1,5 @@
-import {TestCaseModel} from '../models/testCaseModel';
-import {TestSuiteModel} from '../models/testSuiteModel';
+import {TestCaseModel} from '../database/models/testCaseModel';
+import {TestSuiteModel} from '../database/models/testSuiteModel';
 import moment from 'moment';
 
 class TestsService {
