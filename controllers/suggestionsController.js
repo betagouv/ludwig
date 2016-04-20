@@ -15,7 +15,7 @@ class SuggestionsController {
 	}
 
 	/*
-	 This function chains 4 github API calls in order to create a pull request
+	 This function chains github API calls in order to create a pull request
 	 @param accessToken: A valid accessToken to access the github API
 	 @param title: (string) Will be used as a title for the pull request creation
 	 @param description: (urlencoded JSON string) The state we want to record
