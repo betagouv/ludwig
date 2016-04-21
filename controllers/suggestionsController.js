@@ -21,14 +21,14 @@ class SuggestionsController {
 	 @param description: (urlencoded JSON string) The state we want to record
 	 @param state: (urlencoded JSON string) The state we want to record
 	 @param res: An expressjs Response object to get back to the user
-	 @param branchToCreatePullRequestsTo: the branch to create a pull request for
 	 */
-	createPullRequest(accessToken, title, description, state, res, branchToCreatePullRequestsTo) {
+	createPullRequest(title, description, state, res) {
+		const accessToken = process.env.npm_config_ludwig_accessToken;
 		const now = (new Date()).getTime();
 		const newBranchName = BRANCH_PREFIX + now;
 
 		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, title, description, state)) {
-			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch(branchToCreatePullRequestsTo || 'master');
+			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch(this._configuration.github.branch || 'master');
 
 			return pullRequestFlowPromise
 				.then(headerReference => this.githubHelper.createReference(accessToken, newBranchName, headerReference))

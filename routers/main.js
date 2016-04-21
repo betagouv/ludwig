@@ -1,6 +1,6 @@
 import express from 'express';
 import {HistoryController} from '../controllers/historyController';
-import config from '../ludwig-conf.js';
+import ludwigConfiguration from '../ludwig-conf.js';
 import passport from 'passport';
 import GithubStrategy from 'passport-github';
 import {SuggestionsController} from '../controllers/suggestionsController';
@@ -8,7 +8,7 @@ import ListTestsController from '../controllers/listTestsController';
 
 const router = express.Router();
 const Strategy = GithubStrategy.Strategy;
-const historyController = new HistoryController(config);
+const historyController = new HistoryController(ludwigConfiguration);
 
 passport.serializeUser((user, done) => {
 	done(null, user);
@@ -21,7 +21,7 @@ passport.deserializeUser((obj, done) => {
 passport.use('github', new Strategy({
 	clientID: process.env.npm_config_ludwig_clientID,
 	clientSecret: process.env.npm_config_ludwig_clientSecret,
-	callbackURL: config.github.authenticationCallback
+	callbackURL: ludwigConfiguration.github.authenticationCallback
 }, (accessToken, refreshToken, profile, done) => {
 	profile.accessToken = accessToken;
 	profile.refreshToken = refreshToken;
@@ -46,10 +46,9 @@ router.get('/createSuggestion',
 	passport.authenticate('github', {scope: [ 'repo' ]}));
 
 router.get('/github_callback', passport.authenticate('github', {failureRedirect: '/authKO'}), (req, res) => {
-
-	const suggestionsController = new SuggestionsController(config);
+	const suggestionsController = new SuggestionsController(ludwigConfiguration);
 	if (req.session.originalUrl === '/createSuggestion') {
-		suggestionsController.createPullRequest(process.env.npm_config_ludwig_accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branch);
+		suggestionsController.createPullRequest(req.session.title, req.session.description, req.session.state, res);
 	} else {
 		res.redirect(req.session.originalUrl);
 	}
