@@ -1,18 +1,14 @@
 import express from 'express';
-const router = express.Router();
+import {HistoryController} from '../controllers/historyController';
+import config from '../ludwig-conf.js';
 import passport from 'passport';
 import GithubStrategy from 'passport-github';
 import {SuggestionsController} from '../controllers/suggestionsController';
+import ListTestsController from '../controllers/listTestsController';
+
+const router = express.Router();
 const Strategy = GithubStrategy.Strategy;
-
-import config from '../ludwig-conf.js';
-
-import {HistoryController} from '../controllers/historyController';
-
 const historyController = new HistoryController(config);
-import {ListTestsController} from '../controllers/listTestsController';
-const listTestsController = new ListTestsController();
-
 
 passport.serializeUser((user, done) => {
 	done(null, user);
@@ -75,11 +71,11 @@ router.get('/', (req, res) => {
 
 router.get('/listTests', (req, res) => {
 	let userIdFIlter = null;
-	const myTestsOnly = listTestsController.filterMine(req.query['filter'], req.session.passport);
+	const myTestsOnly = ListTestsController.filterMine(req.query['filter'], req.session.passport);
 	if (myTestsOnly) {
 		userIdFIlter = req.session.passport.user.id;
 	}
-	listTestsController.showLatestTestSuite(userIdFIlter, (err, renderParams) => {
+	ListTestsController.showLatestTestSuite(userIdFIlter, (err, renderParams) => {
 		if (!err) {
 			renderParams.mine = myTestsOnly;
 			res.render('listTests', renderParams);
