@@ -70,7 +70,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/listTests', (req, res) => {
-	let userIdFIlter = null;
+	let userIdFIlter;
 	const myTestsOnly = ListTestsController.filterMine(req.query['filter'], req.session.passport);
 	if (myTestsOnly) {
 		userIdFIlter = req.session.passport.user.id;
