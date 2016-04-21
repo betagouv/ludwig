@@ -1,17 +1,14 @@
-import {TestsService} from '../services/testsService';
-const testsService = new TestsService();
+import ludwigDAO from '../database/ludwigDAO';
+
 import moment from 'moment';
 
 class ListTestsController {
 	constructor() {
 	}
 
-	get testsService() {
-		return testsService;
-	}
 	showLatestTestSuite(userIdFIlter, callback) {
-		this.testsService.getMostRecentTestSuite(userIdFIlter, (err, mostRecentTestSuite) => {
-			if (!err) {
+		ludwigDAO.getTestHistoryFilteredByName(userIdFIlter)
+			.then((mostRecentTestSuite) => {
 				if (mostRecentTestSuite) {
 					var date = new Date();
 					date.setTime(mostRecentTestSuite.timestamp);
@@ -22,10 +19,10 @@ class ListTestsController {
 				} else {
 					callback(null, {testSuite: null});
 				}
-			} else {
+			})
+			.catch((err) => {
 				callback(err);
-			}
-		});
+			});
 	}
 
 	filterMine(filterName, sessionData) {

@@ -1,5 +1,6 @@
 import {TestSuiteModel} from '../database/models/testSuiteModel';
 import {TestCaseModel} from '../database/models/testCaseModel';
+import moment from 'moment';
 
 module.exports.saveCompleteTestSuite = function(testSuiteData) {
 	return new Promise( (resolve, reject) => {
@@ -29,3 +30,40 @@ module.exports.saveCompleteTestSuite = function(testSuiteData) {
 	});
 };
 
+module.exports.getTestHistoryFilteredByName = function(userIdToFilterWith) {
+	return new Promise( (resolve) => {
+		TestSuiteModel.find({})
+			.sort({timestamp: -1})
+			.populate('testCases')
+			.exec((err, data) => {
+				const testSuite = data[0];
+				if (userIdToFilterWith) {
+					const filteredTests = testSuite.testCases.filter((testCase) => {
+						return testCase.author.githubId === userIdToFilterWith;
+					});
+					testSuite.testCases = filteredTests;
+				}
+				resolve(testSuite);
+			});
+	});
+};
+
+module.exports.getTestHistoryByName = function(testName) {
+	return new Promise( (resolve) => {
+		TestCaseModel.find({name: testName})
+			.sort({timestamp: -1})
+			.exec((err, data) => {
+				const enrichedData = this.addFormattedTimestamps(data);
+				resolve(enrichedData);
+			});
+	});
+};
+
+module.exports.addFormattedTimestamps = function(testCaseList) {
+	testCaseList.forEach((testCase) => {
+		const date = new Date();
+		date.setTime(testCase.timestamp);
+		testCase.formattedTimestamp = moment(date).format('DD/MM/YYYY à HH:mm:ss');
+	});
+	return testCaseList;
+};

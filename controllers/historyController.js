@@ -1,27 +1,19 @@
-import {TestsService} from '../services/testsService';
+import ludwigDAO from '../database/ludwigDAO';
 
 class HistoryController {
-	constructor(configuration) {
-		this.config = configuration;
-	}
-
-	getTestsService() {
-		if (!this.testsService) {
-			this.testsService = new TestsService(this.config.mongo);
-		}
-		return this.testsService;
+	constructor() {
 	}
 
 	collectTestHistoryDataForTest(testName, callback) {
 		if (testName) {
-			this.getTestsService().getTestHistoryByName(testName, (err, data) => {
-				let testList = [];
-				if (!err) {
-					testList = data;
-				}
-
-				callback(null, {testURL: testList[0] && testList[0].url, testList, testName});
-			});
+			ludwigDAO.getTestHistoryByName(testName)
+				.then( (data) => {
+					let testList = data;
+					callback(null, {testURL: testList[0] && testList[0].url, testList, testName});
+				})
+				.catch( (err) => {
+					callback(err);
+				});
 		} else {
 			callback({message:'No test name'});
 		}

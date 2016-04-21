@@ -3,6 +3,7 @@
 import {ListTestsController} from '../../controllers/listTestsController';
 import {assert} from 'chai';
 import sinon from 'sinon';
+import ludwigDAO from '../../database/ludwigDAO';
 
 describe('ListTestsController', () => {
 	let listTestsController = null;
@@ -11,57 +12,42 @@ describe('ListTestsController', () => {
 	});
 
 	describe('showLastTestSuite',  () => {
-		it('should callback w/ an error if getting most recent test suite raised an error', () => {
+		it('should return a rejected promise if getting most recent test suite raised an error', () => {
 			//setup
-			const callbackSpy = sinon.spy();
-			sinon.stub(listTestsController, 'testsService', {
-				get:() => {
-					return {
-						getMostRecentTestSuite:sinon.stub().yields({some:'error'})
-					};
-				}
-			});
+			sinon.stub(ludwigDAO, 'getTestHistoryFilteredByName').returns(Promise.reject({some:'error'}));
 			//action
-			listTestsController.showLatestTestSuite(null, callbackSpy);
-			//assert
-			assert.equal(callbackSpy.calledOnce, true);
-			assert.deepEqual(callbackSpy.getCall(0).args, [ {some:'error'} ]);
+			listTestsController.showLatestTestSuite(null, (err) => {
+				//assert
+				assert.deepEqual(err, {some:'error'} );
+			});
+			ludwigDAO.getTestHistoryFilteredByName.restore();
+
 		});
 
-		it('should callback w/ an empty testSuite if getting most recent test suite returned nothing', () => {
+		it('should resolve w/ an empty testSuite if getting most recent test suite returned nothing', () => {
 			//setup
-			const callbackSpy = sinon.spy();
-			sinon.stub(listTestsController, 'testsService', {
-				get:() => {
-					return {
-						getMostRecentTestSuite:sinon.stub().yields(null, null)
-					};
-				}
-			});
+			sinon.stub(ludwigDAO, 'getTestHistoryFilteredByName').returns(Promise.resolve(null));
+
 			//action
-			listTestsController.showLatestTestSuite(null, callbackSpy);
-			//assert
-			assert.equal(callbackSpy.calledOnce, true);
-			assert.deepEqual(callbackSpy.getCall(0).args, [ null, {testSuite:null} ]);
+			listTestsController.showLatestTestSuite(null, (err, data) => {
+				//assert
+				assert.deepEqual(data, {testSuite:null} );
+			});
+			ludwigDAO.getTestHistoryFilteredByName.restore();
 		});
 
-		it('should callback w/ a valid testSuite if getting most recent test suite returned something', () => {
+		it('should resolve w/ a valid testSuite if getting most recent test suite returned something', () => {
 			//setup
-			const callbackSpy = sinon.spy();
-			sinon.stub(listTestsController, 'testsService', {
-				get:() => {
-					return {
-						getMostRecentTestSuite:sinon.stub().yields(null, {testCases:[], name:'foo bar baz', timestamp:0})
-					};
-				}
-			});
+			sinon.stub(ludwigDAO, 'getTestHistoryFilteredByName').returns(Promise.resolve({testCases:[], name:'foo bar baz', timestamp:0}));
+
 			//action
-			listTestsController.showLatestTestSuite(null, callbackSpy);
-			//assert
-			assert.equal(callbackSpy.calledOnce, true);
-			assert.equal(callbackSpy.getCall(0).args[0], null);
-			assert.deepEqual(callbackSpy.getCall(0).args[1].testSuite, {testCases:[], name:'foo bar baz', timestamp:0});
-			assert.match(callbackSpy.getCall(0).args[1].formattedTimestamp, /^01\/01\/1970 à [0-9]{2}:00:00$/);
+			listTestsController.showLatestTestSuite(null, (err, data) => {
+				//assert
+				assert.equal(err, null);
+				assert.deepEqual(data.testSuite, {testCases:[], name:'foo bar baz', timestamp:0});
+				assert.match(data.formattedTimestamp, /^01\/01\/1970 à [0-9]{2}:00:00$/);
+			});
+			ludwigDAO.getTestHistoryFilteredByName.restore();
 		});
 	});
 
