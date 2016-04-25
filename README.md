@@ -125,12 +125,7 @@ Pour automatiser l'enregistrement de toutes les clefs de configuration NPM, util
 
 Il est possible de configurer le port que va utiliser le serveur Ludwig. Par défaut, ludwig se lancera et écoutera sur le port `3000`. Cependant, il est possible de définir le port que vous souhaitez en configurant la clef `ludwig:port` par npm config.
 
-
-La commande
-```
-    npm config set ludwig:port 4242
-```
-définira le port utilisé par Ludwig à 4242. Cette configuration, comme la définition des secrets de l'application, peut être faite par l'intermédiaire du script de configuration `./scripts/setupNPMVariables.sh`.
+La commande `npm config set ludwig:port 4242` définira le port utilisé par Ludwig à 4242. Cette configuration, comme la définition des secrets de l'application, peut être faite par l'intermédiaire du script de configuration `./scripts/setupNPMVariables.sh`.
 
 ### Lancer le serveur Ludwig
 
