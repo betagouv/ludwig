@@ -11,6 +11,7 @@ class GithubHelper {
 			createPullRequest: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/pulls`,
 			commitsEndpoint: `${GITHUB_API_REPO_URL_PREFIX}${configuration.repo}/commits`,
 			repository: configuration.repo,
+			acceptedTestsLocation: configuration.acceptedTestsLocation,
 			github: configuration.github
 		};
 	}
@@ -57,7 +58,6 @@ class GithubHelper {
 			message: commitMessage,
 			content: base64FileContents
 		};
-
 		function authorDataContainsRequiredInformation() {
 			return authorData && authorData.username && Array.isArray(authorData.emails) && authorData.emails.length;
 		}
@@ -75,8 +75,8 @@ class GithubHelper {
 	createContent(accessToken, testFileName, branchName, commitMessage, base64FileContents, authorData) {
 		return new Promise((resolve, reject) => {
 			this.agent
-				.put(`${this.config.createContent}${testFileName}`)
-				.send(this.createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents, authorData))
+				.put(`${this.config.createContent}${this.githubConfig.acceptedTestsLocation}/${testFileName}`)
+				.send(this.createContentRequestBody(`${this.githubConfig.acceptedTestsLocation}/${testFileName}`, branchName, commitMessage, base64FileContents, authorData))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createCommitResult) => {
 					if (err) {
