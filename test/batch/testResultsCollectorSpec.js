@@ -11,7 +11,7 @@ describe('testResultsCollector', () => {
 		};//we don't want any db connection happening during those tests, so we might as well disable the connection part
 	});
 	describe('saveFromXUnitData', () => {
-		it('should callback with an error if file parsing failed', (done) => {
+		it('should reject if file parsing failed', (done) => {
 			//setup
 			sinon.stub(testResultsCollector, 'parser', {
 				get: () => {
@@ -21,14 +21,16 @@ describe('testResultsCollector', () => {
 				}
 			});
 			//action
-			testResultsCollector.saveFromXUnitData('file/path', (err) => {
+			testResultsCollector.saveFromXUnitData('file/path').then( () => {
+				done(new Error('should reject w/ an error at that point'));
+			} ).catch( (err) => {
 				//assert
 				assert.deepEqual(err, {message: 'Could not parse xUnit file'});
 				done();
-			});
+			} );
 		});
 
-		it('should callback with an error if testSuite save fails', (done) => {
+		it('should reject if testSuite save fails', (done) => {
 			//setup
 			sinon.stub(testResultsCollector, 'parser', {
 				get: () => {
@@ -48,14 +50,17 @@ describe('testResultsCollector', () => {
 				}
 			});
 			//action
-			testResultsCollector.saveFromXUnitData('file/path', (err) => {
+			testResultsCollector.saveFromXUnitData('file/path').then( (data) => {
+				console.log(data);
+				done(new Error('should reject w/ an error at that point'));
+			} ).catch( (err) => {
 				//assert
 				assert.deepEqual(err.message, 'some error');
 				done();
-			});
+			} );
 		});
 
-		it('should callback with saved test suite data if all saves succeeded', (done) => {
+		it('should resolve with saved test suite data if all saves succeeded', (done) => {
 			//setup
 			sinon.stub(testResultsCollector, 'parser', {
 				get: () => {
@@ -78,15 +83,16 @@ describe('testResultsCollector', () => {
 				}
 			});
 			//action
-			testResultsCollector.saveFromXUnitData('file/path', (err, data) => {
+			testResultsCollector.saveFromXUnitData('file/path').then ( (data) => {
 				//assert
-				assert.deepEqual(err, null);
 				assert.deepEqual(data, {some: 'data'});
 				done();
+			}).catch( (err) => {
+				done(err);
 			});
 		});
 
-		it('should add the test author to the right test case (match by file location) data before saving it', (done) => {
+		it('should resolve and add the test author to the right test case (match by file location) data before saving it', (done) => {
 			//setup
 			sinon.stub(testResultsCollector, 'parser', {
 				get: () => {
@@ -123,7 +129,7 @@ describe('testResultsCollector', () => {
 			});
 
 			//action
-			testResultsCollector.saveFromXUnitData('file/path', () => {
+			testResultsCollector.saveFromXUnitData('file/path').then( () => {
 				//assert
 				assert.equal(saveCompleteTestSuiteStub.calledOnce, true);
 
@@ -140,7 +146,9 @@ describe('testResultsCollector', () => {
 					githubId: 1234
 				});
 				done();
-			});
+			}).catch( (err) => {
+				done(err);
+			} );
 		});
 	});
 });

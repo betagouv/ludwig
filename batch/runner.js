@@ -11,15 +11,13 @@ const filePath = process.argv[2];
 if (filePath) {
 	fs.stat(filePath, (err, stat)  => {
 		if (!err && stat.isFile()) {
-			collector.saveFromXUnitData(filePath, (err) => {
-				if (err) {
-					console.error('Something wrong happened');
-					console.error(err);
-					process.exit(1);
-				} else {
-					console.log('Data inserted!');
-					process.exit(0);
-				}
+			collector.saveFromXUnitData(filePath).then( () => {
+				console.log('Data inserted!');
+				process.exit(0);
+			}).catch( (err) => {
+				console.error('Something wrong happened');
+				console.error(err);
+				process.exit(1);
 			});
 		} else {
 			console.error(`Path specified does not point to a file (${filePath})`);

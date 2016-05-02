@@ -22,14 +22,14 @@ class TestResultsCollector {
 		return this._dao;
 	}
 
-	saveFromXUnitData(xUnitFilePath, callback) {
+	saveFromXUnitData(xUnitFilePath) {
 		const githubHelper = this.githubHelper;
-		this.parser.parseTestSuiteFromFile(xUnitFilePath).then((parsedTestSuiteData) => {
+		return this.parser.parseTestSuiteFromFile(xUnitFilePath).then((parsedTestSuiteData) => {
 			const testCasePromises = parsedTestSuiteData.testCases.map((testCase) => {
 				return githubHelper.getFirstCommitForFile(testCase.location);
 			});
 
-			Promise.all(testCasePromises)
+			return Promise.all(testCasePromises)
 				.then((values) => {
 					parsedTestSuiteData.testCases.forEach((value, index) => {
 						value.author = values[index].commit.author;
@@ -38,15 +38,7 @@ class TestResultsCollector {
 
 					return this.dao.saveCompleteTestSuite(parsedTestSuiteData);
 				})
-				.then((savedData) => {
-					callback(null, savedData);
-				})
-				.catch((err) => {
-					callback(err);
-				});
-		}).catch((errors) => {
-			callback(errors);
-		});
+		})
 	}
 }
 
