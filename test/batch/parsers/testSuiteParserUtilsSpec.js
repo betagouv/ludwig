@@ -90,7 +90,7 @@ describe('xUnit parsed data decorator', () => {
 		it('should return an empty array if there are no testcases to be found', () => {
 			//setup
 			//action
-			const actual = tests({});
+			const actual = tests([]);
 			//assert
 			assert.deepEqual(actual, [ ]);
 		});

@@ -29,7 +29,7 @@ export function getFailureDataForSingleTest(raw) {
 }
 
 export function tests(rawTestsList) {
-	return _.map(rawTestsList, (test) => {
+	return rawTestsList.map( (test) => {
 		let testFailureData = test.failure && test.failure[0];
 
 		const testDataToMap = {
