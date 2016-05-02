@@ -3,8 +3,8 @@ import ludwigDAO from '../database/ludwigDAO';
 import moment from 'moment';
 
 
-module.exports.showLatestTestSuite = function (userIdFIlter, callback) {
-	ludwigDAO.getTestHistoryFilteredByName(userIdFIlter)
+module.exports.showLatestTestSuite = function (userIdFilter, callback) {
+	ludwigDAO.getTestHistoryFilteredByName(userIdFilter)
 		.then((mostRecentTestSuite) => {
 			if (mostRecentTestSuite) {
 				var date = new Date();
