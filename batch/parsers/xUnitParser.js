@@ -5,10 +5,7 @@ const GITHUB_HOST = 'https://github.com/';
 class XUnitParser {
 	constructor(configuration) {
 		this.configuration = configuration;
-	}
-
-	get xml2JSParser() {
-		return xml2jsPromise;
+		this.xml2JSParser = xml2jsPromise;
 	}
 
 	parseSingleTestData(timestamp, testCaseXMLObject) {
