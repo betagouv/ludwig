@@ -25,9 +25,8 @@ class TestResultsCollector {
 	saveFromXUnitData(xUnitFilePath, callback) {
 		const githubHelper = this.githubHelper;
 		this.parser.parseTestSuiteFromFile(xUnitFilePath).then((parsedTestSuiteData) => {
-			const testCasePromises = [];
-			parsedTestSuiteData.testCases.forEach((testCase) => {
-				testCasePromises.push(githubHelper.getFirstCommitForFile(testCase.location));
+			const testCasePromises = parsedTestSuiteData.testCases.map((testCase) => {
+				return githubHelper.getFirstCommitForFile(testCase.location);
 			});
 
 			Promise.all(testCasePromises)
