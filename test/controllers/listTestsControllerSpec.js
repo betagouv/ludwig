@@ -70,14 +70,14 @@ describe('ListTestsController', () => {
 	});
 
 	describe('authenticateToFilterMyTests', () => {
-		it('should redirect to "/listTEsts?filter=mine" if passport session data is defined', () => {
+		it('should redirect to "/listTests?filter=mine" if passport session data is defined', () => {
 			//setup
 			const res = {redirect:sinon.spy(), req:{session:{passport:{}}}};
 			//action
 			ListTestsController.authenticateToFilterMyTests(res);
 			//assert
 			assert.equal(res.redirect.calledOnce, true);
-			assert.equal(res.redirect.getCall(0).args[0], '/listTEsts?filter=mine');
+			assert.equal(res.redirect.getCall(0).args[0], '/listTests?filter=mine');
 		});
 
 		it('should move on to the authentication middleware is no passport session data exists', () => {
