@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import ludwigDAO from '../../database/ludwigDAO';
 
 describe('ListTestsController', () => {
-	describe('showLastTestSuite',  () => {
+	describe('showLatestTestSuite',  () => {
 		it('should return a rejected promise if getting most recent test suite raised an error', () => {
 			//setup
 			sinon.stub(ludwigDAO, 'getTestHistoryFilteredByName').returns(Promise.reject({some:'error'}));
@@ -30,7 +30,7 @@ describe('ListTestsController', () => {
 			ludwigDAO.getTestHistoryFilteredByName.restore();
 		});
 
-		it('should resolve w/ a valid testSuite if getting most recent test suite returned something', () => {
+		it('should resolve w/ a valid testSuite if getting most recent test suite returned something', (done) => {
 			//setup
 			sinon.stub(ludwigDAO, 'getTestHistoryFilteredByName').returns(Promise.resolve({testCases:[], name:'foo bar baz', timestamp:0}));
 
@@ -40,6 +40,7 @@ describe('ListTestsController', () => {
 				assert.equal(err, null);
 				assert.deepEqual(data.testSuite, {testCases:[], name:'foo bar baz', timestamp:0});
 				assert.match(data.formattedTimestamp, /^01\/01\/1970 à [0-9]{2}:00:00$/);
+				done();
 			});
 			ludwigDAO.getTestHistoryFilteredByName.restore();
 		});

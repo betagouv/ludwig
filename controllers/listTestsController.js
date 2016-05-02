@@ -7,11 +7,9 @@ module.exports.showLatestTestSuite = function (userIdFilter, callback) {
 	ludwigDAO.getTestHistoryFilteredByName(userIdFilter)
 		.then((mostRecentTestSuite) => {
 			if (mostRecentTestSuite) {
-				var date = new Date();
-				date.setTime(mostRecentTestSuite.timestamp);
 				callback(null, {
 					testSuite: mostRecentTestSuite,
-					formattedTimestamp: moment(date).format('DD/MM/YYYY à HH:mm:ss')
+					formattedTimestamp: moment(mostRecentTestSuite.timestamp).format('DD/MM/YYYY à HH:mm:ss')
 				});
 			} else {
 				callback(null, {testSuite: null});
