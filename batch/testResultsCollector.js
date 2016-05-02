@@ -5,21 +5,9 @@ import LudwigDAO from '../database/ludwigDAO';
 class TestResultsCollector {
 	constructor(ludwigConfiguration) {
 		this.configuration = ludwigConfiguration;
-		this._xUnitParser = new XUnitParser(this.configuration);
-		this._githubHelper = new GithubHelper(this.configuration);
-		this._dao = LudwigDAO;
-	}
-
-	get parser() {
-		return this._xUnitParser;
-	}
-
-	get githubHelper() {
-		return this._githubHelper;
-	}
-
-	get dao() {
-		return this._dao;
+		this.parser = new XUnitParser(this.configuration);
+		this.githubHelper = new GithubHelper(this.configuration);
+		this.dao = LudwigDAO;
 	}
 
 	saveFromXUnitData(xUnitFilePath) {

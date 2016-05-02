@@ -13,123 +13,97 @@ describe('testResultsCollector', () => {
 	describe('saveFromXUnitData', () => {
 		it('should reject if file parsing failed', (done) => {
 			//setup
-			sinon.stub(testResultsCollector, 'parser', {
-				get: () => {
-					return {
-						parseTestSuiteFromFile: sinon.stub().returns(Promise.reject({message: 'Could not parse xUnit file'}))
-					};
+			const context = {
+				parser: {
+					parseTestSuiteFromFile: sinon.stub().returns(Promise.reject({message: 'Could not parse xUnit file'}))
 				}
-			});
+			};
 			//action
-			testResultsCollector.saveFromXUnitData('file/path').then( () => {
+			testResultsCollector.saveFromXUnitData.call(context, 'file/path').then(() => {
 				done(new Error('should reject w/ an error at that point'));
-			} ).catch( (err) => {
+			}).catch((err) => {
 				//assert
 				assert.deepEqual(err, {message: 'Could not parse xUnit file'});
 				done();
-			} );
+			});
 		});
 
 		it('should reject if testSuite save fails', (done) => {
 			//setup
-			sinon.stub(testResultsCollector, 'parser', {
-				get: () => {
-					return {
-						parseTestSuiteFromFile: sinon.stub().returns(Promise.resolve({testCases: []}))
-					};
+			const context = {
+				parser: {
+					parseTestSuiteFromFile: sinon.stub().returns(Promise.resolve({testCases: []}))
+				},
+				githubHelper: {
+					getFirstCommitForFile: sinon.stub().returns(Promise.resolve({some: 'data'}))
+				},
+				dao: {
+					saveCompleteTestSuite: sinon.stub().returns(Promise.reject(new Error('some error')))
 				}
-			});
-			sinon.stub(testResultsCollector, 'githubHelper', {
-				get: () => {
-					return {getFirstCommitForFile: sinon.stub().returns(Promise.resolve({some: 'data'}))};
-				}
-			});
-			sinon.stub(testResultsCollector, 'dao', {
-				get: () => {
-					return {saveCompleteTestSuite:sinon.stub().returns(Promise.reject(new Error('some error')))};
-				}
-			});
+			};
+
 			//action
-			testResultsCollector.saveFromXUnitData('file/path').then( (data) => {
+			testResultsCollector.saveFromXUnitData.call(context, 'file/path').then((data) => {
 				console.log(data);
 				done(new Error('should reject w/ an error at that point'));
-			} ).catch( (err) => {
+			}).catch((err) => {
 				//assert
 				assert.deepEqual(err.message, 'some error');
 				done();
-			} );
+			});
 		});
 
 		it('should resolve with saved test suite data if all saves succeeded', (done) => {
 			//setup
-			sinon.stub(testResultsCollector, 'parser', {
-				get: () => {
-					return {
-						parseTestSuiteFromFile: sinon.stub().returns(Promise.resolve({testCases: [ {} ]}))
-					};
-				}
-			});
-			sinon.stub(testResultsCollector, 'githubHelper', {
-				get: () => {
-					return {getFirstCommitForFile: sinon.stub().returns(Promise.resolve({
+			const context = {
+				parser: {
+					parseTestSuiteFromFile: sinon.stub().returns(Promise.resolve({testCases: [ {} ]}))
+				},
+				githubHelper: {
+					getFirstCommitForFile: sinon.stub().returns(Promise.resolve({
 						commit: {author: {foo: 'bar'}},
 						author: {id: 1234}
-					}))};
-				}
-			});
-			sinon.stub(testResultsCollector, 'dao', {
-				get: () => {
-					return {saveCompleteTestSuite:sinon.stub().returns(Promise.resolve({some:'data'}))};
-				}
-			});
+					}))
+				},
+				dao: {saveCompleteTestSuite: sinon.stub().returns(Promise.resolve({some: 'data'}))}
+			};
 			//action
-			testResultsCollector.saveFromXUnitData('file/path').then ( (data) => {
+			testResultsCollector.saveFromXUnitData.call(context, 'file/path').then((data) => {
 				//assert
 				assert.deepEqual(data, {some: 'data'});
 				done();
-			}).catch( (err) => {
+			}).catch((err) => {
 				done(err);
 			});
 		});
 
 		it('should resolve and add the test author to the right test case (match by file location) data before saving it', (done) => {
 			//setup
-			sinon.stub(testResultsCollector, 'parser', {
-				get: () => {
-					return {
-						parseTestSuiteFromFile: sinon.stub().returns(Promise.resolve({testCases: [ {location: 'location1'}, {location: 'location2'} ]}))
-					};
-				}
-			});
-			sinon.stub(testResultsCollector, 'githubHelper', {
-				get: () => {
-					return {
-						getFirstCommitForFile: (location) => {
-							if (location === 'location1') {
-								return Promise.resolve({
-									commit: {author: {name: 'author1', email: 'author1@mail.com'}},
-									author: {id: 1233}
-								});
-							} else {
-								return Promise.resolve({
-									commit: {author: {name: 'author2', email: 'author2@mail.com'}},
-									author: {id: 1234}
-								});
-							}
+			const saveCompleteTestSuiteStub = sinon.stub().returns(Promise.resolve({some: 'data'}));
+			const context = {
+				parser:{
+					parseTestSuiteFromFile: sinon.stub().returns(Promise.resolve({testCases: [ {location: 'location1'}, {location: 'location2'} ]}))
+				},
+				githubHelper:{
+					getFirstCommitForFile: (location) => {
+						if (location === 'location1') {
+							return Promise.resolve({
+								commit: {author: {name: 'author1', email: 'author1@mail.com'}},
+								author: {id: 1233}
+							});
+						} else {
+							return Promise.resolve({
+								commit: {author: {name: 'author2', email: 'author2@mail.com'}},
+								author: {id: 1234}
+							});
 						}
-					};
-				}
-			});
-
-			const saveCompleteTestSuiteStub = sinon.stub().returns(Promise.resolve({some:'data'}));
-			sinon.stub(testResultsCollector, 'dao', {
-				get: () => {
-					return {saveCompleteTestSuite:saveCompleteTestSuiteStub};
-				}
-			});
+					}
+				},
+				dao:{saveCompleteTestSuite: saveCompleteTestSuiteStub}
+			};
 
 			//action
-			testResultsCollector.saveFromXUnitData('file/path').then( () => {
+			testResultsCollector.saveFromXUnitData.call(context, 'file/path').then(() => {
 				//assert
 				assert.equal(saveCompleteTestSuiteStub.calledOnce, true);
 
@@ -146,9 +120,9 @@ describe('testResultsCollector', () => {
 					githubId: 1234
 				});
 				done();
-			}).catch( (err) => {
+			}).catch((err) => {
 				done(err);
-			} );
+			});
 		});
 	});
 });
