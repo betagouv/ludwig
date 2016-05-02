@@ -46,30 +46,6 @@ describe('ListTestsController', () => {
 		});
 	});
 
-	describe('isFilterMine', () => {
-		it('should return false if query filter does not equal "mine"', () => {
-			//setup
-			//action
-			const actual = ListTestsController.isFilterMine('hai');
-			//assert
-			assert.equal(actual, false);
-		});
-		it('should return true if passport data contains GitHUb id, and filter is "mine"', () => {
-			//setup
-			//action
-			const actual = ListTestsController.isFilterMine('mine', {user:{id:'1234'}});
-			//assert
-			assert.equal(actual, true);
-		});
-		it('should return false if passport data is null, even if filter is "mine"', () => {
-			//setup
-			//action
-			const actual = ListTestsController.isFilterMine('mine', null);
-			//assert
-			assert.equal(actual, false);
-		});
-	});
-
 	describe('authenticateToFilterMyTests', () => {
 		it('should redirect to "/listTests?filter=mine" if passport session data is defined', () => {
 			//setup

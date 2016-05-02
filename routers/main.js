@@ -49,13 +49,17 @@ router.get('/', (req, res) => {
 	res.redirect('/listTests');
 });
 
+function isUserConnected(sessionData) {
+	return typeof(sessionData) !== 'undefined' && sessionData !== null && sessionData.user.id.length > 0;
+}
+
 router.get('/listTests', (req, res) => {
-	let userIdFIlter;
-	const myTestsOnly = ListTestsController.isFilterMine(req.query['filter'], req.session.passport);
+	let userIdFilter;
+	const myTestsOnly = isUserConnected(req.session.passport) && req.query['filter'] === 'mine';
 	if (myTestsOnly) {
-		userIdFIlter = req.session.passport.user.id;
+		userIdFilter = req.session.passport.user.id;
 	}
-	ListTestsController.showLatestTestSuite(userIdFIlter, (err, renderParams) => {
+	ListTestsController.showLatestTestSuite(userIdFilter, (err, renderParams) => {
 		if (err) {
 			res.render('ko');
 		} else {

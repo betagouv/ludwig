@@ -20,14 +20,9 @@ module.exports.showLatestTestSuite = function (userIdFilter, callback) {
 		});
 };
 
-module.exports.isFilterMine = function (filterName, sessionData) {
-	return (typeof(sessionData) !== 'undefined' && sessionData !== null && filterName === 'mine' && sessionData.user.id.length > 0);
-};
-
 module.exports.authenticateToFilterMyTests = function (res, next) {
 	if (res.req.session.passport) {
 		return res.redirect('/listTests?filter=mine');
 	}
-
 	next();
 };
