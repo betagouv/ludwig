@@ -28,7 +28,7 @@ module.exports.isFilterMine = function (filterName, sessionData) {
 
 module.exports.authenticateToFilterMyTests = function (res, next) {
 	if (res.req.session.passport) {
-		return res.redirect('/listTEsts?filter=mine');
+		return res.redirect('/listTests?filter=mine');
 	}
 
 	next();
