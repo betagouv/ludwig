@@ -29,11 +29,10 @@ class XUnitParser {
 	}
 
 	parseTestSuiteFromFile(xUnitFilePath) {
-		return new Promise((resolve, reject) => {
-			this.xml2JSParser.xmlFileToJSON(xUnitFilePath)
+		return this.xml2JSParser.xmlFileToJSON(xUnitFilePath)
 				.then((rawParsedData) => {
 					if (!rawParsedData || rawParsedData.testsuite.$.tests == '0') {
-						return resolve(null);
+						return null;
 					}
 					let testSuiteData = normalizeTestSuiteData(rawParsedData);
 					if (testSuiteData.suite && testSuiteData.suite.tests) {
@@ -45,13 +44,9 @@ class XUnitParser {
 							timestamp: testSuiteData.suite.timestamp,
 							testCases: testCases
 						};
-						resolve(testSuite);
+						return testSuite;
 					}
-				})
-				.catch((err) => {
-					reject(err);
 				});
-		});
 	}
 }
 export {XUnitParser};
