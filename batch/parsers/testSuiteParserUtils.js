@@ -28,21 +28,21 @@ export function getFailureDataForSingleTest(raw) {
 	};
 }
 
-export function tests(raw) {
-	return _(raw).map(function (test) {
-		var current = (test.failure || [])[0] || {$: {}, _: ''};
+export function tests(rawTestsList) {
+	return _.map(rawTestsList, (test) => {
+		let testFailureData = test.failure && test.failure[0];
 
-		return _({
+		const testDataToMap = {
 			name: test.$.name,
 			time: normalizeTime(test.$.time),
-			classname: test.$.classname,
-			failure: getFailureDataForSingleTest(current)
-		}).tap(function (result) {
-			if (!test.failure) {
-				delete result.failure;
-			}
-		}).value();
-	}).value();
+			classname: test.$.classname
+		};
+		if (testFailureData) {
+			testDataToMap.failure = getFailureDataForSingleTest(testFailureData);
+		}
+
+		return testDataToMap;
+	});
 }
 
 export function getSystemOutputsForTest(rawTestData) {
