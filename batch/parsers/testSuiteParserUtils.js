@@ -8,15 +8,15 @@ export function normalizeTime(rawTime) {
 	return returnValue.toFixed(2);
 }
 
-function parsedIntOrZero(stringToParse) {
+function parseIntOrZero(stringToParse) {
 	return Number.parseInt(stringToParse) || 0;
 }
 export function testSuiteSummary(raw) {
 	return {
-		'tests': parsedIntOrZero(raw.tests),
-		'failures': parsedIntOrZero(raw.failures),
-		'skipped': parsedIntOrZero(raw.skipped),
-		'errors': parsedIntOrZero(raw.errors)
+		'tests': parseIntOrZero(raw.tests),
+		'failures': parseIntOrZero(raw.failures),
+		'skipped': parseIntOrZero(raw.skipped),
+		'errors': parseIntOrZero(raw.errors)
 	};
 }
 
