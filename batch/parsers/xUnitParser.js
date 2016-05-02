@@ -1,5 +1,5 @@
 import xml2jsPromise from 'xml-to-json-promise';
-import {gatherTestSuiteData, normalizeTime} from './testSuiteParserUtils';
+import {normalizeTestSuiteData, normalizeTime} from './testSuiteParserUtils';
 const GITHUB_HOST = 'https://github.com/';
 
 class XUnitParser {
@@ -35,7 +35,7 @@ class XUnitParser {
 					if (!rawParsedData || rawParsedData.testsuite.$.tests == '0') {
 						return resolve(null);
 					}
-					let testSuiteData = gatherTestSuiteData(rawParsedData);
+					let testSuiteData = normalizeTestSuiteData(rawParsedData);
 					if (testSuiteData.suite && testSuiteData.suite.tests) {
 						const testCases = testSuiteData.suite.tests.map(this.parseSingleTestData.bind(this, testSuiteData.suite.timestamp));
 						let testSuite = {

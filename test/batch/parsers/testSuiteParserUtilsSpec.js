@@ -1,5 +1,5 @@
 /*global describe it*/
-import {normalizeTime, testSuiteSummary, getFailureDataForSingleTest, getOutputs, tests, gatherTestSuiteData} from '../../../batch/parsers/testSuiteParserUtils';
+import {normalizeTime, testSuiteSummary, getFailureDataForSingleTest, getSystemOutputsForTest, tests, normalizeTestSuiteData} from '../../../batch/parsers/testSuiteParserUtils';
 import {assert} from 'chai';
 
 describe('xUnit parsed data decorator', () => {
@@ -56,23 +56,23 @@ describe('xUnit parsed data decorator', () => {
 		it('should return an object containing sys-output contents (such if node exists and is not an object)', () => {
 			//setup
 			//action
-			const actual = getOutputs({'system-out': [ 'some output' ]});
+			const actual = getSystemOutputsForTest({'system-out': [ 'some output' ]});
 			//assert
-			assert.deepEqual(actual, {output: 'some output'});
+			assert.deepEqual(actual, {standart: 'some output'});
 		});
 
 		it('should return an object containing an empty sys-output value if the first output node encountered contains an object', () => {
 			//setup
 			//action
-			const actual = getOutputs({'system-out': [ {some: 'output'} ]});
+			const actual = getSystemOutputsForTest({'system-out': [ {some: 'output'} ]});
 			//assert
-			assert.deepEqual(actual, {output: ''});
+			assert.deepEqual(actual, {standart: ''});
 		});
 
 		it('should return an object containing sys-error contents (such if node exists and is not an object)', () => {
 			//setup
 			//action
-			const actual = getOutputs({'system-err': [ 'some error' ]});
+			const actual = getSystemOutputsForTest({'system-err': [ 'some error' ]});
 			//assert
 			assert.deepEqual(actual, {errors: 'some error'});
 		});
@@ -80,7 +80,7 @@ describe('xUnit parsed data decorator', () => {
 		it('should return an object containing an empty sys-error value if the first error node encountered contains an object', () => {
 			//setup
 			//action
-			const actual = getOutputs({'system-err': [ {some: 'error'} ]});
+			const actual = getSystemOutputsForTest({'system-err': [ {some: 'error'} ]});
 			//assert
 			assert.deepEqual(actual, {errors: ''});
 		});
@@ -133,7 +133,7 @@ describe('xUnit parsed data decorator', () => {
 		it('should return an empty object if raw data is not defined', () => {
 			//setup
 			//action
-			const actual = gatherTestSuiteData();
+			const actual = normalizeTestSuiteData();
 			//assert
 			assert.deepEqual(actual, {});
 		});
@@ -142,7 +142,7 @@ describe('xUnit parsed data decorator', () => {
 			//setup
 
 			//action
-			const actual = gatherTestSuiteData({testsuite:{$:{tests:1, failures:0, name:'Test Suite', timestamp:'Tue, 08 Mar 2016 09:07:06 GMT', time:'0.103'}, testcase:[ {$:{classname:'tests/test spec location', name:'Test Case', time:'0.02'}} ]}});
+			const actual = normalizeTestSuiteData({testsuite:{$:{tests:1, failures:0, name:'Test Suite', timestamp:'Tue, 08 Mar 2016 09:07:06 GMT', time:'0.103'}, testcase:[ {$:{classname:'tests/test spec location', name:'Test Case', time:'0.02'}} ]}});
 			//assert
 			assert.deepEqual(actual, {
 				suite: {

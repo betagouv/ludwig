@@ -45,19 +45,19 @@ export function tests(raw) {
 	}).value();
 }
 
-export function getOutputs(raw) {
-	const extras = {};
-	if (raw['system-out']) {
-		extras.output = (!_.isObject(raw['system-out'][0]) && raw['system-out'][0]) || '';
+export function getSystemOutputsForTest(rawTestData) {
+	const systemOutput = {};
+	if (rawTestData['system-out']) {
+		systemOutput.standart = (!_.isObject(rawTestData['system-out'][0]) && rawTestData['system-out'][0]) || '';
 	}
-	if (raw['system-err']) {
-		extras.errors = (!_.isObject(raw['system-err'][0]) && raw['system-err'][0]) || '';
+	if (rawTestData['system-err']) {
+		systemOutput.errors = (!_.isObject(rawTestData['system-err'][0]) && rawTestData['system-err'][0]) || '';
 	}
-	return extras;
+	return systemOutput;
 }
 
-export function gatherTestSuiteData(raw) {
-	var testSuiteFromParsedData = (raw && raw.testsuite) ? raw.testsuite : null;
+export function normalizeTestSuiteData(raw) {
+	var testSuiteFromParsedData = raw && raw.testsuite;
 	if (!testSuiteFromParsedData) {
 		return {};
 	}
@@ -66,7 +66,7 @@ export function gatherTestSuiteData(raw) {
 		time: normalizeTime(testSuiteFromParsedData.$.time),
 		summary: testSuiteSummary(testSuiteFromParsedData.$),
 		tests: tests(testSuiteFromParsedData.testcase),
-		outputs: getOutputs(testSuiteFromParsedData),
+		outputs: getSystemOutputsForTest(testSuiteFromParsedData),
 		timestamp: testSuiteFromParsedData.$.timestamp ? Date.parse(testSuiteFromParsedData.$.timestamp) : new Date().getTime()
 	};
 	return {'suite': parsed};
