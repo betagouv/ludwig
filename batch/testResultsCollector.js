@@ -37,8 +37,8 @@ class TestResultsCollector {
 					});
 
 					return this.dao.saveCompleteTestSuite(parsedTestSuiteData);
-				})
-		})
+				});
+		});
 	}
 }
 
