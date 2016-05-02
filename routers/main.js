@@ -1,5 +1,5 @@
 import express from 'express';
-import {HistoryController} from '../controllers/historyController';
+import HistoryController from '../controllers/historyController';
 import ludwigConfiguration from '../ludwig-conf.js';
 import passport from 'passport';
 import {SuggestionsController} from '../controllers/suggestionsController';
@@ -7,7 +7,6 @@ import ListTestsController from '../controllers/listTestsController';
 import {passportStrategyFactory} from '../helpers/passportStrategyHelper';
 
 const router = express.Router();
-const historyController = new HistoryController(ludwigConfiguration);
 const suggestionsController = new SuggestionsController(ludwigConfiguration);
 
 passport.serializeUser((user, done) => {
@@ -71,7 +70,7 @@ router.get('/listTestsConnected', (req, res, next) => {
 }, passport.authenticate(CHECK_LOGIN_STRATEGY_NAME, {scope: [ 'repo' ]}));
 
 router.get('/history', (req, res) => {
-	historyController.collectTestHistoryDataForTest(req.query.testName, (err, dataToFeedToTemplateEngine) => {
+	HistoryController.collectTestHistoryDataForTest(req.query.testName, (err, dataToFeedToTemplateEngine) => {
 		if (err) {
 			res.render('ko');
 		} else {
