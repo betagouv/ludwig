@@ -1,18 +1,22 @@
 'use strict';
-var express = require('express'), path = require('path');
-var session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-var passport = require('passport');
-const appConfiguration = require('./ludwig-conf');
-const mongoose = require('mongoose');
+import express from 'express';
+import session from 'express-session';
+import store from 'connect-mongo';
+import passport from 'passport';
+import appConfiguration from './ludwig-conf';
+import mongoose from 'mongoose';
+import path from 'path';
+
+const MongoStore = store(session);
+
 mongoose.connect(appConfiguration.mongo.uri, appConfiguration.mongo.options);
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-var app = express();
+const app = express();
 
-var env = app.get('env');
-var config = {
+const env = app.get('env');
+const config = {
 	port:env['NODE_PORT'] || 3000,
 	ip:env['NODE_IP'] || 'localhost'
 };
