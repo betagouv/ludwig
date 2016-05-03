@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 export function normalizeTime(rawTime) {
 	let returnValue = 0;
 	if (rawTime) {
@@ -47,11 +45,16 @@ export function tests(rawTestsList) {
 
 export function getSystemOutputsForTest(rawTestData) {
 	const systemOutput = {};
+
+	function getStringOutputOrEmpty(outputTested) {
+		return (typeof outputTested === 'string' && outputTested) || '';
+	}
+
 	if (rawTestData['system-out']) {
-		systemOutput.standart = (!_.isObject(rawTestData['system-out'][0]) && rawTestData['system-out'][0]) || '';
+		systemOutput.standart = getStringOutputOrEmpty(rawTestData['system-out'][0]);
 	}
 	if (rawTestData['system-err']) {
-		systemOutput.errors = (!_.isObject(rawTestData['system-err'][0]) && rawTestData['system-err'][0]) || '';
+		systemOutput.errors = getStringOutputOrEmpty(rawTestData['system-err'][0]);
 	}
 	return systemOutput;
 }
