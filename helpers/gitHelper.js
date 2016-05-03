@@ -10,19 +10,29 @@ class GitHelper {
 
 	init() {
 		const repositoryCloneLocation = `/tmp/ludwig-git-${this.configuration.repo.split('/')[1]}.git`;
-		fs.stat(repositoryCloneLocation, (err, stat) => {
-			if (err) {
-				throw err;
-			}
-			if (!stat.isDirectory()) {
-				this.simpleGit.clone(`https://github.com/${this.configuration.repo}.git`, repositoryCloneLocation, () => {
-					//déclencher le vrai travail intéressant
-				});
-			} else {
-				this.simpleGit.checkout(this.configuration.github.branch, () => {
-					//déclencher le vrai travail intéressant
-				});
-			}
+		return new Promise( (resolve, reject) => {
+			fs.stat(repositoryCloneLocation, (err, stat) => {
+				if (err) {
+					throw err;
+				}
+				if (!stat.isDirectory()) {
+					this.simpleGit.clone(`https://github.com/${this.configuration.repo}.git`, repositoryCloneLocation, (err, data) => {
+						if (err) {
+							return reject(err);
+						}
+						return resolve(data);
+					});
+				} else {
+					this.simpleGit.checkout(this.configuration.github.branch, () => {
+						this.simpleGit.pull('origin', this.configuration.github.branch, (err, data) => {
+							if (err) {
+								return reject(err);
+							}
+							return resolve(data);
+						});
+					});
+				}
+			});
 		});
 	}
 }
