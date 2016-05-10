@@ -180,7 +180,8 @@ describe('Ludwig DAO', () => {
 						}, {author: {name: 'bar', email: 'bar@test.com'}} ]
 					});
 					done();
-				}).catch((err) => {
+				})
+				.catch((err) => {
 					done(err);
 				});
 		});
@@ -197,7 +198,8 @@ describe('Ludwig DAO', () => {
 						} ]
 					});
 					done();
-				}).catch((err) => {
+				})
+				.catch((err) => {
 					done(err);
 				});
 		});
@@ -214,7 +216,8 @@ describe('Ludwig DAO', () => {
 						} ]
 					});
 					done();
-				}).catch((err) => {
+				})
+				.catch((err) => {
 					done(err);
 				});
 		});
@@ -231,7 +234,8 @@ describe('Ludwig DAO', () => {
 						} ]
 					});
 					done();
-				}).catch((err) => {
+				})
+				.catch((err) => {
 					done(err);
 				});
 		});
@@ -280,7 +284,8 @@ describe('Ludwig DAO', () => {
 						} ]
 					});
 					done();
-				}).catch((err) => {
+				})
+				.catch((err) => {
 					done(err);
 				});
 		});
