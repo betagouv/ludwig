@@ -30,19 +30,34 @@ module.exports.saveCompleteTestSuite = function(testSuiteData) {
 	});
 };
 
-module.exports.getTestHistoryFilteredByName = function(userIdToFilterWith) {
+module.exports.getTestHistoryFilteredByUserData = function(customUserFilter) {
 	return new Promise( (resolve) => {
 		TestSuiteModel.find({})
 			.sort({timestamp: -1})
 			.populate('testCases')
 			.exec((err, data) => {
 				const testSuite = data[0];
-				if (userIdToFilterWith) {
-					const filteredTests = testSuite.testCases.filter((testCase) => {
-						return testCase.author.githubId === userIdToFilterWith;
-					});
-					testSuite.testCases = filteredTests;
-				}
+				const filteredTestCases = testSuite.testCases.filter((testCase) => {
+
+					if (Object.keys(customUserFilter).length) {
+						let includeTestCase = false;
+						const filterMatches = [];
+
+						filterMatches.push(customUserFilter.login && customUserFilter.login === testCase.author.name);
+						filterMatches.push(customUserFilter.name && customUserFilter.name === testCase.author.name);
+						filterMatches.push(customUserFilter.emails && customUserFilter.emails.indexOf(testCase.author.email) > -1);
+
+						filterMatches.forEach((matchFound) => {
+							includeTestCase |= matchFound;
+						});
+						return includeTestCase;
+					} else {
+						return true;
+					}
+				});
+				testSuite.testCases = filteredTestCases;
+				console.log(testSuite.testCases);
+				console.log(customUserFilter);
 				resolve(testSuite);
 			});
 	});

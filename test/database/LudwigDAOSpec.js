@@ -10,17 +10,17 @@ describe('Ludwig DAO', () => {
 	describe('saveCompleteTestSuite', () => {
 		it('should return a resolved promise if DAO saves both test suite and test cases without errors', (done) => {
 			//setup
-			sinon.stub(TestSuiteModel.prototype, 'save').yields(null, {saved:'data'});
-			TestCaseModel.collection = {insert:sinon.stub().yields(null, [])};
+			sinon.stub(TestSuiteModel.prototype, 'save').yields(null, {saved: 'data'});
+			TestCaseModel.collection = {insert: sinon.stub().yields(null, [])};
 			//action
-			ludwigDAO.saveCompleteTestSuite({testCases:[]})
-				.then( (data) => {
+			ludwigDAO.saveCompleteTestSuite({testCases: []})
+				.then((data) => {
 					//assert
 					TestSuiteModel.prototype.save.restore();
-					assert.deepEqual(data, {saved:'data'});
+					assert.deepEqual(data, {saved: 'data'});
 					done();
 				})
-				.catch( (err) => {
+				.catch((err) => {
 					TestSuiteModel.prototype.save.restore();
 					done(err);
 				});
@@ -31,11 +31,11 @@ describe('Ludwig DAO', () => {
 			sinon.stub(TestSuiteModel.prototype, 'save').yields(new Error('test suite save failed'));
 			//action
 			ludwigDAO.saveCompleteTestSuite({})
-				.then( () => {
+				.then(() => {
 					TestSuiteModel.prototype.save.restore();
 					done(new Error('ludwigDAO should return a rejected promise if test suite save fails'));
 				})
-				.catch( (err) => {
+				.catch((err) => {
 					//assert
 					assert.equal(err.message, 'test suite save failed');
 					TestSuiteModel.prototype.save.restore();
@@ -45,40 +45,40 @@ describe('Ludwig DAO', () => {
 
 		it('should return an rejected promise if testCase collection for test suite fails', (done) => {
 			//setup
-			sinon.stub(TestSuiteModel.prototype, 'save').yields(null, {saved:'data'});
-			TestCaseModel.collection = {insert:sinon.stub().yields(new Error('test cases save failed'))};
+			sinon.stub(TestSuiteModel.prototype, 'save').yields(null, {saved: 'data'});
+			TestCaseModel.collection = {insert: sinon.stub().yields(new Error('test cases save failed'))};
 			//action
 			ludwigDAO.saveCompleteTestSuite({})
 				.then(() => {
 					TestSuiteModel.prototype.save.restore();
 					done(new Error('should reject if we cannot save test cases collection'));
 				})
-				.catch( (err) => {
+				.catch((err) => {
 					//assert
 					TestSuiteModel.prototype.save.restore();
 					assert.equal(err.message, 'test cases save failed');
 					done();
-				} );
+				});
 		});
 
 		it('should return an rejected promise if test suite update fails', (done) => {
 			//setup
 			const saveStub = sinon.stub(TestSuiteModel.prototype, 'save');
-			saveStub.onFirstCall().yields(null, {saved:'data'});
+			saveStub.onFirstCall().yields(null, {saved: 'data'});
 			saveStub.onSecondCall().yields(new Error('test suite update failed'));
-			TestCaseModel.collection = {insert:sinon.stub().yields(null, {})};
+			TestCaseModel.collection = {insert: sinon.stub().yields(null, {})};
 			//action
 			ludwigDAO.saveCompleteTestSuite({})
 				.then(() => {
 					TestSuiteModel.prototype.save.restore();
 					done(new Error('should reject if we cannot update test suite'));
 				})
-				.catch( (err) => {
+				.catch((err) => {
 					//assert
 					TestSuiteModel.prototype.save.restore();
 					assert.equal(err.message, 'test suite update failed');
 					done();
-				} );
+				});
 		});
 		//cleanup ? transaction? concaténation d'opérations?
 
@@ -133,7 +133,7 @@ describe('Ludwig DAO', () => {
 		assert.match(actual[1].formattedTimestamp, /^01\/01\/1970 à [0-9]{2}:00:20$/);
 	});
 
-	describe('getTestHistoryFilteredByName', () => {
+	describe('getTestHistoryFilteredByUserData', () => {
 		const stubbedTestSuiteModelFind = {
 			sort: () => {
 				const sort = () => {
@@ -142,7 +142,14 @@ describe('Ludwig DAO', () => {
 					const populate = () => {
 					};
 					populate.exec = (callback) => {
-						callback(null, [ {testCases: [ {author: {githubId: 'foo'}}, {author: {githubId: 'bar'}} ]} ]);
+						callback(null, [ {
+							testCases: [ {
+								author: {
+									name: 'foo',
+									email: 'foo@test.com'
+								}
+							}, {author: {name: 'bar', email: 'bar@test.com'}} ]
+						} ]);
 					};
 					return populate;
 				};
@@ -158,43 +165,123 @@ describe('Ludwig DAO', () => {
 			mongoose.Model.find.restore();
 		});
 
-		it('should not filter results if nameToFilterWith is empty', () => {
+		it('should not filter results if there are no filters set', (done) => {
 			//setup
 			//action
-			ludwigDAO.getTestHistoryFilteredByName('')
-				.then( (testHistory) => {
+			ludwigDAO.getTestHistoryFilteredByUserData({})
+				.then((testHistory) => {
 					//assert
-					assert.deepEqual(testHistory, {testCases: [ {author: {githubId: 'foo'}}, {author: {githubId: 'bar'}} ]} );
+					assert.deepEqual(testHistory, {
+						testCases: [ {
+							author: {
+								name: 'foo',
+								email: 'foo@test.com'
+							}
+						}, {author: {name: 'bar', email: 'bar@test.com'}} ]
+					});
+					done();
+				}).catch((err) => {
+					done(err);
 				});
 		});
 
-		it('should not filter results if nameToFilterWith is null', () => {
-			//setup
-			//action
-			ludwigDAO.getTestHistoryFilteredByName(null)
-				.then( (testHistory) => {
-					assert.deepEqual(testHistory, {testCases: [ {author: {githubId: 'foo'}}, {author: {githubId: 'bar'}} ]} );
+		it('should filter testsCases by matching user login to author name', (done) => {
+			ludwigDAO.getTestHistoryFilteredByUserData({login:'foo'})
+				.then((testHistory) => {
+					assert.deepEqual(testHistory, {
+						testCases: [ {
+							author: {
+								name: 'foo',
+								email: 'foo@test.com'
+							}
+						} ]
+					});
+					done();
+				}).catch((err) => {
+					done(err);
 				});
 		});
 
-		it('should only show testCases by "foo" if nameToFilterWith equals foo and there is a testCase where "foo" is an author', () => {
-			//setup
-			//action
-
-			ludwigDAO.getTestHistoryFilteredByName('foo')
-				.then( (testHistory) => {
-					//assert
-					assert.deepEqual(testHistory, {testCases: [ {author: {githubId: 'foo'}} ]} );
+		it('should filter testsCases by matching user name to author name', (done) => {
+			ludwigDAO.getTestHistoryFilteredByUserData({name:'foo'})
+				.then((testHistory) => {
+					assert.deepEqual(testHistory, {
+						testCases: [ {
+							author: {
+								name: 'foo',
+								email: 'foo@test.com'
+							}
+						} ]
+					});
+					done();
+				}).catch((err) => {
+					done(err);
 				});
 		});
 
-		it('should return an empty test case list if nameToFilterWith equals foobar and there no testCase where "foobar" is an author', () => {
-			//setup
-			//action
-			ludwigDAO.getTestHistoryFilteredByName('foobar')
-				.then( (testHistory) => {
-					//assert
-					assert.deepEqual(testHistory, {testCases: []} );
+		it('should filter testsCases by matching user email to author email', (done) => {
+			ludwigDAO.getTestHistoryFilteredByUserData({emails:[ 'test@something.net', 'foo@test.com' ]})
+				.then((testHistory) => {
+					assert.deepEqual(testHistory, {
+						testCases: [ {
+							author: {
+								name: 'foo',
+								email: 'foo@test.com'
+							}
+						} ]
+					});
+					done();
+				}).catch((err) => {
+					done(err);
+				});
+		});
+
+		it('should allow filter combinations based on email or name', (done) => {
+			mongoose.Model.find.restore();
+			const stubbedTestSuiteModelFind = {
+				sort: () => {
+					const sort = () => {
+					};
+					sort.populate = () => {
+						const populate = () => {
+						};
+						populate.exec = (callback) => {
+							callback(null, [ {
+								testCases: [ {
+									author: {
+										name: 'foo',
+										email: 'foo@test.com'
+									}
+								}, {author: {name: 'bar', email: 'bar@test.com'}},
+									{author: {name: 'baz', email: 'baz@somewhere.else'}}  ]
+							} ]);
+						};
+						return populate;
+					};
+					return sort;
+				}
+			};
+
+			sinon.stub(mongoose.Model, 'find').returns(stubbedTestSuiteModelFind);
+
+			ludwigDAO.getTestHistoryFilteredByUserData({name:'baz', emails:[ 'test@something.net', 'foo@test.com' ]})
+				.then((testHistory) => {
+					assert.deepEqual(testHistory, {
+						testCases: [ {
+							author: {
+								name: 'foo',
+								email: 'foo@test.com'
+							}
+						}, {
+							author: {
+								name: 'baz',
+								email: 'baz@somewhere.else'
+							}
+						} ]
+					});
+					done();
+				}).catch((err) => {
+					done(err);
 				});
 		});
 	});
