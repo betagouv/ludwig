@@ -77,11 +77,21 @@ class Ludwig {
 		return title && description && currentState && expectedState && this.ludwigCreateSuggestionURL;
 	}
 
-	generateLudwigSuggestionEndpointURL(title, description, currentState, expectedState) {
+	generateLudwigSuggestionEndpointURL(title, description, currentState, expectedState, customSuggestionFormatter) {
 		if (!this.canGenerateLudwigSuggestionEndpointURL(title, description, currentState, expectedState)) {
 			throw new Error('Cannot generate Ludwig suggestions creation endpoint URL');
 		} else {
-			let URIEncodedState = encodeURIComponent(JSON.stringify(currentState));
+			let URIEncodedState;
+
+			if (customSuggestionFormatter) {
+				if (typeof customSuggestionFormatter === 'function') {
+					URIEncodedState=encodeURIComponent(customSuggestionFormatter(currentState, expectedState));
+				} else {
+					throw new Error('customSuggestionFormatter expected to be a clojure');
+				}
+			} else {
+				URIEncodedState=encodeURIComponent(this.defaultSuggestionFormatter(currentState, expectedState));
+			}
 			let URIEncodedExpectedState = encodeURIComponent(expectedState);
 			let URIEncodedTitle = encodeURIComponent(title);
 			let URIEncodedDescription = encodeURIComponent(description);
