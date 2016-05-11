@@ -56,8 +56,6 @@ module.exports.getTestHistoryFilteredByUserData = function(customUserFilter) {
 					}
 				});
 				testSuite.testCases = filteredTestCases;
-				console.log(testSuite.testCases);
-				console.log(customUserFilter);
 				resolve(testSuite);
 			});
 	});
