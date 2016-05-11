@@ -36,7 +36,8 @@ describe('GitHelper', () => {
 				}
 			});
 			const cloneSpy = sinon.stub().yields(null);
-			const context = {simpleGit: {clone: cloneSpy}, configuration, repositoryCloneLocation:'/tmp/ludwig-git-repoName.git'};
+			const simpleGitStub = sinon.stub().returns({clone: cloneSpy});
+			const context = {simpleGit: simpleGitStub, configuration, repositoryCloneLocation:'/tmp/ludwig-git-repoName.git'};
 
 			//action
 			gitHelper.init.call(context).then(() => {
@@ -44,6 +45,9 @@ describe('GitHelper', () => {
 				assert.equal(cloneSpy.calledOnce, true);
 				assert.deepEqual(cloneSpy.getCall(0).args[0], 'https://github.com/github-user/repoName.git');
 				assert.deepEqual(cloneSpy.getCall(0).args[1], '/tmp/ludwig-git-repoName.git');
+
+				assert.equal(simpleGitStub.called, true);
+				assert.deepEqual(simpleGitStub.getCall(0).args, []);
 
 				done();
 			}).catch((error) => {
@@ -61,13 +65,14 @@ describe('GitHelper', () => {
 			});
 			const pullSpy = sinon.stub().yields(null);
 			const cloneSpy = sinon.stub().yields(null);
+			const checkoutSpy = sinon.stub().yields(null, null);
+			const simpleGitStub = sinon.stub().returns({
+				clone: cloneSpy, checkout: checkoutSpy, pull: pullSpy
+			});
 			const context = {
-				simpleGit: {
-					clone: cloneSpy, checkout: () => {
-					}, pull: pullSpy
-				}, configuration
+				simpleGit: simpleGitStub, configuration,
+				repositoryCloneLocation:'repository clone location'
 			};
-			const checkoutSpy = sinon.stub(context.simpleGit, 'checkout').yields(null, null);
 			//action
 			gitHelper.init.call(context).then(() => {
 				//assert
@@ -77,6 +82,10 @@ describe('GitHelper', () => {
 				assert.equal(pullSpy.calledOnce, true);
 				assert.equal(pullSpy.getCall(0).args[0], 'origin');
 				assert.equal(pullSpy.getCall(0).args[1], 'foobar');
+
+				assert.equal(simpleGitStub.calledTwice, true);
+				assert.deepEqual(simpleGitStub.getCall(0).args, [ 'repository clone location' ]);
+				assert.deepEqual(simpleGitStub.getCall(1).args, [ 'repository clone location' ]);
 				done();
 			}).catch((error) => {
 				done(error);
@@ -105,8 +114,8 @@ describe('GitHelper', () => {
 		it('should reject if there is an error getting the log', (done) => {
 			//setup
 			const context = {
-				simpleGit: {
-					log: sinon.stub().yields(new Error('Log error'))}};
+				simpleGit: sinon.stub().returns({
+					log: sinon.stub().yields(new Error('Log error'))})};
 			//action
 			gitHelper.getEarliestCommitAuthorForFile.call(context, '/file.name')
 				.then(() => {
@@ -122,7 +131,7 @@ describe('GitHelper', () => {
 		it('should return the author data from the first commit for a file', (done) => {
 			//setup
 			const context = {
-				simpleGit: {
+				simpleGit: sinon.stub().returns({
 					log: sinon.stub().yields(null, {
 						latest: {}, total: 2,
 						all: [
@@ -138,7 +147,7 @@ describe('GitHelper', () => {
 								author_name: 'Baz Lightning',
 								author_email: 'baz@users.noreply.github.com'
 							} ]
-					})}};
+					})})};
 			//action
 			gitHelper.getEarliestCommitAuthorForFile.call(context, '/file.name')
 				.then((data) => {
