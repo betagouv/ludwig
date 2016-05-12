@@ -5,6 +5,8 @@ const MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
 const appConfiguration = require('./ludwig-conf');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
 mongoose.connect(appConfiguration.mongo.uri, appConfiguration.mongo.options);
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -18,6 +20,7 @@ var config = {
 };
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, '/dist')));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 if (!process.env.npm_config_ludwig_sessionSecret) {
 	console.error('Session secret not defined! Ludwig server will not start until this is fixed!');
