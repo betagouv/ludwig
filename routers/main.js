@@ -54,12 +54,12 @@ function isUserConnected(sessionData) {
 }
 
 router.get('/listTests', (req, res) => {
-	let userIdFilter;
+	let customUserFilter = {};
 	const myTestsOnly = isUserConnected(req.session.passport) && req.query['filter'] === 'mine';
 	if (myTestsOnly) {
-		userIdFilter = req.session.passport.user.id;
+		customUserFilter = ListTestsController.buildTestFilterForUser(req.session.passport.user._json);
 	}
-	ListTestsController.showLatestTestSuite(userIdFilter, (err, renderParams) => {
+	ListTestsController.showLatestTestSuite(customUserFilter, (err, renderParams) => {
 		if (err) {
 			res.render('ko');
 		} else {
