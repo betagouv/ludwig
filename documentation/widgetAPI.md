@@ -6,4 +6,6 @@ Il est possible de préciser à la méthode une fonction personnalisée pour sé
 * `generateSuggestionName()` : Génère un nom de suggestion qui se base sur le préfixe configuré et la date courante.
 * `acceptedTestsURL()` : Génère l'URL permettant d'accéder à la liste des tests acceptés.
 * `suggestedTestsURL()` : Génère l'URL permettant de consulter les suggestions de tests.
-* `generateLudwigSuggestionEndpointURL(suggestionTitle, suggestionDescription, currentState, expectedResult)` : Crée le lien qui permet de contacter l'API Ludwig pour créer une nouvelle suggestion. Cela permet de fournir un titre et une description en plus de l'état et du résultat attendu.
+* `generateLudwigSuggestionEndpointURL(suggestionTitle, suggestionDescription, currentState, expectedResult [, customSuggestionFOrmatter])` : Crée le lien qui permet de contacter l'API Ludwig pour créer une nouvelle suggestion. Cela permet de fournir un titre et une description en plus de l'état et du résultat attendu.
+* `postSuggestion(suggestionTitle, suggestionDescription, currentState, expectedResult [, customSuggestionFOrmatter])` : POST d'une nouvelle suggestion vers l'API Ludwig. Même résultat que `generateLudwigSuggestionEndpointURL` mais en passant par un POST HTTP.
+

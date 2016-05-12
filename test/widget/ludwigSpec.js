@@ -290,4 +290,62 @@ describe('Widget : Sugestion link retrieval', () => {
 			assert.equal(ludwig.defaultSuggestionFormatter.calledOnce, true);
 		});
 	});
+
+	describe('prepareDataToPostToLudwig', () => {
+		it('should create a flat object containing title, description and formattedStates if all data is valid', () => {
+			//setup
+			sinon.stub(ludwig, 'canGenerateLudwigSuggestionEndpointURL').returns(true);
+			//action
+			const actual = ludwig.prepareDataToPostToLudwig('my title', 'my description', {current:'state'}, {expected:'state'});
+			//assert
+			assert.deepEqual(actual, {
+				title:'my title',
+				description:'my description',
+				state:'undefined\r\n{\n\t"current": "state"\n}\r\n{\n\t"expected": "state"\n}'
+			});
+		});
+
+		it('should create a flat object containing title, description and formattedStates if all data is valid and use the custom formatter if given and is a function', () => {
+			//setup
+			sinon.stub(ludwig, 'canGenerateLudwigSuggestionEndpointURL').returns(true);
+			const customFormatterStub = sinon.stub().returns(' custom formatter called');
+			//action
+			const actual = ludwig.prepareDataToPostToLudwig('my title', 'my description', {current:'state'}, {expected:'state'}, customFormatterStub);
+			//assert
+			assert.deepEqual(actual, {
+				title:'my title',
+				description:'my description',
+				state:' custom formatter called'
+			});
+			assert.equal(customFormatterStub.calledOnce, true);
+			assert.deepEqual(customFormatterStub.getCall(0).args, [ {current:'state'}, {expected:'state'} ]);
+		});
+
+		it('should throw an error if custom formatter is provided but is not a function', () => {
+			//setup
+			sinon.stub(ludwig, 'canGenerateLudwigSuggestionEndpointURL').returns(true);
+			//action
+			try {
+				ludwig.prepareDataToPostToLudwig('title', 'description', {current:'state'}, {expected:'state'}, 'hai!');
+				assert.fail('we should not be able to get there');
+			} catch (error) {
+				assert.equal(error.message, 'customSuggestionFormatter expected to be a clojure');
+			}
+		});
+	});
+
+	describe('postSuggestion', () => {
+		it('should throw an error if there suggestion data is incomplete', () => {
+			//setup
+			sinon.stub(ludwig, 'canGenerateLudwigSuggestionEndpointURL').returns(false);
+			//action
+			try {
+				ludwig.postSuggestion();
+				assert.fail('we should not be able to get there');
+			} catch (error) {
+				//assert
+				assert.equal(error.message, 'Cannot generate Ludwig suggestions creation endpoint data');
+			}
+		});
+	});
 });
