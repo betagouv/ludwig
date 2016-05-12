@@ -3,8 +3,8 @@ import ludwigDAO from '../database/ludwigDAO';
 import moment from 'moment';
 
 
-module.exports.showLatestTestSuite = function (userIdFilter, callback) {
-	ludwigDAO.getTestHistoryFilteredByName(userIdFilter)
+module.exports.showLatestTestSuite = function (customUserFilter, callback) {
+	ludwigDAO.getTestHistoryFilteredByUserData(customUserFilter)
 		.then((mostRecentTestSuite) => {
 			if (mostRecentTestSuite) {
 				callback(null, {
@@ -25,4 +25,21 @@ module.exports.authenticateToFilterMyTests = function (res, next) {
 		return res.redirect('/listTests?filter=mine');
 	}
 	next();
+};
+
+module.exports.buildTestFilterForUser = function(sessionData) {
+	const testFilterForUser = {};
+	if (sessionData) {
+		if (sessionData.login) {
+			testFilterForUser.login = sessionData.login;
+		}
+		if (sessionData.name) {
+			testFilterForUser.name = sessionData.name;
+		}
+		if (sessionData.email || sessionData.emails) {
+			const multipleMails = sessionData.emails || [];
+			testFilterForUser.emails = [  ].concat(sessionData.email, multipleMails.map( (emailElement) => {return emailElement.value; })).filter( (element) => {return element != null;});
+		}
+	}
+	return testFilterForUser;
 };

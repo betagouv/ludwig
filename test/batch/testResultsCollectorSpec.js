@@ -6,9 +6,8 @@ import {TestResultsCollector} from '../../batch/testResultsCollector';
 describe('testResultsCollector', () => {
 	let testResultsCollector;
 	beforeEach(() => {
-		testResultsCollector = new TestResultsCollector({});
-		testResultsCollector.connect = () => {
-		};//we don't want any db connection happening during those tests, so we might as well disable the connection part
+		testResultsCollector = new TestResultsCollector({repo:'test/repo'});
+		testResultsCollector.connect = () => {};//we don't want any db connection happening during those tests, so we might as well disable the connection part
 	});
 	describe('saveFromXUnitData', () => {
 		it('should reject if file parsing failed', (done) => {
@@ -16,7 +15,8 @@ describe('testResultsCollector', () => {
 			const context = {
 				parser: {
 					parseTestSuiteFromFile: sinon.stub().returns(Promise.reject({message: 'Could not parse xUnit file'}))
-				}
+				},
+				gitHelper: {init:sinon.stub().returns(Promise.resolve({}))}
 			};
 			//action
 			testResultsCollector.saveFromXUnitData.call(context, 'file/path').then(() => {
@@ -34,8 +34,9 @@ describe('testResultsCollector', () => {
 				parser: {
 					parseTestSuiteFromFile: sinon.stub().returns(Promise.resolve({testCases: []}))
 				},
-				githubHelper: {
-					getFirstCommitForFile: sinon.stub().returns(Promise.resolve({some: 'data'}))
+				gitHelper: {
+					getEarliestCommitAuthorForFile: sinon.stub().returns(Promise.resolve({some: 'data'})),
+					init:sinon.stub().returns(Promise.resolve({}))
 				},
 				dao: {
 					saveCompleteTestSuite: sinon.stub().returns(Promise.reject(new Error('some error')))
@@ -59,11 +60,12 @@ describe('testResultsCollector', () => {
 				parser: {
 					parseTestSuiteFromFile: sinon.stub().returns(Promise.resolve({testCases: [ {} ]}))
 				},
-				githubHelper: {
-					getFirstCommitForFile: sinon.stub().returns(Promise.resolve({
+				gitHelper:{
+					getEarliestCommitAuthorForFile: sinon.stub().returns(Promise.resolve({
 						commit: {author: {foo: 'bar'}},
 						author: {id: 1234}
-					}))
+					})),
+					init:sinon.stub().returns(Promise.resolve({}))
 				},
 				dao: {saveCompleteTestSuite: sinon.stub().returns(Promise.resolve({some: 'data'}))}
 			};
@@ -84,8 +86,8 @@ describe('testResultsCollector', () => {
 				parser:{
 					parseTestSuiteFromFile: sinon.stub().returns(Promise.resolve({testCases: [ {location: 'location1'}, {location: 'location2'} ]}))
 				},
-				githubHelper:{
-					getFirstCommitForFile: (location) => {
+				gitHelper:{
+					getEarliestCommitAuthorForFile: (location) => {
 						if (location === 'location1') {
 							return Promise.resolve({
 								commit: {author: {name: 'author1', email: 'author1@mail.com'}},
@@ -97,7 +99,8 @@ describe('testResultsCollector', () => {
 								author: {id: 1234}
 							});
 						}
-					}
+					},
+					init:sinon.stub().returns(Promise.resolve({}))
 				},
 				dao:{saveCompleteTestSuite: saveCompleteTestSuiteStub}
 			};
@@ -110,14 +113,12 @@ describe('testResultsCollector', () => {
 				assert.equal(saveCompleteTestSuiteStub.getCall(0).args[0].testCases[0].location, 'location1');
 				assert.deepEqual(saveCompleteTestSuiteStub.getCall(0).args[0].testCases[0].author, {
 					name: 'author1',
-					email: 'author1@mail.com',
-					githubId: 1233
+					email: 'author1@mail.com'
 				});
 				assert.equal(saveCompleteTestSuiteStub.getCall(0).args[0].testCases[1].location, 'location2');
 				assert.deepEqual(saveCompleteTestSuiteStub.getCall(0).args[0].testCases[1].author, {
 					name: 'author2',
-					email: 'author2@mail.com',
-					githubId: 1234
+					email: 'author2@mail.com'
 				});
 				done();
 			}).catch((err) => {
