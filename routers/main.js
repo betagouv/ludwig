@@ -1,18 +1,13 @@
 import express from 'express';
-const router = express.Router();
+import HistoryController from '../controllers/historyController';
+import ludwigConfiguration from '../ludwig-conf.js';
 import passport from 'passport';
-import GithubStrategy from 'passport-github';
 import {SuggestionsController} from '../controllers/suggestionsController';
-const Strategy = GithubStrategy.Strategy;
-import {TestsService} from '../services/testsService';
-import moment from 'moment';
+import ListTestsController from '../controllers/listTestsController';
+import {passportStrategyFactory} from '../helpers/passportStrategyHelper';
 
-import config from '../ludwig-conf.js';
-
-const testsService = new TestsService();
-
-import {HistoryController} from '../controllers/historyController';
-const historyController = new HistoryController(config);
+const router = express.Router();
+const suggestionsController = new SuggestionsController(ludwigConfiguration);
 
 passport.serializeUser((user, done) => {
 	done(null, user);
@@ -22,17 +17,11 @@ passport.deserializeUser((obj, done) => {
 	done(null, obj);
 });
 
-passport.use('github', new Strategy({
-	clientID: process.env.npm_config_ludwig_clientID,
-	clientSecret: process.env.npm_config_ludwig_clientSecret,
-	callbackURL: config.github.authenticationCallback
-}, (accessToken, refreshToken, profile, done) => {
-	profile.accessToken = accessToken;
-	profile.refreshToken = refreshToken;
-	return done(null, profile);
-}));
+const CREATE_PR_STRATEGY_NAME = 'githubCreatePR';
+const CHECK_LOGIN_STRATEGY_NAME = 'githubLogin';
+passport.use(CREATE_PR_STRATEGY_NAME, passportStrategyFactory(ludwigConfiguration.github.authenticationCallback+'/createPR'));
+passport.use(CHECK_LOGIN_STRATEGY_NAME, passportStrategyFactory(ludwigConfiguration.github.authenticationCallback+'/login'));
 
-// /test route not even declared if not explicitly enabled in configuration
 if (process.env.NODE_ENV === 'development') {
 	router.get('/test', (req, res) => {
 		res.render('test');
@@ -46,39 +35,46 @@ router.get('/createSuggestion',
 		req.session.state = req.query.state;
 		next();
 	},
-	passport.authenticate('github', {scope: [ 'repo' ]}));
+	passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]}));
 
-router.get('/github_callback', passport.authenticate('github', {failureRedirect: '/authKO'}), (req, res) => {
-	const suggestionsController = new SuggestionsController(config);
-	suggestionsController.createPullRequest(process.env.npm_config_ludwig_accessToken, req.session.title, req.session.description, req.session.state, res, config.github.branch);
+router.get('/github_callback/createPR', passport.authenticate(CREATE_PR_STRATEGY_NAME, {failureRedirect: '/authKO'}), (req, res) => {
+	suggestionsController.createPullRequest(req.session.title, req.session.description, req.session.state, res);
+});
+
+router.get('/github_callback/login', passport.authenticate(CHECK_LOGIN_STRATEGY_NAME, {failureRedirect: '/authKO'}), (req, res) => {
+	res.redirect('/listTestsConnected');
 });
 
 router.get('/', (req, res) => {
 	res.redirect('/listTests');
 });
 
+function isUserConnected(sessionData) {
+	return typeof(sessionData) !== 'undefined' && sessionData !== null && sessionData.user.id.length > 0;
+}
+
 router.get('/listTests', (req, res) => {
-	testsService.getMostRecentTestSuite((err, mostRecentTestSuite) => {
-		if (!err) {
-			if (mostRecentTestSuite) {
-				var date = new Date();
-				date.setTime(mostRecentTestSuite.timestamp);
-				res.render('listTests', {
-					testSuite: mostRecentTestSuite,
-					formattedTimestamp: moment(date).format('YYYY/MM/DD à HH:mm:ss')
-				});
-			} else {
-				res.render('listTests', {testSuite: null});
-			}
-		} else {
+	let userIdFilter;
+	const myTestsOnly = isUserConnected(req.session.passport) && req.query['filter'] === 'mine';
+	if (myTestsOnly) {
+		userIdFilter = req.session.passport.user.id;
+	}
+	ListTestsController.showLatestTestSuite(userIdFilter, (err, renderParams) => {
+		if (err) {
 			res.render('ko');
+		} else {
+			renderParams.mine = myTestsOnly;
+			res.render('listTests', renderParams);
 		}
 	});
 });
 
+router.get('/listTestsConnected', (req, res, next) => {
+	ListTestsController.authenticateToFilterMyTests(res, next);
+}, passport.authenticate(CHECK_LOGIN_STRATEGY_NAME, {scope: [ 'repo' ]}));
+
 router.get('/history', (req, res) => {
-	const testName = req.query.testName;
-	historyController.collectTestHistoryDataForTest(testName, (err, dataToFeedToTemplateEngine) => {
+	HistoryController.collectTestHistoryDataForTest(req.query.testName, (err, dataToFeedToTemplateEngine) => {
 		if (err) {
 			res.render('ko');
 		} else {

@@ -8,7 +8,7 @@ describe('Github Helper', () => {
 	let githubHelper;
 
 	beforeEach(() => {
-		githubHelper = new GithubHelper({github:{}});
+		githubHelper = new GithubHelper({github: {}, acceptedTestsLocation:'testsDir'});
 	});
 
 	describe('createPullRequestRequestBody', () => {
@@ -45,15 +45,21 @@ describe('Github Helper', () => {
 			//setup
 			const suggestionFileName = 'path for the suggestion file', branchName = 'branch to commit to', commitMessage = 'commit message', base64FileContents = 'Base64 Contents';
 			//action
-			const actual = githubHelper.createContentRequestBody(suggestionFileName, branchName, commitMessage, base64FileContents, {username:'authorName', emails:[ {value:'authorEmail'}, {value:'someOtherEmail'} ]});
+			const actual = githubHelper.createContentRequestBody(suggestionFileName, branchName, commitMessage, base64FileContents, {
+				username: 'authorName',
+				emails: [ {value: 'authorEmail'}, {value: 'someOtherEmail'} ]
+			});
 			//assert
 			assert.equal(actual, '{"path":"path for the suggestion file","branch":"branch to commit to","message":"commit message","content":"Base64 Contents","author":{"name":"authorName","email":"authorEmail"}}');
 		});
 
 		const authorBadInfoVariationsTests = [
-			{title:'the author user name is missing', authorData:{emails:[ {value:'authorEmail'} ]}},
-			{title:'the author email is missing (email not public)', authorData:{username:'authorName'}},
-			{title:'the author email is missing (empty emails array)', authorData:{username:'authorName', emails:[]}}
+			{title: 'the author user name is missing', authorData: {emails: [ {value: 'authorEmail'} ]}},
+			{title: 'the author email is missing (email not public)', authorData: {username: 'authorName'}},
+			{
+				title: 'the author email is missing (empty emails array)',
+				authorData: {username: 'authorName', emails: [ ]}
+			}
 		];
 
 		authorBadInfoVariationsTests.forEach((testCase) => {
@@ -71,9 +77,9 @@ describe('Github Helper', () => {
 	describe('createReferenceRequestBody', () => {
 		it('should generate a correctly constructed reference creation request body', () => {
 			//setup
-			const newBranchName = 'newBranchName', 	branchToCreatePullRequestsFor = 'commit sha1 reference to branch from';
+			const newBranchName = 'newBranchName', branchToCreatePullRequestsFor = 'commit sha1 reference to branch from';
 			//action
-			const actual = githubHelper.createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor );
+			const actual = githubHelper.createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor);
 			//assert
 			assert.equal(actual, '{"ref":"refs/heads/newBranchName","sha":"commit sha1 reference to branch from"}');
 		});
@@ -85,7 +91,7 @@ describe('Github Helper', () => {
 			const superAgentConfig = [ {
 				pattern: 'https://api.github.com/(.*)',
 				post: () => {
-					return {ok:'some data', statusCode:201} ;
+					return {ok: 'some data', statusCode: 201};
 				},
 				fixtures: () => {
 					return {};
@@ -107,9 +113,9 @@ describe('Github Helper', () => {
 			//action
 			const createPullRequestPromise = githubHelper.createPullRequest('head', 'title', 'body', 'accessToken');
 			//assert
-			createPullRequestPromise.then( (data) => {
+			createPullRequestPromise.then((data) => {
 				console.log(data);
-				assert.deepEqual(data, {ok : 'some data', statusCode:201} );
+				assert.deepEqual(data, {ok: 'some data', statusCode: 201});
 				superagentMock.unset();
 				done();
 			});
@@ -141,8 +147,8 @@ describe('Github Helper', () => {
 			//action
 			const createPullRequestPromise = githubHelper.createPullRequest('head', 'title', 'body', 'accessToken');
 			//assert
-			createPullRequestPromise.catch( (message) => {
-				assert.deepEqual(message.message, 'some PR error message' );
+			createPullRequestPromise.catch((message) => {
+				assert.deepEqual(message.message, 'some PR error message');
 				superagentMock.unset();
 				done();
 			});
@@ -155,7 +161,7 @@ describe('Github Helper', () => {
 			const config = [ {
 				pattern: 'https://api.github.com/(.*)',
 				put: () => {
-					return {ok:'some data'} ;
+					return {ok: 'some data'};
 				},
 				fixtures: () => {
 					return {};
@@ -177,12 +183,14 @@ describe('Github Helper', () => {
 			//action
 			const createContentPromise = githubHelper.createContent('accessToken', 'testFileName', 'branchName', 'commitMessage', 'b64FC==',  {username:'authorName', emails:[ {value:'email1'} ]});
 			//assert
-			createContentPromise.then( (data) => {
-				assert.deepEqual(data, {ok : 'some data'} );
+			createContentPromise.then((data) => {
+				assert.deepEqual(data, {ok: 'some data'});
 				assert.equal(githubHelper.createContentRequestBody.calledOnce, true);
-				assert.deepEqual(githubHelper.createContentRequestBody.getCall(0).args, [ 'testFileName', 'branchName', 'commitMessage', 'b64FC==', {username:'authorName', emails:[ {value:'email1'} ]} ]);
+				assert.deepEqual(githubHelper.createContentRequestBody.getCall(0).args, [ 'testsDir/testFileName', 'branchName', 'commitMessage', 'b64FC==', {username:'authorName', emails:[ {value:'email1'} ]} ]);
 				superagentMock.unset();
 				done();
+			}).catch( (err) => {
+				done(err);
 			});
 		});
 
@@ -212,8 +220,8 @@ describe('Github Helper', () => {
 			//action
 			const createContentPromise = githubHelper.createContent('accessToken', 'testFileName', 'branchName', 'commitMessage', 'b64FC==');
 			//assert
-			createContentPromise.catch( (message) => {
-				assert.deepEqual(message.message, 'some content error message' );
+			createContentPromise.catch((message) => {
+				assert.deepEqual(message.message, 'some content error message');
 				superagentMock.unset();
 				done();
 			});
@@ -226,7 +234,7 @@ describe('Github Helper', () => {
 			const config = [ {
 				pattern: 'https://api.github.com/(.*)',
 				post: () => {
-					return {ok:'some data', statusCode:201} ;
+					return {ok:'some data', statusCode:201};
 				},
 				fixtures: () => {
 					return {};
@@ -247,8 +255,8 @@ describe('Github Helper', () => {
 			//action
 			const createReferencePromise = githubHelper.createReference('accessToken', 'newBranchName', 'master');
 			//assert
-			createReferencePromise.then( (data) => {
-				assert.deepEqual(data, {ok : 'some data', statusCode:201} );
+			createReferencePromise.then((data) => {
+				assert.deepEqual(data, {ok: 'some data', statusCode: 201});
 				superagentMock.unset();
 				done();
 			});
@@ -280,8 +288,8 @@ describe('Github Helper', () => {
 			//action
 			const createReferencePromise = githubHelper.createReference('accessToken', 'newBranchName', 'master');
 			//assert
-			createReferencePromise.catch( (message) => {
-				assert.deepEqual(message.message, 'some new error' );
+			createReferencePromise.catch((message) => {
+				assert.deepEqual(message.message, 'some new error');
 				superagentMock.unset();
 				done();
 			});
@@ -315,7 +323,7 @@ describe('Github Helper', () => {
 			//action
 			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('');
 			//assert
-			getHeadReferencesForBranchPromise.catch( (message) => {
+			getHeadReferencesForBranchPromise.catch((message) => {
 				assert.deepEqual(message, {
 					message: 'Not able to retrieve references',
 					details: 'Can\'t retrieve references'
@@ -331,7 +339,7 @@ describe('Github Helper', () => {
 			const config = [ {
 				pattern: 'https://api.github.com/(.*)',
 				get: () => {
-					return {body: [], statusCode:200};
+					return {body: [], statusCode: 200};
 				},
 				fixtures: () => {
 					return {};
@@ -352,7 +360,7 @@ describe('Github Helper', () => {
 			//action
 			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobarbaz');
 			//assert
-			getHeadReferencesForBranchPromise.catch( (message) => {
+			getHeadReferencesForBranchPromise.catch((message) => {
 				assert.deepEqual(message, {
 					message: 'Required branch not found',
 					details: 'Reference searched for: refs/heads/foobarbaz'
@@ -368,7 +376,7 @@ describe('Github Helper', () => {
 			const config = [ {
 				pattern: 'https://api.github.com/(.*)',
 				get: () => {
-					return {statusCode:200};
+					return {statusCode: 200};
 				},
 				fixtures: () => {
 					return {};
@@ -389,7 +397,7 @@ describe('Github Helper', () => {
 			//action
 			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobarbaz');
 			//assert
-			getHeadReferencesForBranchPromise.catch( (message) => {
+			getHeadReferencesForBranchPromise.catch((message) => {
 				assert.deepEqual(message, {
 					message: 'Not able to retrieve references',
 					details: 'Body does not contain references list'
@@ -425,8 +433,121 @@ describe('Github Helper', () => {
 			//action
 			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobar');
 			//assert
-			getHeadReferencesForBranchPromise.then( (data) => {
-				assert.deepEqual(data, 'shacode for foobar' );
+			getHeadReferencesForBranchPromise.then((data) => {
+				assert.deepEqual(data, 'shacode for foobar');
+				superagentMock.unset();
+				done();
+			});
+		});
+	});
+
+	describe('getFirstCommitForFile', () => {
+		it('should return a rejected promise if there was an error reaching out to Github', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				get: () => {
+					throw new Error('Error when reaching Github');
+				},
+				fixtures: () => {
+					return {};
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {commitsEndpoint: 'https://api.github.com/repos/user/reponame/commits'};
+				}
+			});
+			//action
+			const getFirstCommitForFilePromise = githubHelper.getFirstCommitForFile('file/path');
+			//assert
+			getFirstCommitForFilePromise.catch((message) => {
+				assert.deepEqual(message, {
+					message: 'Not able to retrieve commit',
+					details: 'Error when reaching Github'
+				});
+				superagentMock.unset();
+				done();
+			});
+		});
+
+		it('should return the only commit data if there is only one commit', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				get: () => {
+					return {body:[ {sha:1, commit:{author:{date:'2016-03-31T09:29:37Z'}}} ]};
+				},
+				fixtures: () => {
+					return {};
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {commitsEndpoint: 'https://api.github.com/repos/user/reponame/commits'};
+				}
+			});
+			//action
+			const getFirstCommitForFilePromise = githubHelper.getFirstCommitForFile('file/path');
+			//assert
+			getFirstCommitForFilePromise.then((data) => {
+				assert.deepEqual(data, {sha: 1, commit: {author: {date: '2016-03-31T09:29:37Z'}}});
+				superagentMock.unset();
+				done();
+			});
+		});
+
+		it('should return the oldest commit data if there are multiple commits (based on author date)', (done) => {
+			//setup
+			const config = [ {
+				pattern: 'https://api.github.com/(.*)',
+				get: () => {
+					return {
+						body: [ {sha: 1, commit: {author: {date: '2016-03-31T09:29:37Z'}}}, {
+							sha: 2,
+							commit: {author: {date: '2015-03-31T09:29:37Z'}}
+						} ]
+					};
+				},
+				fixtures: (match) => {
+					if (match[1].match(/repos\/user\/reponame\/commits\?path=file\/path&client_id=(.*)&client_secret=(.*)/)) {
+						return {};
+					} else {
+						assert.fail('Not an adequate URL');
+					}
+				}
+			} ];
+
+			const superagentMock = require('superagent-mock')(request, config);
+			sinon.stub(githubHelper, 'agent', {
+				get: () => {
+					return request;
+				}
+			});
+			sinon.stub(githubHelper, 'config', {
+				get: () => {
+					return {commitsEndpoint: 'https://api.github.com/repos/user/reponame/commits'};
+				}
+			});
+			//action
+			const getFirstCommitForFilePromise = githubHelper.getFirstCommitForFile('file/path');
+			//assert
+			getFirstCommitForFilePromise.then((data) => {
+				assert.deepEqual(data, {sha: 2, commit: {author: {date: '2015-03-31T09:29:37Z'}}});
 				superagentMock.unset();
 				done();
 			});

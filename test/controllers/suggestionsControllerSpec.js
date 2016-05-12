@@ -1,4 +1,4 @@
-/*global describe it beforeEach*/
+/*global describe it beforeEach process*/
 import {assert} from 'chai';
 import sinon from 'sinon';
 import {SuggestionsController} from '../../controllers/suggestionsController';
@@ -6,8 +6,10 @@ import {SuggestionsController} from '../../controllers/suggestionsController';
 describe('suggestionController', () => {
 	let suggestionsController;
 	beforeEach(() => {
-		suggestionsController = new SuggestionsController({});
+		suggestionsController = new SuggestionsController({github:{}});
+		process.env.npm_config_ludwig_accessToken = 'access token';
 	});
+
 	describe('createPullRequest', () => {
 		const testData = {
 			accessToken: 'accessToken',
@@ -22,7 +24,7 @@ describe('suggestionController', () => {
 
 		it('should render the ok page if all remote calls work without errors', (done) => {
 			//setup
-			const accessToken = 'access token', title = 'title', description = 'description';
+			const title = 'title', description = 'description';
 			const res = {render: sinon.spy(), req:{session:{passport:{user:{}}}}};
 			const mockedGithubHelper = {
 				getHeadReferenceForBranch: sinon.stub().returns(Promise.resolve('branchedReferenceSHA')),
@@ -42,9 +44,8 @@ describe('suggestionController', () => {
 					return mockedGithubHelper;
 				}
 			});
-			//suggestionsController.githubHelper = mockedGithubHelper;
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(accessToken, title, description, state, res);
+			const createPRPromise = suggestionsController.createPullRequest(title, description, state, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(res.render.calledOnce, true);
@@ -89,8 +90,9 @@ describe('suggestionController', () => {
 			it(`should return an error if ${testCase.title} missing`, () => {
 				//setup
 				const testData = testCase.data;
+				process.env.npm_config_ludwig_accessToken = testData.accessToken;
 				//action
-				suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res);
+				suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 				//assert
 				assert.equal(res.render.calledOnce, true);
 				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
@@ -110,7 +112,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(res.render.calledOnce, true);
@@ -134,7 +136,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(res.render.calledOnce, true);
@@ -159,7 +161,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(res.render.calledOnce, true);
@@ -185,7 +187,7 @@ describe('suggestionController', () => {
 			});
 			const customRes = {render:sinon.spy(),req:{session:{passport:{user:{username:'user name', emails:[ {value:'user@mail'} ]}}}}};
 			//action
-			const createPRPromise = suggestionsController.createPullRequest('accessToken', 'title', 'description', 'state', customRes);
+			const createPRPromise = suggestionsController.createPullRequest('title', 'description', 'state', customRes);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(githubHelperStub.createContent.calledOnce, true);
@@ -207,7 +209,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(res.render.calledOnce, true);
@@ -220,6 +222,7 @@ describe('suggestionController', () => {
 
 		it('should use the "not_master" branch to create pull requests for if branch "not_master" is specified', (done) => {
 			//setup
+			const suggestionsController = new SuggestionsController({github:{branch:'not_master'}});
 			const githubHelperStub = {
 				createReference: sinon.spy(),
 				getHeadReferenceForBranch: sinon.stub().returns(Promise.reject({}))
@@ -230,7 +233,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res, 'not_master');
+			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(githubHelperStub.getHeadReferenceForBranch.calledOnce, true);
@@ -252,7 +255,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.accessToken, testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(githubHelperStub.getHeadReferenceForBranch.calledOnce, true);

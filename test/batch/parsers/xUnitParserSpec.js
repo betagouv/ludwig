@@ -8,146 +8,187 @@ describe('XUnit Parser', () => {
 
 	beforeEach(()=> {
 		xUnitParser = new XUnitParser({
-			repoUrl: 'https://github.com/user/repo',
-			acceptedTestsLocation: '/tree/master/tests',
-			repo:'user/repo'
-		});
-	});
-
-	it('should return null if file to parse is empty (no test suite)', () => {
-		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Mocha Tests" tests="0" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"></testsuite>');
-		const callback = sinon.spy();
-		//action
-		xUnitParser.parse('./filename.xunitreport', callback);
-		//assert
-		assert.equal(callback.calledOnce, true);
-		assert.deepEqual(callback.getCall(0).args, [ null, null ]);
-	});
-
-	it('should return a testSuite with one ok test included in it if xUnitReport contains one test case', () => {
-		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="1" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="test spec location" name="Test Case" time="0.02"><randomElement>not a failure</randomElement></testcase><system-out></system-out><system-err></system-err></testsuite>');
-		const callback = sinon.spy();
-		//action
-		xUnitParser.parse('./filename.xunitreport', callback);
-		//assert
-		assert.equal(callback.calledOnce, true);
-		assert.equal(callback.getCall(0).args[0], null);
-		assert.deepEqual(callback.getCall(0).args[1], {
-			name: 'Test Suite',
-			tests: 1,
-			failures: 0,
-			timestamp: '1457428026000',
-			testCases: [ {
-				location: 'https://github.com/user/repo/tree/master/tests/test spec location',
-				name: 'Test Case',
-				status: 'ok',
-				time: '0.02',
-				timestamp: '1457428026000'
-			} ]
-		});
-	});
-
-	it('should return a testSuite with its "tests" property read form testsuite attributes', () => {
-		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="2" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="" name="Test Case" time="0.02"><randomElement>not a failure</randomElement></testcase><testcase classname="" name="Test Case 2" time="0.02"/><system-out></system-out><system-err></system-err></testsuite>');
-		const callback = sinon.spy();
-		sinon.stub(xUnitParser, 'now', {
-			get: () => {
-				return 'Tue, 05 Apr 2016 09:16:33 GMT';
+			repo:'user/repo',
+			github:{
+				branch:'master'
 			}
 		});
-		//action
-		xUnitParser.parse('./filename.xunitreport', callback);
-		//assert
-		assert.equal(callback.calledOnce, true);
-		assert.equal(callback.getCall(0).args[0], null);
-		assert.deepEqual(callback.getCall(0).args[1], {
-			name: 'Test Suite',
-			tests: 2,
-			failures: 0,
-			timestamp: '1457428026000',
-			testCases: [
-				{
-					location: 'https://github.com/user/repo/tree/master/tests/',
-					name: 'Test Case',
-					status: 'ok',
-					time: '0.02',
-					timestamp: '1457428026000'
-				}, {
-					location: 'https://github.com/user/repo/tree/master/tests/',
-					name: 'Test Case 2',
-					status: 'ok',
-					time: '0.02',
-					timestamp: '1457428026000'
-				} ]
+	});
+
+	describe('should return a resolved promise w/ null data if test suite data has issues', () => {
+		it('test suite is empty (0 tests)', (done) => {
+			//setup
+			const context = {xml2JSParser:{xmlFileToJSON:sinon.stub().returns(Promise.resolve({testsuite:{$:{tests:0}}}))}};
+			//action
+			const parserPromise = xUnitParser.parseTestSuiteFromFile.call(context, './filename.xunitreport');
+			//assert
+			parserPromise.then((data) => {
+				assert.equal(data, null);
+				done();
+			}).catch( (err) => {
+				done(err);
+			});
+		});
+
+		it('retrieved test suite data is null', (done) => {
+			//setup
+			const context = {xml2JSParser:{xmlFileToJSON:sinon.stub().returns(Promise.resolve(null))}};
+			//action
+			const parserPromise = xUnitParser.parseTestSuiteFromFile.call(context, './filename.xunitreport');
+			//assert
+			parserPromise.then((data) => {
+				assert.equal(data, null);
+				done();
+			}).catch( (err) => {
+				done(err);
+			});
 		});
 	});
 
-	it('should use the current date if no timestamp is found in the test suite', function() {
-		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="2" failures="0" errors="0" skipped="0" time="0.103"><testcase classname="" name="Test Case" time="0.02"><randomElement>not a failure</randomElement></testcase><testcase classname="" name="Test Case 2" time="0.02"/><system-out></system-out><system-err></system-err></testsuite>');
-		const callback = sinon.spy();
-		sinon.stub(xUnitParser, 'now', {
-			get: () => {
-				const mockedDate = new Date();
-				mockedDate.setTime(1459847793847);
-				return mockedDate;
-			}
+	describe('should return a resolved promise w/ testSuite data', () => {
+		it('... with one ok test included in it if xUnitReport contains one test case', (done) => {
+			//setup
+			const context = {
+				parseSingleTestData:xUnitParser.parseSingleTestData,
+				configuration:{repo:'user/repo', github:{branch:'master'}},
+				xml2JSParser:{xmlFileToJSON:sinon.stub().returns(Promise.resolve({testsuite:{$:{tests:1, failures:0, name:'Test Suite', timestamp:'Tue, 08 Mar 2016 09:07:06 GMT', time:'0.103'}, testcase:[ {$:{classname:'tests/test spec location', name:'Test Case', time:'0.02'}} ]}}))}
+			};
+			//action
+			const parserPromise = xUnitParser.parseTestSuiteFromFile.call(context, './filename.xunitreport');
+			//assert
+			parserPromise.then((data) => {
+				assert.deepEqual(data, {
+					name: 'Test Suite',
+					tests: 1,
+					failures: 0,
+					timestamp: 1457428026000,
+					testCases: [ {
+						url: 'https://github.com/user/repo/tree/master/tests/test spec location',
+						location:'tests/test spec location',
+						name: 'Test Case',
+						status: 'ok',
+						time: '0.02',
+						timestamp: 1457428026000
+					} ]
+				});
+
+				done();
+			}).catch( (err) => {
+				done(err);
+			});
+
 		});
-		//action
-		xUnitParser.parse('./filename.xunitreport', callback);
-		//assert
-		assert.equal(callback.calledOnce, true);
-		assert.equal(callback.getCall(0).args[0], null);
-		assert.equal(callback.getCall(0).args[1].timestamp, '1459847793847');
-	});
 
-	it('should return a testSuite with one failed test included in it if xUnitReport contains one test case, failures property must be read from testSuite attributes', () => {
-		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tests="1" failures="1" errors="0" skipped="0" timestamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="" name="Test Case" time="0.02"><failure type="failure" message="some failure message"></failure></testcase><system-out></system-out><system-err></system-err></testsuite>');
-		const callback = sinon.spy();
-		//action
-		xUnitParser.parse('./filename.xunitreport', callback);
-		//assert
-		assert.equal(callback.calledOnce, true);
-		assert.equal(callback.getCall(0).args[0], null);
-		assert.deepEqual(callback.getCall(0).args[1], {
-			name: 'Test Suite',
-			tests: 1,
-			failures: 1,
-			timestamp: '1457428026000',
-			testCases: [ {
-				location: 'https://github.com/user/repo/tree/master/tests/',
-				name: 'Test Case',
-				status: 'ko',
-				time: '0.02',
-				timestamp: '1457428026000',
-				message: 'some failure message'
-			} ]
+		it('... with its "tests" property read form testsuite attributes', (done) => {
+			//setup
+			const context = {
+				parseSingleTestData:xUnitParser.parseSingleTestData,
+				configuration:{repo:'user/repo', github:{branch:'master'}},
+				xml2JSParser:{xmlFileToJSON:sinon.stub().returns(Promise.resolve({testsuite:{$:{tests:2, failures:0, name:'Test Suite', timestamp:'Tue, 08 Mar 2016 09:07:06 GMT', time:'0.103'}, testcase:[ {$:{classname:'tests/', name:'Test Case', time:'0.02'}}, {$:{classname:'tests/', name:'Test Case 2', time:'0.02'}} ]}}))}
+			};
+			var clock = sinon.useFakeTimers(new Date('Tue, 05 Apr 2016 09:16:33 GMT').getTime());
+			//action
+			const parserPromise = xUnitParser.parseTestSuiteFromFile.call(context, './filename.xunitreport');
+			//assert
+			parserPromise.then((data) => {
+				assert.deepEqual(data, {
+					name: 'Test Suite',
+					tests: 2,
+					failures: 0,
+					timestamp: 1457428026000,
+					testCases: [
+						{
+							url: 'https://github.com/user/repo/tree/master/tests/',
+							location:'tests/',
+							name: 'Test Case',
+							status: 'ok',
+							time: '0.02',
+							timestamp: 1457428026000
+						}, {
+							url: 'https://github.com/user/repo/tree/master/tests/',
+							location:'tests/',
+							name: 'Test Case 2',
+							status: 'ok',
+							time: '0.02',
+							timestamp: 1457428026000
+						} ]
+				});
+				clock.restore();
+				done();
+			}).catch( (err) => {
+				clock.restore();
+				done(err);
+			});
+
+		});
+
+		it('... and test suite timestamp should beset to the current date if no timestamp was found', (done) => {
+			//setup
+			const context = {
+				parseSingleTestData:xUnitParser.parseSingleTestData,
+				configuration:{repo:'user/repo', github:{branch:'master'}},
+				xml2JSParser:{xmlFileToJSON:sinon.stub().returns(Promise.resolve({testsuite:{$:{tests:2, failures:0, name:'Test Suite', time:'0.103'}, testcase:[ {$:{classname:'tests/', name:'Test Case', time:'0.02'}}, {$:{classname:'tests/', name:'Test Case 2', time:'0.02'}} ]}}))}
+			};
+			var clock = sinon.useFakeTimers(1459847793847);
+			//action
+			const parserPromise = xUnitParser.parseTestSuiteFromFile.call(context, './filename.xunitreport');
+			//assert
+			parserPromise.then((data) => {
+				assert.equal(data.timestamp, 1459847793847);
+				clock.restore();
+				done();
+			}).catch( (err) => {
+				clock.restore();
+				done(err);
+			});
+		});
+
+		it('... with one failed test included in it if xUnitReport contains one test case, failures property must be read from testSuite attributes', (done) => {
+			//setup
+			const context = {
+				parseSingleTestData:xUnitParser.parseSingleTestData,
+				configuration:{repo:'user/repo', github:{branch:'master'}},
+				xml2JSParser:{xmlFileToJSON:sinon.stub().returns(Promise.resolve({testsuite:{$:{tests:1, failures:1, name:'Test Suite', timestamp:'Tue, 08 Mar 2016 09:07:06 GMT', time:'0.103'}, testcase:[ {$:{classname:'tests/', name:'Test Case', time:'0.02'}, failure:[ {$:{type:'falure', message:'some failure message'}, _:{}} ]} ]}}))}
+			};
+			//action
+			const parserPromise = xUnitParser.parseTestSuiteFromFile.call(context, './filename.xunitreport');
+			//assert
+			parserPromise.then((data) => {
+				assert.deepEqual(data, {
+					name: 'Test Suite',
+					tests: 1,
+					failures: 1,
+					timestamp: 1457428026000,
+					testCases: [ {
+						url: 'https://github.com/user/repo/tree/master/tests/',
+						location:'tests/',
+						name: 'Test Case',
+						status: 'ko',
+						time: '0.02',
+						timestamp: 1457428026000,
+						message: 'some failure message'
+					} ]
+				});
+				done();
+			}).catch( (err) => {
+				done(err);
+			});
 		});
 	});
 
-	it('should return an error if parser failed to read the file', () => {
+	it('should return a rejected promise if parser triggered an error while reading the file (before actually putting together the testSuite object)', (done) => {
 		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(new Error('failed to read the file'));
-		const callback = sinon.spy();
+		const context = {
+			parseSingleTestData:xUnitParser.parseSingleTestData,
+			configuration:{repo:'user/repo', github:{branch:'master'}},
+			xml2JSParser:{xmlFileToJSON:sinon.stub().returns(Promise.reject(new Error('failed to read the file')))}
+		};
 		//action
-		xUnitParser.parse('./filename.xunitreport', callback);
+		const parserPromise = xUnitParser.parseTestSuiteFromFile.call(context, './filename.xunitreport');
 		//assert
-		assert.equal(callback.calledOnce, true);
-		assert.deepEqual(callback.getCall(0).args[0], {message: 'failed to read the file'});
-	});
-
-	it('should return an error if xml data is invalid', () => {
-		//setup
-		sinon.stub(xUnitParser, 'readFile').yields(null, '<testsuite name="Test Suite" tamp="Tue, 08 Mar 2016 09:07:06 GMT" time="0.103"><testcase classname="" name="Test Case" time="0.02"</testsuite>');
-		const callback = sinon.spy();
-		//action
-		xUnitParser.parse('./filename.xunitreport', callback);
-		//assert
-		assert.equal(callback.calledOnce, true);
-		assert.deepEqual(callback.getCall(0).args[0].message, 'Invalid attribute name\nLine: 0\nColumn: 131\nChar: <');
+		parserPromise.catch((message) => {
+			assert.equal(message.message, 'failed to read the file');
+			done();
+		});
 	});
 });

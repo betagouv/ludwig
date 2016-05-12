@@ -1,22 +1,23 @@
 import {TestResultsCollector} from './testResultsCollector';
-import configuration from '../ludwig-conf';
+import ludwigConfiguration from '../ludwig-conf';
+import mongoose from 'mongoose';
+
 import fs from 'fs';
 
-const collector = new TestResultsCollector(configuration);
+const collector = new TestResultsCollector(ludwigConfiguration);
+mongoose.connect(ludwigConfiguration.mongo.uri, ludwigConfiguration.mongo.options);
 
 const filePath = process.argv[2];
 if (filePath) {
 	fs.stat(filePath, (err, stat)  => {
 		if (!err && stat.isFile()) {
-			collector.saveFromXUnitData(filePath, (err) => {
-				if (err) {
-					console.error('Something wrong happened');
-					console.error(err);
-					process.exit(1);
-				} else {
-					console.log('Data inserted!');
-					process.exit(0);
-				}
+			collector.saveFromXUnitData(filePath).then( () => {
+				console.log('Data inserted!');
+				process.exit(0);
+			}).catch( (err) => {
+				console.error('Something wrong happened');
+				console.error(err);
+				process.exit(1);
 			});
 		} else {
 			console.error(`Path specified does not point to a file (${filePath})`);

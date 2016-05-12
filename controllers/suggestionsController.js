@@ -15,19 +15,20 @@ class SuggestionsController {
 	}
 
 	/*
-	 This function chains 3 github API calls in order to create a pull request
-	 Right now this lacks error management (it assumes everything goes well from one call to another ... which will probably not be the case at the start)
+	 This function chains github API calls in order to create a pull request
 	 @param accessToken: A valid accessToken to access the github API
 	 @param title: (string) Will be used as a title for the pull request creation
+	 @param description: (urlencoded JSON string) The state we want to record
 	 @param state: (urlencoded JSON string) The state we want to record
 	 @param res: An expressjs Response object to get back to the user
 	 */
-	createPullRequest(accessToken, title, description, state, res, branchToCreatePullRequestsTo) {
+	createPullRequest(title, description, state, res) {
+		const accessToken = process.env.npm_config_ludwig_accessToken;
 		const now = (new Date()).getTime();
 		const newBranchName = BRANCH_PREFIX + now;
 
 		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, title, description, state)) {
-			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch(branchToCreatePullRequestsTo || 'master');
+			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch(this._configuration.github.branch || 'master');
 
 			return pullRequestFlowPromise
 				.then(headerReference => this.githubHelper.createReference(accessToken, newBranchName, headerReference))

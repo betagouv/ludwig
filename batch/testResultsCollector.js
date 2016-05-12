@@ -1,40 +1,31 @@
 import {XUnitParser} from './parsers/xUnitParser';
-import mongoose from 'mongoose';
-import {TestSuiteModel} from '../models/testSuiteModel';
-import {TestCaseModel} from '../models/testCaseModel';
-
+import {GithubHelper} from '../helpers/githubHelper';
+import LudwigDAO from '../database/ludwigDAO';
 
 class TestResultsCollector {
-	constructor(configuration) {
-		this.configuration = configuration;
-		mongoose.connect(configuration.mongo.uri, configuration.mongo.options);
+	constructor(ludwigConfiguration) {
+		this.configuration = ludwigConfiguration;
+		this.parser = new XUnitParser(this.configuration);
+		this.githubHelper = new GithubHelper(this.configuration);
+		this.dao = LudwigDAO;
 	}
 
-	saveFromXUnitData(xUnitFilePath, callback) {
-		const parser = new XUnitParser(this.configuration);
-		parser.parse(xUnitFilePath, (errors, parsedTestSuiteData) => {
-			let testSuite = new TestSuiteModel({
-				name: parsedTestSuiteData.name,
-				failures: parsedTestSuiteData.failures,
-				timestamp: parsedTestSuiteData.timestamp
+	saveFromXUnitData(xUnitFilePath) {
+		const githubHelper = this.githubHelper;
+		return this.parser.parseTestSuiteFromFile(xUnitFilePath).then((parsedTestSuiteData) => {
+			const testCasePromises = parsedTestSuiteData.testCases.map((testCase) => {
+				return githubHelper.getFirstCommitForFile(testCase.location);
 			});
 
-			testSuite.save((err) => {
-				if (!err) {
-					TestCaseModel.collection.insert(parsedTestSuiteData.testCases, (err, testCases) => {
-						if (!err) {
-							testSuite.testCases = testCases.ops;
-							testSuite.save((err, data) => {
-								callback(err, data);
-							});
-						} else {
-							callback(err);
-						}
+			return Promise.all(testCasePromises)
+				.then((values) => {
+					parsedTestSuiteData.testCases.forEach((value, index) => {
+						value.author = values[index].commit.author;
+						value.author.githubId = values[index].author.id;
 					});
-				} else {
-					callback(err);
-				}
-			});
+
+					return this.dao.saveCompleteTestSuite(parsedTestSuiteData);
+				});
 		});
 	}
 }
