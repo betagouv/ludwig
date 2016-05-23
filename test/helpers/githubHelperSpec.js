@@ -334,43 +334,6 @@ describe('Github Helper', () => {
 
 		});
 
-		// it('should return a rejected promise if no reference for requested branch foobar was found', (done) => {
-		// 	//setup
-		// 	const config = [ {
-		// 		pattern: 'https://api.github.com/repos/(.*)/(.*)/git/refs/foobar',
-		// 		get: () => {
-		// 			throw new Error(404);
-		// 		},
-		// 		fixtures: () => {
-		// 			return {};
-		// 		}
-		// 	} ];
-		//
-		// 	const superagentMock = require('superagent-mock')(request, config);
-		// 	sinon.stub(githubHelper, 'agent', {
-		// 		get: () => {
-		// 			return request;
-		// 		}
-		// 	});
-		// 	sinon.stub(githubHelper, 'config', {
-		// 		get: () => {
-		// 			return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/git/refs'};
-		// 		}
-		// 	});
-		// 	//action
-		// 	const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobar');
-		// 	//assert
-		// 	getHeadReferencesForBranchPromise.catch((message) => {
-		// 		assert.deepEqual(message, {
-		// 			message: 'Required branch not found',
-		// 			details: 'Reference searched for: refs/heads/foobar'
-		// 		});
-		// 		superagentMock.unset();
-		//
-		// 		done();
-		// 	});
-		// });
-
 		it('should return a rejected promise if call succeeded but the returned object in the body does not contain an object property', (done) => {
 			//setup
 			const config = [ {
