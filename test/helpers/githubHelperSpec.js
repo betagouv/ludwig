@@ -114,7 +114,6 @@ describe('Github Helper', () => {
 			const createPullRequestPromise = githubHelper.createPullRequest('head', 'title', 'body', 'accessToken');
 			//assert
 			createPullRequestPromise.then((data) => {
-				console.log(data);
 				assert.deepEqual(data, {ok: 'some data', statusCode: 201});
 				superagentMock.unset();
 				done();
