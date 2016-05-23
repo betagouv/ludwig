@@ -19,3 +19,7 @@ npm config set ludwig:AccessControlAllowOrigin "$cors"
 echo "Committer API access token? (result from https://help.github.com/articles/creating-an-access-token-for-command-line-use/)"
 read accessToken
 npm config set ludwig:accessToken "$accessToken"
+
+echo "Port for the server to listen to"
+read port
+npm config set ludwig:port "$port"

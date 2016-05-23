@@ -16,10 +16,9 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const app = express();
 
-const env = app.get('env');
 const config = {
-	port:env['NODE_PORT'] || 3000,
-	ip:env['NODE_IP'] || 'localhost'
+	port:process.env.npm_config_ludwig_port || process.env.npm_package_config_port,
+	ip:process.env['NODE_IP'] || 'localhost'
 };
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, '/dist')));
