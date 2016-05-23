@@ -7,7 +7,6 @@ import appConfiguration from './ludwig-conf';
 import mongoose from 'mongoose';
 import path from 'path';
 import bodyParser from 'body-parser';
-//const bodyParser = require('body-parser');
 
 const MongoStore = store(session);
 
