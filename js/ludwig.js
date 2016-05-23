@@ -77,11 +77,21 @@ class Ludwig {
 		return title && description && currentState && expectedState && this.ludwigCreateSuggestionURL;
 	}
 
-	generateLudwigSuggestionEndpointURL(title, description, currentState, expectedState) {
+	generateLudwigSuggestionEndpointURL(title, description, currentState, expectedState, customSuggestionFormatter) {
 		if (!this.canGenerateLudwigSuggestionEndpointURL(title, description, currentState, expectedState)) {
 			throw new Error('Cannot generate Ludwig suggestions creation endpoint URL');
 		} else {
-			let URIEncodedState = encodeURIComponent(JSON.stringify(currentState));
+			let URIEncodedState;
+
+			if (customSuggestionFormatter) {
+				if (typeof customSuggestionFormatter === 'function') {
+					URIEncodedState=encodeURIComponent(customSuggestionFormatter(currentState, expectedState));
+				} else {
+					throw new Error('customSuggestionFormatter expected to be a clojure');
+				}
+			} else {
+				URIEncodedState=encodeURIComponent(this.defaultSuggestionFormatter(currentState, expectedState));
+			}
 			let URIEncodedExpectedState = encodeURIComponent(expectedState);
 			let URIEncodedTitle = encodeURIComponent(title);
 			let URIEncodedDescription = encodeURIComponent(description);
@@ -89,6 +99,52 @@ class Ludwig {
 		}
 	}
 
+	prepareDataToPostToLudwig(title, description, currentState, expectedState, customSuggestionFormatter) {
+		if (customSuggestionFormatter) {
+			if (typeof customSuggestionFormatter === 'function') {
+				return {
+					title: title,
+					description: description,
+					state: customSuggestionFormatter(currentState, expectedState)
+				};
+			} else {
+				throw new Error('customSuggestionFormatter expected to be a clojure');
+			}
+		} else {
+			return {
+				title: title,
+				description: description,
+				state: this.defaultSuggestionFormatter(currentState, expectedState)
+			};
+		}
+	}
+
+	postSuggestion(title, description, currentState, expectedState, customSuggestionFormatter) {
+		if (!this.canGenerateLudwigSuggestionEndpointURL(title, description, currentState, expectedState)) {
+			throw new Error('Cannot generate Ludwig suggestions creation endpoint data');
+		} else {
+			const dataToPost = this.prepareDataToPostToLudwig(title, description, currentState, expectedState, customSuggestionFormatter);
+			var existingForm = document.getElementById('ludwig-post-form');
+			if (existingForm) {
+				existingForm.parentNode.removeChild(existingForm);
+			}
+			var form = document.createElement('form');
+			form.setAttribute('id', 'ludwig-post-form');
+			form.setAttribute('method', 'post');
+			form.setAttribute('action', this.ludwigCreateSuggestionURL);
+			for (var key in dataToPost) {
+				if (dataToPost.hasOwnProperty(key)) {
+					var hiddenField = document.createElement('input');
+					hiddenField.setAttribute('type', 'hidden');
+					hiddenField.setAttribute('name', key);
+					hiddenField.setAttribute('value', dataToPost[key]);
+					form.appendChild(hiddenField);
+				}
+			}
+			document.body.appendChild(form);
+			form.submit();
+		}
+	}
 	acceptedTestsURL() {
 		return `${GITHUB_URL}/${this.repo}/tree/${this.branch}/tests`;
 	}

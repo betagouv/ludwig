@@ -48,9 +48,10 @@
     function createCompleteSuggestion() {
         var title = document.getElementById('title').value;
         var description = document.getElementById('description').value;
-        var expected = document.getElementById('expected').value;
+        var expected = JSON.parse(document.getElementById('expected').value);
 
-        window.location = ludwig.generateLudwigSuggestionEndpointURL(title, description, currentState, expected);
+        //window.location = ludwig.generateLudwigSuggestionEndpointURL(title, description, currentState, expected);
+        ludwig.postSuggestion(title, description, currentState, expected)
     }
     window.onload = function () {
         document.getElementById('expected').value = ludwig.expectedTemplate;

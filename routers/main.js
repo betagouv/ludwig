@@ -37,6 +37,15 @@ router.get('/createSuggestion',
 	},
 	passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]}));
 
+router.post('/createSuggestion',
+	(req, res, next) => {
+		req.session.title = req.body.title;
+		req.session.description = req.body.description;
+		req.session.state = req.body.state;
+		next();
+	},
+	passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]}));
+
 router.get('/github_callback/createPR', passport.authenticate(CREATE_PR_STRATEGY_NAME, {failureRedirect: '/authKO'}), (req, res) => {
 	suggestionsController.createPullRequest(req.session.title, req.session.description, req.session.state, res);
 });
