@@ -297,10 +297,10 @@ describe('Github Helper', () => {
 	});
 
 	describe('getHeadReferenceForBranch', () => {
-		it('should return a rejected promise if an error occurred when retrieving refs list', (done) => {
+		it('should return a rejected promise if an error occurred when retrieving ref', (done) => {
 			//setup
 			const config = [ {
-				pattern: 'https://api.github.com/(.*)',
+				pattern: 'https://api.github.com/repos/(.*)/(.*)/git/refs/heads/asdf',
 				get: () => {
 					throw new Error('Can\'t retrieve references');
 				},
@@ -317,15 +317,15 @@ describe('Github Helper', () => {
 			});
 			sinon.stub(githubHelper, 'config', {
 				get: () => {
-					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'};
+					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/git/refs'};
 				}
 			});
 			//action
-			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('');
+			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('asdf');
 			//assert
 			getHeadReferencesForBranchPromise.catch((message) => {
 				assert.deepEqual(message, {
-					message: 'Not able to retrieve references',
+					message: 'Not able to retrieve reference "asdf"',
 					details: 'Can\'t retrieve references'
 				});
 				superagentMock.unset();
@@ -334,12 +334,49 @@ describe('Github Helper', () => {
 
 		});
 
-		it('should return a rejected promise if no reference for requested branch foobar was found', (done) => {
+		// it('should return a rejected promise if no reference for requested branch foobar was found', (done) => {
+		// 	//setup
+		// 	const config = [ {
+		// 		pattern: 'https://api.github.com/repos/(.*)/(.*)/git/refs/foobar',
+		// 		get: () => {
+		// 			throw new Error(404);
+		// 		},
+		// 		fixtures: () => {
+		// 			return {};
+		// 		}
+		// 	} ];
+		//
+		// 	const superagentMock = require('superagent-mock')(request, config);
+		// 	sinon.stub(githubHelper, 'agent', {
+		// 		get: () => {
+		// 			return request;
+		// 		}
+		// 	});
+		// 	sinon.stub(githubHelper, 'config', {
+		// 		get: () => {
+		// 			return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/git/refs'};
+		// 		}
+		// 	});
+		// 	//action
+		// 	const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobar');
+		// 	//assert
+		// 	getHeadReferencesForBranchPromise.catch((message) => {
+		// 		assert.deepEqual(message, {
+		// 			message: 'Required branch not found',
+		// 			details: 'Reference searched for: refs/heads/foobar'
+		// 		});
+		// 		superagentMock.unset();
+		//
+		// 		done();
+		// 	});
+		// });
+
+		it('should return a rejected promise if call succeeded but the returned object in the body does not contain an object property', (done) => {
 			//setup
 			const config = [ {
-				pattern: 'https://api.github.com/(.*)',
+				pattern: 'https://api.github.com/repos/(.*)/(.*)/git/refs/heads/foobar',
 				get: () => {
-					return {body: [], statusCode: 200};
+					return {body:{}};
 				},
 				fixtures: () => {
 					return {};
@@ -354,29 +391,28 @@ describe('Github Helper', () => {
 			});
 			sinon.stub(githubHelper, 'config', {
 				get: () => {
-					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'};
+					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/git/refs'};
 				}
 			});
 			//action
-			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobarbaz');
+			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobar');
 			//assert
 			getHeadReferencesForBranchPromise.catch((message) => {
 				assert.deepEqual(message, {
-					message: 'Required branch not found',
-					details: 'Reference searched for: refs/heads/foobarbaz'
+					message: 'Not able to retrieve reference',
+					details: 'No reference data available'
 				});
 				superagentMock.unset();
-
 				done();
 			});
 		});
 
-		it('should return a rejected promise if call succeeded but the returned body is not an array', (done) => {
+		it('should return a rejected promise if call succeeded but the returned object in the body does not contain an object.sha property', (done) => {
 			//setup
 			const config = [ {
-				pattern: 'https://api.github.com/(.*)',
+				pattern: 'https://api.github.com/repos/(.*)/(.*)/git/refs/heads/foobar',
 				get: () => {
-					return {statusCode: 200};
+					return {body:{object:{}}};
 				},
 				fixtures: () => {
 					return {};
@@ -391,16 +427,16 @@ describe('Github Helper', () => {
 			});
 			sinon.stub(githubHelper, 'config', {
 				get: () => {
-					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'};
+					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/git/refs'};
 				}
 			});
 			//action
-			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobarbaz');
+			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('foobar');
 			//assert
 			getHeadReferencesForBranchPromise.catch((message) => {
 				assert.deepEqual(message, {
-					message: 'Not able to retrieve references',
-					details: 'Body does not contain references list'
+					message: 'Not able to retrieve reference',
+					details: 'No reference data available'
 				});
 				superagentMock.unset();
 				done();
@@ -410,9 +446,9 @@ describe('Github Helper', () => {
 		it('should return a resolved promise w/ the sha reference of the branch looked up', (done) => {
 			//setup
 			const config = [ {
-				pattern: 'https://api.github.com/(.*)',
+				pattern: 'https://api.github.com/repos/(.*)/(.*)/git/refs/heads/foobar',
 				get: () => {
-					return {body: [ {ref:'refs/heads/foobar', object:{sha:'shacode for foobar'}} ], statusCode:200};
+					return {body: {ref:'refs/heads/foobar', object:{sha:'shacode for foobar'}}};
 				},
 				fixtures: () => {
 					return {};
@@ -427,7 +463,7 @@ describe('Github Helper', () => {
 			});
 			sinon.stub(githubHelper, 'config', {
 				get: () => {
-					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/pulls'};
+					return {referencesEndpoint: 'https://api.github.com/repos/user/reponame/git/refs'};
 				}
 			});
 			//action

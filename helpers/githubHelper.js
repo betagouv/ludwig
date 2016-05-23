@@ -115,34 +115,22 @@ class GithubHelper {
 	}
 
 	getHeadReferenceForBranch(requestedBranch) {
+		console.log(`Trying to get ${this.config.referencesEndpoint}/heads/${requestedBranch}`);
 		return new Promise((resolve, reject) => {
 			this.agent
-				.get(this.config.referencesEndpoint)
+				.get(`${this.config.referencesEndpoint}/heads/${requestedBranch}`)
 				.end((err, response) => {
 					if (err) {
-						return reject({message: 'Not able to retrieve references', details: err && err.message});
+						return reject({message:`Not able to retrieve reference "${requestedBranch}"`, details: err && err.message});
 					} else {
 						const responseBody = response.body;
-						if (responseBody && Array.isArray(responseBody)) {
-							let branchRef;
-							responseBody.forEach((singleReference) => {
-								if (singleReference.ref === `refs/heads/${requestedBranch}`) {
-									branchRef = singleReference.object.sha;
-								}
+						if (!responseBody.object || !responseBody.object.sha) {
+							return reject({
+								message: 'Not able to retrieve reference',
+								details: 'No reference data available'
 							});
-							if (branchRef) {
-								resolve(branchRef);
-							} else {
-								reject({
-									message: 'Required branch not found',
-									details: `Reference searched for: refs/heads/${requestedBranch}`
-								});
-							}
 						} else {
-							reject({
-								message: 'Not able to retrieve references',
-								details: 'Body does not contain references list'
-							});
+							return resolve(responseBody.object.sha);
 						}
 					}
 				});
