@@ -96,7 +96,7 @@ La configuration NPM peut se faire via le script situé ici : `scripts/setupNPMV
 
 
 ## Créer une suggestion depuis le widget
-Une fois le widget et le serveur configurés. On peut créer une suggestion depuis le widget (`etatCourant` représente l'état observé de l'application que l'on souhaite tester et `etatAttendu` celui souhaité): 
+Une fois le widget et le serveur configurés. On peut créer une suggestion depuis le widget (`etatCourant` représente l'état observé de l'application que l'on souhaite tester et `etatAttendu` celui souhaité, typiquement sous la forme d'objets JSON mais ce n'est pas une obligation): 
 
 ```js
 ludwig.postSuggestion('nom suggestion', 'description de la suggestion', etatCourant, etatAttendu)
