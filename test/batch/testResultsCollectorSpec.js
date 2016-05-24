@@ -44,8 +44,7 @@ describe('testResultsCollector', () => {
 			};
 
 			//action
-			testResultsCollector.saveFromXUnitData.call(context, 'file/path').then((data) => {
-				console.log(data);
+			testResultsCollector.saveFromXUnitData.call(context, 'file/path').then(() => {
 				done(new Error('should reject w/ an error at that point'));
 			}).catch((err) => {
 				//assert
