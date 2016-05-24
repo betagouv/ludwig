@@ -67,7 +67,7 @@ Exemple d'import et de configuration :
 </script>
 ```
 
-## Inataller le serveur Ludwig
+## Installer le serveur Ludwig
 
 Vous pouvez récupérer la dernière version de Ludwig avec
 
@@ -81,7 +81,6 @@ Exemple de fichier de configuration :
 module.exports = {
 	repo: 'monutilisateur/nom-depot',
 	acceptedTestsLocation: 'tests',
-	accessControlAllowOrigin: 'http://url.serveur.ludwig/*',
 	github: {
 		branch: 'master',
 		authenticationCallback: 'http://url.serveur.ludwig/github_callback'
@@ -103,7 +102,7 @@ Une fois le widget et le serveur configurés. On peut créer une suggestion depu
 ludwig.postSuggestion('nom suggestion', 'description de la suggestion', etatCourant, etatAttendu)
 ```
 
-# L'installation dans le détail
+# Plus de détails
 
 ## Pré-requis
 
