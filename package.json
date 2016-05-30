@@ -53,15 +53,17 @@
   "files": [
     "controllers",
     "dist/ludwig.js",
+    "dist/guiUtils.js",
     "helpers",
     "routers",
     "views",
     "server.js",
     "scripts",
+    "webpack.config.server.js",
     "webpack.config.js"
   ],
   "scripts": {
-    "build": "mkdir -p dist && cp -r node_modules/bootstrap/dist ./dist/bootstrap && cp -r ./views/css/ ./dist/ && webpack",
+    "build": "mkdir -p dist && cp -r node_modules/bootstrap/dist ./dist/bootstrap && cp -r ./views/css/ ./dist/ && webpack && webpack --config webpack.config.server.js",
     "prepublish": "npm run build",
     "start": "babel-node server.js",
     "test": "mocha --compilers js:babel-core/register --recursive ./test/",

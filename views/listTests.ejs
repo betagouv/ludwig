@@ -4,6 +4,30 @@
     <title>Liste des tests de l'application</title>
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="css/ludwig.css" rel="stylesheet"/>
+    <script type="text/javascript" src="/guiUtils.js">
+    </script>
+    <script type="text/javascript">
+        function filterByTestName(){
+            var testNameFilter =  document.getElementById('testNameFilter').value;
+            if (testNameFilter) {
+                window.location.search = guiUtils.filterByTestName(window.location.search, testNameFilter);
+            }
+        }
+        function resetTestNameFilter(){
+            document.getElementById('testNameFilter').value = '';
+            window.location.search = window.location.search.replace(/testNameFilter=[^&]*/, '');
+        }
+
+        function filterMyTests(){
+            //console.log(guiUtils.filterByMine(window.location));
+            window.location = guiUtils.filterByMine(window.location);
+            //window.location = '/listTestsConnected';
+        }
+
+        function filterAllTests(){
+            window.location = '/listTests';
+        }
+    </script>
 </head>
 <body>
 
@@ -17,14 +41,25 @@
             <div class="panel-heading"><div style="width:100%">Les tests pour la campagne "<%= testSuite.name %>" réalisés
                 le <%= formattedTimestamp %></div>
 
-                <%if(!mine){%>
-                <button class="btn btn-default" onclick="window.location = '/listTestsConnected'">Voir seulement mes tests (login GitHub requis)</button>
-                <%} else {%>
-                <button class="btn btn-default" onclick="window.location = '/listTests'">Voir tous les tests</button>
-                <%}%>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <%if(!mine){%>
+                        <button class="btn btn-default" onclick="filterMyTests()">Voir seulement mes tests (login GitHub requis)</button>
+                        <%} else {%>
+                        <button class="btn btn-default" onclick="filterAllTests()">Voir tous les tests</button>
+                        <%}%>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <button class="btn btn-default pull-right" style="margin-right:25px;" onclick="filterByTestName()">Filtrer par nom de test</button>
+                        <input type="text" class="pull-right" name="testNameFilter" id="testNameFilter" placeholder="nom ou partie du nom d'un test"/>
+                        <button class="btn btn-default pull-right" style="position:absolute;top:0;right:0;width:35px;" onclick="resetTestNameFilter()">X</button>
+                    </div>
+                </div>
+
             </div>
             <div class="panel-body"><p>
-                    Nombre total de tests : <%= testSuite.testCases.length %>
+                    Nombre de tests (filtrés) : <%= testSuite.testCases.length %>
                 </p>
                 <p>
                     Nombre d'échecs : <%= testSuite.failures %>

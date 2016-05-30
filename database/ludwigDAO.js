@@ -31,6 +31,15 @@ module.exports.saveCompleteTestSuite = function(testSuiteData) {
 };
 
 module.exports.getTestHistoryFilteredByUserData = function(customUserFilter) {
+	var shouldFilterOnlyBasedOnTestCaseName = function () {
+		return !customUserFilter.login && !customUserFilter.name && !customUserFilter.emails && customUserFilter.testNameFilter;
+	};
+	var profileMatchAndTestNameFilterIsSet = function (profileDataMatch) {
+		return profileDataMatch && customUserFilter.testNameFilter;
+	};
+	var filtersDefined = function () {
+		return Object.keys(customUserFilter).length;
+	};
 	return new Promise( (resolve) => {
 		TestSuiteModel.find({})
 			.sort({timestamp: -1})
@@ -39,18 +48,20 @@ module.exports.getTestHistoryFilteredByUserData = function(customUserFilter) {
 				const testSuite = data[0];
 				const filteredTestCases = testSuite.testCases.filter((testCase) => {
 
-					if (Object.keys(customUserFilter).length) {
-						let includeTestCase = false;
-						const filterMatches = [];
+					if (filtersDefined()) {
+						const loginMatch = customUserFilter.login && customUserFilter.login === testCase.author.name;
+						const nameMatch = customUserFilter.name && customUserFilter.name === testCase.author.name;
+						const emailMatch = customUserFilter.emails && customUserFilter.emails.indexOf(testCase.author.email) > -1;
+						const testNameMatch = customUserFilter.testNameFilter && testCase.name.toLowerCase().includes(customUserFilter.testNameFilter.toLowerCase());
 
-						filterMatches.push(customUserFilter.login && customUserFilter.login === testCase.author.name);
-						filterMatches.push(customUserFilter.name && customUserFilter.name === testCase.author.name);
-						filterMatches.push(customUserFilter.emails && customUserFilter.emails.indexOf(testCase.author.email) > -1);
-
-						filterMatches.forEach((matchFound) => {
-							includeTestCase |= matchFound;
-						});
-						return includeTestCase;
+						let profileDataMatch = loginMatch || nameMatch || emailMatch;
+						if (profileMatchAndTestNameFilterIsSet(profileDataMatch)) {
+							profileDataMatch &= testNameMatch;
+						}
+						if (shouldFilterOnlyBasedOnTestCaseName()) {
+							profileDataMatch = testNameMatch;
+						}
+						return profileDataMatch;
 					} else {
 						return true;
 					}
