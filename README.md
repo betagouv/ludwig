@@ -45,7 +45,7 @@ Les deux composants vont devoir communiquer, il faut donc que le serveur Ludwig 
 Tout ce dont va avoir besoin l'application est détaillé dans les exemples et dans le script `setupNPMVariables.sh`.
 
 ## Intégrer le widget
-Dans le dépôt, le widget "prêt à servir" est disponible ici : `dist/ludwig.js`, il suffit de l'intégrer dans son application avec un tag `script` pour qu'il soit disponible dans `window.ludwig`. 
+Dans le dépôt, le widget "prêt à servir" est disponible à l'emplacement suivant : `dist/ludwig.js`, il suffit de l'intégrer dans son application avec un tag `script` pour qu'il soit disponible dans `window.ludwig`. 
 
 `window.ludwig` donne accès au constructeur car il faut configurer le widget.
 
@@ -57,9 +57,7 @@ Exemple d'import et de configuration :
 <script>
     var configuration = {
         repo: 'monutilisateur/nom-depot',
-        branch: 'foo',
         template: 'un+template+basique\r\n===========',
-        prefix: 'test-ludwig',
         ludwigCreateSuggestionURL: 'http://url.serveur.ludwig/createSuggestion'
     }
 
@@ -67,13 +65,17 @@ Exemple d'import et de configuration :
 </script>
 ```
 
+Notes: 
+* La branche utilisée par défaut est "master"
+* Le template va servir de préfixe au contenu du test à créer, il peut, entre autres contenir des informations que l'on souhaite saisies automatiquement.
+
 ## Installer le serveur Ludwig
 
 Vous pouvez récupérer la dernière version de Ludwig avec
 
 `$ npm install sgmap.ludwig`
 
-Avant de démarrer le serveur, il faut le configurer. Cela se fait via le fichier de configuration et la configuration npm.
+Avant de démarrer le serveur, il faut le configurer. Cela se fait via le fichier `./ludwig-conf.js` et la configuration npm.
 
 Exemple de fichier de configuration : 
 
