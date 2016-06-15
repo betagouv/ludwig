@@ -39,6 +39,14 @@ describe('Widget : Sugestion link retrieval', () => {
 				assert.equal(error.message, '"repo" field in configuration is mandatory');
 			}
 		});
+
+		it('should set the template to an empty string if configuration.template is not set', () => {
+			//setup
+			//action
+			ludwig = new Ludwig({repo:'foobar'});
+			//assert
+			assert.deepEqual(ludwig.template, '');
+		});
 	});
 
 	describe('generateSuggestionName', () => {
@@ -301,7 +309,7 @@ describe('Widget : Sugestion link retrieval', () => {
 			assert.deepEqual(actual, {
 				title:'my title',
 				description:'my description',
-				state:'undefined\r\n{\n\t"current": "state"\n}\r\n{\n\t"expected": "state"\n}'
+				state:'\r\n{\n\t"current": "state"\n}\r\n{\n\t"expected": "state"\n}'
 			});
 		});
 

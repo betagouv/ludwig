@@ -9,7 +9,7 @@ class Ludwig {
 		}
 		this.repo = configuration.repo;
 		this.branch = configuration.branch || 'master';
-		this.template = configuration.template;
+		this.template = configuration.template || '';
 		this.prefix = configuration.prefix;
 		this.ludwigCreateSuggestionURL = configuration.ludwigCreateSuggestionURL;
 		this.expectedTemplate = configuration.expectedTemplate || '';
