@@ -91,7 +91,8 @@ Le fichier de configuration utilisé par l'application se trouve à la racine. I
 Un fichier exemple `ludwig-conf-sample.js` est présent à la racine du projet, renommé en `ludwig-conf.js` et édité pour y mettre les informations correspondant à votre dépôt / votre base de données il devrait permettre à votre instance de se lancer et de communiquer avec les APIs GitHub.
 
 * `repo`: Le dépôt GitHub où sont versionnés les tests (sous la forme `<utilisateur>/<nom du dépôt>`
-* `acceptedTestsLocation`: Le chemin dans le dépôt où seront stockés les fichiers contenant les tests   
+* `acceptedTestsLocation`: Le chemin dans le dépôt où seront stockés les fichiers contenant les tests 
+* `accessControlAllowOrigin` : Le pattern d'URLs autorisées pour une utilisation cross-domain (si le widget et l'application Ludwig sont sur des machines avec des domaines différents)
 * `github`:
     * `branch`: La branche de travail (par défaut : master)
     * `authenticationCallback`: L'URL de callback que GitHub doit appeler lors d'une authentification
@@ -117,8 +118,6 @@ Les clientID et clientSecret doivent être créés au préalable par le responsa
 Deux autres paramètres sont configurés par clefs de configuration NPM :
 
 * `ludwig:sessionSecret` : Le secret qui sera utilisé pour signer le cookie de session (et éviter qu'il soit manipulé)
-* `ludwig:AccessControlAllowOrigin` : Le pattern d'URLs autorisées pour une utilisation cross-domain (si le widget et l'application Ludwig sont sur des machines avec des domaines différents)
-
 Pour automatiser l'enregistrement de toutes les clefs de configuration NPM, utilisez `npm run setup`. Cela reste partiellement manuel mais aucune clef n'est oubliée et cela devrait éviter les fautes de frappe.
 
 #### Autres options de configuration
