@@ -11,7 +11,13 @@ class Ludwig {
 		this.branch = configuration.branch || 'master';
 		this.template = configuration.template;
 		this.prefix = configuration.prefix;
-		this.ludwigCreateSuggestionURL = configuration.ludwigCreateSuggestionURL;
+		const suggestionDomain = configuration.ludwigCreateSuggestionDomain? configuration.ludwigCreateSuggestionDomain : 'http://localhost:3000';
+		if (suggestionDomain.match(/\/createSuggestion/)) {
+			this.ludwigCreateSuggestionURL = suggestionDomain;
+
+		} else {
+			this.ludwigCreateSuggestionURL = `${suggestionDomain}/createSuggestion`;
+		}
 		this.expectedTemplate = configuration.expectedTemplate || '';
 	}
 

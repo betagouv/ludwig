@@ -39,6 +39,20 @@ describe('Widget : Sugestion link retrieval', () => {
 				assert.equal(error.message, '"repo" field in configuration is mandatory');
 			}
 		});
+
+		it('should append "/createSuggestion" to the configuration.ludwigCreateSuggestionDomain', () => {
+			//setup / action
+			ludwig = new Ludwig({repo:'foobar', ludwigCreateSuggestionDomain:'specifiedDomain'});
+			//assert
+			assert.equal(ludwig.ludwigCreateSuggestionURL, 'specifiedDomain/createSuggestion');
+		});
+
+		it('should not append "/createSuggestion" to the configuration.ludwigCreateSuggestionDomain if it already contains that suffix', () => {
+			//setup / action
+			ludwig = new Ludwig({repo:'foobar', ludwigCreateSuggestionDomain:'specifiedDomain/createSuggestion'});
+			//assert
+			assert.equal(ludwig.ludwigCreateSuggestionURL, 'specifiedDomain/createSuggestion');
+		});
 	});
 
 	describe('generateSuggestionName', () => {

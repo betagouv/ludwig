@@ -55,7 +55,7 @@ Le widget s'instancie avec en unique paramètre un objet contenant les informati
 * `branch` : branche dans laquelle créer des nouvelles demandes et consulter la liste de tests.
 * `template` : contenu par défaut du fichier créé avec la suggestion.
 * `prefix` : préfixe du fichier qui sera créé lors de la suggestion.
-* `ludwigCreateSuggestionURL` : l'URL Ludwig à joindre pour créer une suggestion en passant par les APIs authentifiées GitHub.
+* `ludwigCreateSuggestionDomain` : le domaine pour joindre Ludwig et créer une suggestion en passant par les APIs authentifiées GitHub.
 
 ### Ajouter le widget
 
