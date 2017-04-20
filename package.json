@@ -42,7 +42,7 @@
     "webpack": "^1.12.14"
   },
   "engines": {
-    "node": "^4.2.0"
+    "node": ">=4.2.0"
   },
   "config": {
     "clientID": "client ID you'll need to set via npm (key = ludwig:clientID): https://docs.npmjs.com/cli/config",
