@@ -1,4 +1,5 @@
 bower_components
+db
 dist
 ludwig-*conf.js
 node_modules
