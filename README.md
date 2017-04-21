@@ -1,16 +1,34 @@
-# Qu'est-ce que c'est ?
+Ludwig facilite la validation collaborative d'une application.
 
-Ludwig outille la proposition de corrections d'une application web par des utilisateurs et des experts métier.
+Ce service web permet aux usagers de transmettre des cas de test executables aux développeurs en créant un pont entre l'interface de l'application et GitHub.
 
-## Pour les contributeurs
+# Qu'est-ce que Ludwig n'est pas ?
 
-Ludwig minimise le temps passé à proposer des corrections sur une fonctionnalité et facilite le dialogue avec les développeurs.
+Un `Business Readable, Domain Specific Language` comme [Gherkin](https://github.com/cucumber/cucumber/wiki/Gherkin) car chaque application est différente et que l'utilisation d'un tel langage se fait à un coût élevé pour les développeurs et pour les experts métiers.
 
-## Pour les développeurs
+Un test runner comme [Mocha](https://mochajs.org/) car vous en utilisez probablement déjà un. Avec Ludwig, votre stratégie de test actuelle sera exploitée et votre corpus de tests sera alimenté directement par vos usagers et experts métier.
 
-On s'appuie sur GitHub et ses APIs pour minimiser les outils. Ludwig simplifie la gestion des suggestions en s'appuyant sur les _pull requests_.
+# Dans quel contexte peut-on utiliser Ludwig ?
 
-# De quoi est composé Ludwig?
+## Notre exemple : Validation collaborative d'une API
+
+> Un usager ou un expert métier remplit un formulaire complexe dans une application web. Les données sont ensuite envoyées à une API qui génère les résultats correspondants. En cas d'écart entre les résultats attendus et ceux générés, il est possible d'indiquer les valeurs attendues et de justifier leur validité (en faisant référence à des textes de loi ou des situations réelles par exemple).
+
+## Pré-requis techniques
+
+Votre application doit **avoir une stratégie de validation** qui repose sur des fichiers contenus dans un dépôt GitHub. **Chaque fichier doit définir un cas de test** ie. une situation donnée, les résultats attendus associés et la description de la situation et votre application doit être **capable de générer** de tels fichiers.
+
+Des exemples de fichiers de test sont visibles à https://github.com/openfisca/openfisca-france/blob/master/tests/mes-aides.gouv.fr.
+
+## Intégration
+
+1. Proposition de suggestions
+    * Un endpoint est mis à disponible pour déposer des suggestions
+    * Le widget JavaScript permet de passer d'un fichier de cas de tests à une _pull request_ dans GitHub
+2. Réception des rapports de tests
+    * Les rapports de tests doivent être envoyés à Ludwig qui permettra une bonne visualisation de l'état de validation de l'application
+
+# De quoi est composé Ludwig ?
 
 Ludwig comprend deux composants :
 
@@ -81,16 +99,16 @@ Exemple de fichier de configuration :
 
 ```js 
 module.exports = {
-	repo: 'monutilisateur/nom-depot',
-	acceptedTestsLocation: 'tests',
-	github: {
-		branch: 'master',
-		authenticationCallback: 'http://url.serveur.ludwig/github_callback'
-	},
-	mongo: {
-		uri: 'mongodb://url.serveur.mongo/ludwig',
-		options: {}
-	}
+    repo: 'monutilisateur/nom-depot',
+    acceptedTestsLocation: 'tests',
+    github: {
+        branch: 'master',
+        authenticationCallback: 'http://url.serveur.ludwig/github_callback'
+    },
+    mongo: {
+        uri: 'mongodb://url.serveur.mongo/ludwig',
+        options: {}
+    }
 };
 ```
 
