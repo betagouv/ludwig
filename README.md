@@ -33,8 +33,78 @@ Exemple de fiche résumée :
 
 Exemple de détail pour un test (historique) :
 ![resultats_single](./documentation/single.png)
+# Ludwig en 5 minutes
 
-# Installation
+Pour utiliser Ludwig avec son application, il faut : 
+
+* Intégrer le widget sur son application et le configurer
+* Installer la partie serveur de ludwig
+
+Les deux composants vont devoir communiquer, il faut donc que le serveur Ludwig soit joignable par le widget.
+
+Tout ce dont va avoir besoin l'application est détaillé dans les exemples et dans le script `setupNPMVariables.sh`.
+
+## Intégrer le widget
+Dans le dépôt, le widget "prêt à servir" est disponible à l'emplacement suivant : `dist/ludwig.js`, il suffit de l'intégrer dans son application avec un tag `script` pour qu'il soit disponible dans `window.ludwig`. 
+
+`window.ludwig` donne accès au constructeur car il faut configurer le widget.
+
+Exemple d'import et de configuration : 
+
+```html 
+<script type="text/javascript" src="http://url.serveur.ludwig/ludwig.js" charset="utf-8">
+</script>
+<script>
+    var configuration = {
+        repo: 'monutilisateur/nom-depot',
+        template: 'un+template+basique\r\n===========',
+        ludwigCreateSuggestionURL: 'http://url.serveur.ludwig/createSuggestion'
+    }
+
+    var ludwig = new Ludwig(configuration); //à cette étape, le widget "ludwig" est initialisé et configuré
+</script>
+```
+
+Notes: 
+* La branche utilisée par défaut est "master"
+* Le template va servir de préfixe au contenu du test à créer, il peut, entre autres contenir des informations que l'on souhaite saisies automatiquement.
+
+## Installer le serveur Ludwig
+
+Vous pouvez récupérer la dernière version de Ludwig avec
+
+`$ npm install sgmap.ludwig`
+
+Avant de démarrer le serveur, il faut le configurer. Cela se fait via le fichier `./ludwig-conf.js` et la configuration npm.
+
+Exemple de fichier de configuration : 
+
+```js 
+module.exports = {
+	repo: 'monutilisateur/nom-depot',
+	acceptedTestsLocation: 'tests',
+	github: {
+		branch: 'master',
+		authenticationCallback: 'http://url.serveur.ludwig/github_callback'
+	},
+	mongo: {
+		uri: 'mongodb://url.serveur.mongo/ludwig',
+		options: {}
+	}
+};
+```
+
+La configuration NPM peut se faire via le script situé ici : `scripts/setupNPMVariables.sh`. Le script est interactif, il suffit de se laisser guider.
+
+
+## Créer une suggestion depuis le widget
+Une fois le widget et le serveur configurés. On peut créer une suggestion depuis le widget (`etatCourant` représente l'état observé de l'application que l'on souhaite tester et `etatAttendu` celui souhaité, typiquement sous la forme d'objets JSON mais ce n'est pas une obligation): 
+
+```js
+ludwig.postSuggestion('nom suggestion', 'description de la suggestion', etatCourant, etatAttendu)
+```
+
+# Plus de détails
 
 ## Pré-requis
 
