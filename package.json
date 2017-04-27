@@ -28,6 +28,7 @@
   "devDependencies": {
     "babel-loader": "^6.2.3",
     "babel-preset-es2015": "^6.5.0",
+    "babel-watch": "^2",
     "chai": "^3.0.0",
     "eslint": "^2.2.0",
     "gulp": "^3.9.1",
@@ -63,6 +64,7 @@
   "scripts": {
     "build": "mkdir -p dist && cp -r node_modules/bootstrap/dist ./dist/bootstrap && cp -r ./views/css/ ./dist/ && webpack",
     "prepublish": "npm run build",
+    "dev": "babel-watch server.js",
     "start": "babel-node server.js",
     "test": "mocha --compilers js:babel-core/register --recursive ./test/",
     "qualimetry": "istanbul cover _mocha --dir qualimetry/cover -- --compilers js:babel-core/register -R spec test/* test/batch/*",
