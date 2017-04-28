@@ -120,9 +120,10 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(res.render.calledOnce, true);
-				assert.equal(createContentSpy.called, false);
-				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+				assert(res.send.calledOnce);
+				assert(res.status.calledOnce);
+				assert.equal(res.status.firstCall.args[0], 500);
+				assert(createContentSpy.notCalled);
 				done();
 			});
 		});
@@ -144,10 +145,10 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(res.render.calledOnce, true);
-				assert.equal(createPullRequestSpy.called, false);
-
-				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+				assert(createPullRequestSpy.notCalled);
+				assert(res.status.calledOnce);
+				assert(res.send.calledOnce);
+				assert.equal(res.status.firstCall.args[0], 500);
 				done();
 			});
 		});
@@ -169,10 +170,10 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(res.render.calledOnce, true);
-				assert.equal(githubHelperStub.createPullRequest.calledOnce, true);
-
-				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+				assert(githubHelperStub.createPullRequest.calledOnce);
+				assert(res.status.calledOnce);
+				assert(res.send.calledOnce);
+				assert.equal(res.status.firstCall.args[0], 500);
 				done();
 			});
 		});
@@ -190,12 +191,17 @@ describe('suggestionController', () => {
 					return githubHelperStub;
 				}
 			});
-			const customRes = {render:sinon.spy(),req:{session:{passport:{user:{username:'user name', emails:[ {value:'user@mail'} ]}}}}};
+			const customRes = {
+				render: sinon.spy(),
+				req: { session: { passport: { user: { username: 'user name', emails: [{ value:'user@mail' }]}}}},
+				send: sinon.spy()
+			};
+			customRes.status = sinon.stub().returns(customRes);
 			//action
 			const createPRPromise = suggestionsController.createPullRequest('title', 'description', 'state', customRes);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(githubHelperStub.createContent.calledOnce, true);
+				assert(githubHelperStub.createContent.calledOnce);
 				assert.deepEqual(githubHelperStub.createContent.getCall(0).args[5], {username:'user name', emails:[ {value:'user@mail'} ]});
 
 				done();
@@ -217,10 +223,10 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(res.render.calledOnce, true);
-				assert.equal(githubHelperStub.createReference.called, false);
-
-				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+				assert(res.status.calledOnce);
+				assert(res.send.calledOnce);
+				assert.deepEqual(res.status.firstCall.args[0], 500);
+				assert(githubHelperStub.createReference.notCalled);
 				done();
 			});
 		});
