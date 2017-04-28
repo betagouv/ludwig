@@ -45,7 +45,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(title, description, state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(res.render.calledOnce, true);
@@ -92,7 +92,7 @@ describe('suggestionController', () => {
 				const testData = testCase.data;
 				process.env.npm_config_ludwig_accessToken = testData.accessToken;
 				//action
-				suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+				suggestionsController.createPullRequest(testData, res);
 				//assert
 				assert.equal(res.render.calledOnce, true);
 				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
@@ -112,7 +112,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(res.render.calledOnce, true);
@@ -136,7 +136,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(res.render.calledOnce, true);
@@ -161,7 +161,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(res.render.calledOnce, true);
@@ -187,7 +187,7 @@ describe('suggestionController', () => {
 			});
 			const customRes = {render:sinon.spy(),req:{session:{passport:{user:{username:'user name', emails:[ {value:'user@mail'} ]}}}}};
 			//action
-			const createPRPromise = suggestionsController.createPullRequest('title', 'description', 'state', customRes);
+			const createPRPromise = suggestionsController.createPullRequest(testData, customRes);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(githubHelperStub.createContent.calledOnce, true);
@@ -209,7 +209,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(res.render.calledOnce, true);
@@ -233,7 +233,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(githubHelperStub.getHeadReferenceForBranch.calledOnce, true);
@@ -255,7 +255,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(githubHelperStub.getHeadReferenceForBranch.calledOnce, true);
