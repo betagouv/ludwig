@@ -52,11 +52,11 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(title, description, state, res);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(res.render.calledOnce, true);
-				assert.equal(mockedGithubHelper.createReference.calledOnce, true);
-				assert.equal(mockedGithubHelper.createPullRequest.calledOnce, true);
-				assert.equal(mockedGithubHelper.createContent.calledOnce, true);
-				assert.equal(mockedGithubHelper.getHeadReferenceForBranch.calledOnce, true);
+				assert(res.render.calledOnce);
+				assert(mockedGithubHelper.createReference.calledOnce);
+				assert(mockedGithubHelper.createPullRequest.calledOnce);
+				assert(mockedGithubHelper.createContent.calledOnce);
+				assert(mockedGithubHelper.getHeadReferenceForBranch.calledOnce);
 				assert.deepEqual(res.render.getCall(0).args, [ 'ok', {pullRequestURL: 'HTML URL for pull request'} ]);
 				done();
 			});
