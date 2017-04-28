@@ -1,4 +1,6 @@
 import {GithubHelper} from '../helpers/githubHelper';
+import url from 'url';
+
 const FILE_NAME_PREFIX = 'suggestion_';
 const BRANCH_PREFIX = 'ludwig-';
 
@@ -38,7 +40,16 @@ class SuggestionsController {
 					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, holder.description, base64FileContents, res.req.session.passport.user);
 				})
 				.then(() => this.githubHelper.createPullRequest(newBranchName, holder.title, holder.description, accessToken))
-				.then(newPullRequestData => res.render('ok', {pullRequestURL: newPullRequestData.body.html_url}))
+				.then(newPullRequestData => {
+					if (holder.redirect_to) {
+						var redirectURL = url.parse(holder.redirect_to, true);
+						delete redirectURL.search;
+						redirectURL.query.contributionId = newPullRequestData.body.number;
+						res.redirect(url.format(redirectURL));
+					} else {
+						res.render('ok', { pullRequestURL: newPullRequestData.body.html_url });
+					}
+				})
 				.catch(reason => {
 					console.error(reason);
 					res.render('ko');

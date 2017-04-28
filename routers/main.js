@@ -39,9 +39,12 @@ router.get('/createSuggestion',
 
 router.post('/createSuggestion',
 	(req, res, next) => {
-		req.session.title = req.body.title;
-		req.session.description = req.body.description;
-		req.session.state = req.body.state;
+		for (var key in req.body) {
+			req.session[key] = req.body[key];
+		}
+		if (req.session.redirect_me || req.session.redirect_to) {
+			req.session.redirect_to = req.session.redirect_to || req.headers.referer;
+		}
 		next();
 	},
 	passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]}));

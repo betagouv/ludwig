@@ -1,5 +1,6 @@
 /*global describe it beforeEach process*/
 import {assert} from 'chai';
+import _ from 'lodash';
 import sinon from 'sinon';
 import {SuggestionsController} from '../../controllers/suggestionsController';
 
@@ -19,44 +20,55 @@ describe('suggestionController', () => {
 		};
 		let res = {};
 		beforeEach(()=> {
-			res = {render: sinon.spy(), req:{session:{passport:{user:{}}}}};
+			res = { redirect: sinon.spy(), render: sinon.spy(), req: { session: { passport: { user: {}}}} };
 		});
 
-		it('should render the ok page if all remote calls work without errors', (done) => {
-			//setup
-			const title = 'title', description = 'description';
-			const res = {render: sinon.spy(), req:{session:{passport:{user:{}}}}};
-			const mockedGithubHelper = {
-				getHeadReferenceForBranch: sinon.stub().returns(Promise.resolve('branchedReferenceSHA')),
-				createReference: sinon.stub().returns(Promise.resolve({})),
-				createContent: sinon.stub().returns(Promise.resolve({})),
-				createPullRequest: sinon.stub().returns(Promise.resolve({
-					body: {
-						url: 'API URL for pull request',
-						html_url: 'HTML URL for pull request'
+		function successfulRequest(message, validator, redirect) {
+			return it(message, (done) => {
+				//setup
+				const mockedGithubHelper = {
+					getHeadReferenceForBranch: sinon.stub().returns(Promise.resolve('branchedReferenceSHA')),
+					createReference: sinon.stub().returns(Promise.resolve({})),
+					createContent: sinon.stub().returns(Promise.resolve({})),
+					createPullRequest: sinon.stub().returns(Promise.resolve({
+						body: {
+							url: 'API URL for pull request',
+							html_url: 'HTML URL for pull request',
+							number: 42
+						}
+					}))
+				};
+
+				const state = 'some custom data so that b64 keeps quiet';
+				sinon.stub(suggestionsController, 'githubHelper', {
+					get: () => {
+						return mockedGithubHelper;
 					}
-				}))
-			};
+				});
+				//action
+				const createPRPromise = suggestionsController.createPullRequest(_.merge(testData, redirect), res);
+				//assert
+				createPRPromise.then(() => {
+					assert.equal(mockedGithubHelper.createReference.calledOnce, true);
+					assert.equal(mockedGithubHelper.createPullRequest.calledOnce, true);
+					assert.equal(mockedGithubHelper.createContent.calledOnce, true);
+					assert.equal(mockedGithubHelper.getHeadReferenceForBranch.calledOnce, true);
+					validator(res);
+					
+					done();
+				});
+			});
+		}
 
-			const state = 'some custom data so that b64 keeps quiet';
-			sinon.stub(suggestionsController, 'githubHelper', {
-				get: () => {
-					return mockedGithubHelper;
-				}
-			});
-			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData, res);
-			//assert
-			createPRPromise.then(() => {
-				assert.equal(res.render.calledOnce, true);
-				assert.equal(mockedGithubHelper.createReference.calledOnce, true);
-				assert.equal(mockedGithubHelper.createPullRequest.calledOnce, true);
-				assert.equal(mockedGithubHelper.createContent.calledOnce, true);
-				assert.equal(mockedGithubHelper.getHeadReferenceForBranch.calledOnce, true);
-				assert.deepEqual(res.render.getCall(0).args, [ 'ok', {pullRequestURL: 'HTML URL for pull request'} ]);
-				done();
-			});
+		successfulRequest('should render the ok page if all remote calls work without errors', (res) => {
+			assert.equal(res.render.calledOnce, true);
+			assert.deepEqual(res.render.getCall(0).args, [ 'ok', {pullRequestURL: 'HTML URL for pull request'} ]);
 		});
+
+		successfulRequest('should redirect if all remote calls work without errors', (res) => {
+			assert.equal(res.redirect.calledOnce, true);
+			assert.equal(res.redirect.firstCall.args[0], 'redirect_to?contributionId=42&test=1');
+		}, { redirect_to: 'redirect_to?contributionId=24&test=1' });
 
 		const paramsCombinationsWithMissingParams = [
 			{
