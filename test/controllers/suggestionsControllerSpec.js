@@ -19,13 +19,17 @@ describe('suggestionController', () => {
 		};
 		let res = {};
 		beforeEach(()=> {
-			res = {render: sinon.spy(), req:{session:{passport:{user:{}}}}};
+			res = {
+				render: sinon.spy(),
+				req:{session:{passport:{user:{}}}},
+				send: sinon.spy(),
+			};
+			res.status = sinon.stub().returns(res);
 		});
 
 		it('should render the ok page if all remote calls work without errors', (done) => {
 			//setup
 			const title = 'title', description = 'description';
-			const res = {render: sinon.spy(), req:{session:{passport:{user:{}}}}};
 			const mockedGithubHelper = {
 				getHeadReferenceForBranch: sinon.stub().returns(Promise.resolve('branchedReferenceSHA')),
 				createReference: sinon.stub().returns(Promise.resolve({})),
@@ -94,8 +98,9 @@ describe('suggestionController', () => {
 				//action
 				suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 				//assert
-				assert.equal(res.render.calledOnce, true);
-				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+				assert(res.send.calledOnce);
+				assert(res.status.calledOnce);
+				assert.equal(res.status.firstCall.args[0], 500);
 			});
 		});
 

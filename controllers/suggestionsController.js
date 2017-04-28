@@ -45,7 +45,7 @@ class SuggestionsController {
 					res.render('ko');
 				});
 		} else {
-			res.render('ko');
+			res.status(500).send({ error: 'Missing input' });
 		}
 	}
 }
