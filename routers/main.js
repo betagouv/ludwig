@@ -85,7 +85,7 @@ router.get('/listTestsConnected', (req, res, next) => {
 router.get('/history', (req, res) => {
 	HistoryController.collectTestHistoryDataForTest(req.query.testName, (err, dataToFeedToTemplateEngine) => {
 		if (err) {
-			res.render('ko');
+			res.status(500).send(err);
 		} else {
 			res.render('testHistory', dataToFeedToTemplateEngine);
 		}
