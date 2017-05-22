@@ -15,7 +15,8 @@ describe('suggestionController', () => {
 			accessToken: 'accessToken',
 			title: 'title',
 			description: 'description',
-			state: 'state'
+			state: 'state',
+			passport: { user: { username: 'user name', emails: [{ value: 'user@mail' }]}}
 		};
 		let res = {};
 		beforeEach(()=> {
@@ -195,7 +196,7 @@ describe('suggestionController', () => {
 					return githubHelperStub;
 				}
 			});
-			const customRes = {render:sinon.spy(),req:{session:{passport:{user:{username:'user name', emails:[ {value:'user@mail'} ]}}}}};
+			const customRes = {render:sinon.spy()};
 			//action
 			const createPRPromise = suggestionsController.createPullRequest(testData, customRes);
 			//assert

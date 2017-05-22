@@ -37,7 +37,7 @@ class SuggestionsController {
 					const testFileName = `${FILE_NAME_PREFIX}${now}.txt`;
 					const stateStringBuffer = new Buffer(holder.state);
 					const base64FileContents = stateStringBuffer.toString('base64');
-					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, holder.description, base64FileContents, res.req.session.passport.user);
+					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, holder.title + '\n\n' + holder.description, base64FileContents, holder.passport.user);
 				})
 				.then(() => this.githubHelper.createPullRequest(newBranchName, holder.title, holder.description, accessToken))
 				.then(newPullRequestData => {

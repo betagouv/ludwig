@@ -62,6 +62,10 @@ module.exports = (ludwigConfiguration) => {
 		res.send({ message: 'Ludwig API here!' });
 	});
 
+	router.get('/anon/tests', (req, res) => {
+		suggestionsController.createPullRequest({title:'title', 'description':'description', state:'state'}, res);
+	})
+
 	function isUserConnected(sessionData) {
 		return typeof(sessionData) !== 'undefined' && sessionData !== null && sessionData.user.id.length > 0;
 	}

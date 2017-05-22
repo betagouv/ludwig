@@ -39,7 +39,7 @@ class GithubHelper {
 			this.agent
 				.post(this.config.createPullRequest)
 				.send(this.createPullRequestRequestBody(head, title, body, this.config.github.branch))
-				.set('Authorization', `token ${accessToken}`)
+				.set('Authorization', `Basic ${accessToken}`)
 				.end((err, createPRResult) => {
 					if (err) {
 						reject({message: err.message, details: err});
@@ -76,7 +76,7 @@ class GithubHelper {
 			this.agent
 				.put(`${this.config.createContent}${this.config.acceptedTestsLocation}/${testFileName}`)
 				.send(this.createContentRequestBody(`${this.config.acceptedTestsLocation}/${testFileName}`, branchName, commitMessage, base64FileContents, authorData))
-				.set('Authorization', `token ${accessToken}`)
+				.set('Authorization', `Basic ${accessToken}`)
 				.end((err, createCommitResult) => {
 					if (err) {
 						console.error(err);
@@ -101,7 +101,7 @@ class GithubHelper {
 			this.agent
 				.post(this.config.referencesEndpoint)
 				.send(this.createReferenceRequestBody(newBranchName, branchToCreatePullRequestsFor))
-				.set('Authorization', `token ${accessToken}`)
+				.set('Authorization', `Basic ${accessToken}`)
 				.end((err, createReferenceResult) => {
 					if (err) {
 						console.error(err);
