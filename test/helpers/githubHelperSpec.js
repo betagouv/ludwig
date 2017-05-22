@@ -7,8 +7,14 @@ import request from 'superagent';
 describe('Github Helper', () => {
 	let githubHelper;
 
+	const basicConfig = {
+		acceptedTestsLocation:'testsDir',
+		github: {},
+		repo: 'user/reponame',
+	};
+
 	beforeEach(() => {
-		githubHelper = new GithubHelper({github: {}, acceptedTestsLocation:'testsDir'});
+		githubHelper = new GithubHelper(basicConfig);
 	});
 
 	describe('createPullRequestRequestBody', () => {
@@ -104,11 +110,6 @@ describe('Github Helper', () => {
 					return request;
 				}
 			});
-			sinon.stub(githubHelper, 'config', {
-				get: () => {
-					return {createPullRequest: 'https://api.github.com/repos/user/reponame/pulls'};
-				}
-			});
 
 			//action
 			const createPullRequestPromise = githubHelper.createPullRequest('head', 'title', 'body', 'accessToken');
@@ -136,11 +137,6 @@ describe('Github Helper', () => {
 			sinon.stub(githubHelper, 'agent', {
 				get: () => {
 					return request;
-				}
-			});
-			sinon.stub(githubHelper, 'config', {
-				get: () => {
-					return {createPullRequest: 'https://api.github.com/repos/user/reponame/pulls'};
 				}
 			});
 			//action
@@ -171,11 +167,6 @@ describe('Github Helper', () => {
 			sinon.stub(githubHelper, 'agent', {
 				get: () => {
 					return request;
-				}
-			});
-			sinon.stub(githubHelper, 'config', {
-				get: () => {
-					return {createContent: 'https://api.github.com/repos/user/reponame/pulls'};
 				}
 			});
 			sinon.stub(githubHelper, 'createContentRequestBody').returns(sinon.spy());
@@ -209,11 +200,6 @@ describe('Github Helper', () => {
 			sinon.stub(githubHelper, 'agent', {
 				get: () => {
 					return request;
-				}
-			});
-			sinon.stub(githubHelper, 'config', {
-				get: () => {
-					return {createContent: 'https://api.github.com/repos/user/reponame/pulls'};
 				}
 			});
 			//action
@@ -322,11 +308,9 @@ describe('Github Helper', () => {
 			//action
 			const getHeadReferencesForBranchPromise = githubHelper.getHeadReferenceForBranch('asdf');
 			//assert
-			getHeadReferencesForBranchPromise.catch((message) => {
-				assert.deepEqual(message, {
-					message: 'Not able to retrieve reference "asdf"',
-					details: 'Can\'t retrieve references'
-				});
+			getHeadReferencesForBranchPromise.catch((error) => {
+				assert.equal(error.message, 'Not able to retrieve reference "asdf"');
+				assert.equal(error.details, 'Can\'t retrieve references');
 				superagentMock.unset();
 				done();
 			});
@@ -458,11 +442,6 @@ describe('Github Helper', () => {
 					return request;
 				}
 			});
-			sinon.stub(githubHelper, 'config', {
-				get: () => {
-					return {commitsEndpoint: 'https://api.github.com/repos/user/reponame/commits'};
-				}
-			});
 			//action
 			const getFirstCommitForFilePromise = githubHelper.getFirstCommitForFile('file/path');
 			//assert
@@ -492,11 +471,6 @@ describe('Github Helper', () => {
 			sinon.stub(githubHelper, 'agent', {
 				get: () => {
 					return request;
-				}
-			});
-			sinon.stub(githubHelper, 'config', {
-				get: () => {
-					return {commitsEndpoint: 'https://api.github.com/repos/user/reponame/commits'};
 				}
 			});
 			//action
@@ -534,11 +508,6 @@ describe('Github Helper', () => {
 			sinon.stub(githubHelper, 'agent', {
 				get: () => {
 					return request;
-				}
-			});
-			sinon.stub(githubHelper, 'config', {
-				get: () => {
-					return {commitsEndpoint: 'https://api.github.com/repos/user/reponame/commits'};
 				}
 			});
 			//action
