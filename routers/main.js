@@ -59,7 +59,7 @@ module.exports = (ludwigConfiguration) => {
 	});
 
 	router.get('/', (req, res) => {
-		res.redirect('/listTests');
+		res.send({ message: 'Ludwig API here!' });
 	});
 
 	function isUserConnected(sessionData) {
