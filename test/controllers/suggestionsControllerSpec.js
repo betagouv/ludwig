@@ -231,10 +231,13 @@ describe('suggestionController', () => {
 
 		it('should use the "not_master" branch to create pull requests for if branch "not_master" is specified', (done) => {
 			//setup
-			const suggestionsController = new SuggestionsController({github:{branch:'not_master',
-		accessToken: ' accessToken',
-		clientID: 'clientID',
-		clientSecret: 'clientSecret'}});
+			const suggestionsController = new SuggestionsController({ github: {
+				branch: 'not_master',
+				accessToken: ' accessToken',
+				clientID: 'clientID',
+				clientSecret: 'clientSecret'
+			}});
+
 			const githubHelperStub = {
 				createReference: sinon.spy(),
 				getHeadReferenceForBranch: sinon.stub().returns(Promise.reject({}))
