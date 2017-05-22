@@ -36,7 +36,7 @@ app.use(function(req, res, next) {
 	next();
 });
 
-app.use('/', require('./routers/main'));
+app.use('/', require('./routers/main')(appConfiguration));
 
 app.listen(appConfiguration.port, appConfiguration.ip, function () {
 	console.log('Express server listening on %s:%d, in %s mode', appConfiguration.ip, appConfiguration.port, app.get('env'));
