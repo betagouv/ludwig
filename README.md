@@ -105,27 +105,17 @@ Cela se fait par le biais de [cette page](https://github.com/settings/applicatio
 
 _Note : Pour correctement renseigner le champ `Authorization callback URL`, il faut fournir une URL de type `<URI de la machine Ludwig>/github_callback`._
 
-La configuration des clefs d'API GitHub se fait par `npm config`. Il faut enregistrer les clefs suivantes :
-
-* `ludwig:clientID` : Client ID à utiliser pour requêter l'API GitHub
-* `ludwig:clientSecret` : Client Secret à utiliser pour requêter l'API GitHub
-* `ludwig:accessToken` : Un access token de compte ayant le droit de créer des commits sur le dépôt du projet (celui du mainteneur principal par exemple). Un guide est disponible [ici](https://help.github.com/articles/creating-an-access-token-for-command-line-use/).
+* `github.clientID` : Client ID à utiliser pour requêter l'API GitHub
+* `github.clientSecret` : Client Secret à utiliser pour requêter l'API GitHub
+* `github.accessToken` : Un access token de compte ayant le droit de créer des commits sur le dépôt du projet (celui du mainteneur principal par exemple). Un guide est disponible [ici](https://help.github.com/articles/creating-an-access-token-for-command-line-use/).
 _Note : Dans le cas qui nous intéresse pour le jeton d'accès, il faut en créer un avec le scope "repo" et ne pas sélectionner les autres._
 
 Les clientID et clientSecret doivent être créés au préalable par le responsable du dépôt qui sera modifié de sorte à permettre à Ludwig d'accéder au dépôt et d'y faire des modifications.
 
-Deux autres paramètres sont configurés par clefs de configuration NPM :
+D'autres paramètres peuvent être configurés :
 
-* `ludwig:sessionSecret` : Le secret qui sera utilisé pour signer le cookie de session (et éviter qu'il soit manipulé)
-* `ludwig:AccessControlAllowOrigin` : Le pattern d'URLs autorisées pour une utilisation cross-domain (si le widget et l'application Ludwig sont sur des machines avec des domaines différents)
-
-Pour automatiser l'enregistrement de toutes les clefs de configuration NPM, utilisez `npm run setup`. Cela reste partiellement manuel mais aucune clef n'est oubliée et cela devrait éviter les fautes de frappe.
-
-#### Autres options de configuration
-
-Il est possible de configurer le port que va utiliser le serveur Ludwig. Par défaut, ludwig se lancera et écoutera sur le port `3000`. Cependant, il est possible de définir le port que vous souhaitez en configurant la clef `ludwig:port` par npm config.
-
-La commande `npm config set ludwig:port 4242` définira le port utilisé par Ludwig à 4242. Cette configuration, comme la définition des secrets de l'application, peut être faite par l'intermédiaire du script de configuration `./scripts/setupNPMVariables.sh`.
+* `session.secret` : Le secret qui sera utilisé pour signer le cookie de session (et éviter qu'il soit manipulé)
+* `cors` : Le pattern d'URLs autorisées pour une utilisation cross-domain (si le widget et l'application Ludwig sont sur des machines avec des domaines différents)
 
 ### Lancer le serveur Ludwig
 

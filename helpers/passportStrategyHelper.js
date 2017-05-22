@@ -1,9 +1,9 @@
 import {Strategy} from 'passport-github';
 
-module.exports.passportStrategyFactory = (targetEndpoint) => {
+module.exports.passportStrategyFactory = (config, targetEndpoint) => {
 	return new Strategy({
-		clientID: process.env.npm_config_ludwig_clientID,
-		clientSecret: process.env.npm_config_ludwig_clientSecret,
+		clientID: config.clientID,
+		clientSecret: config.clientSecret,
 		callbackURL: targetEndpoint
 	}, (accessToken, refreshToken, profile, done) => {
 		profile.accessToken = accessToken;

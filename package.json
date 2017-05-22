@@ -45,12 +45,6 @@
   "engines": {
     "node": "^4.2.0 || ^6.9.0"
   },
-  "config": {
-    "clientID": "client ID you'll need to set via npm (key = ludwig:clientID): https://docs.npmjs.com/cli/config",
-    "clientSecret": "client secret you'll need to set via npm (key = ludwig:clientSecret): https://docs.npmjs.com/cli/config",
-    "AccessControlAllowOrigin": "url pattern for CORS configuration (key = ludwig:AccessControlAllowOrigin)",
-	"port":3000
-  },
   "files": [
     "controllers",
     "dist/ludwig.js",
@@ -70,7 +64,6 @@
     "qualimetry": "istanbul cover _mocha --dir qualimetry/cover -- --compilers js:babel-core/register -R spec test/* test/batch/*",
     "lint": "eslint --ignore-pattern=dist --ignore-pattern=qualimetry .",
     "clean": "rm -rf node_modules && rm -rf dist",
-    "insertTestReportData": "babel-node batch/runner.js",
-    "setup": "./scripts/setupNPMVariables.sh"
+    "insertTestReportData": "babel-node batch/runner.js"
   }
 }

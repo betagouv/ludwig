@@ -17,10 +17,11 @@ passport.deserializeUser((obj, done) => {
 	done(null, obj);
 });
 
+const callbackURLPrefix = 'http://' + ludwigConfiguration.ip + ':' + ludwigConfiguration.port + '/github_callback/';
 const CREATE_PR_STRATEGY_NAME = 'githubCreatePR';
 const CHECK_LOGIN_STRATEGY_NAME = 'githubLogin';
-passport.use(CREATE_PR_STRATEGY_NAME, passportStrategyFactory(ludwigConfiguration.github.authenticationCallback+'/createPR'));
-passport.use(CHECK_LOGIN_STRATEGY_NAME, passportStrategyFactory(ludwigConfiguration.github.authenticationCallback+'/login'));
+passport.use(CREATE_PR_STRATEGY_NAME, passportStrategyFactory(ludwigConfiguration.github, callbackURLPrefix + 'createPR'));
+passport.use(CHECK_LOGIN_STRATEGY_NAME, passportStrategyFactory(ludwigConfiguration.github, callbackURLPrefix + 'login'));
 
 if (process.env.NODE_ENV === 'development') {
 	router.get('/test', (req, res) => {
