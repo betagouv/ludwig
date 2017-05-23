@@ -20,25 +20,25 @@ describe('suggestionController', () => {
 		let res = {};
 		beforeEach(()=> {
 			res = {
-				render: sinon.spy(),
 				req:{session:{passport:{user:{}}}},
 				send: sinon.spy(),
 			};
 			res.status = sinon.stub().returns(res);
 		});
 
-		it('should render the ok page if all remote calls work without errors', (done) => {
+		it('should return createPullRequest body response if all remote calls work without errors', (done) => {
 			//setup
 			const title = 'title', description = 'description';
+			const bodyResponse = {
+				url: 'API URL for pull request',
+				html_url: 'HTML URL for pull request'
+			};
 			const mockedGithubHelper = {
 				getHeadReferenceForBranch: sinon.stub().returns(Promise.resolve('branchedReferenceSHA')),
 				createReference: sinon.stub().returns(Promise.resolve({})),
 				createContent: sinon.stub().returns(Promise.resolve({})),
 				createPullRequest: sinon.stub().returns(Promise.resolve({
-					body: {
-						url: 'API URL for pull request',
-						html_url: 'HTML URL for pull request'
-					}
+					body: bodyResponse
 				}))
 			};
 
@@ -52,12 +52,12 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(title, description, state, res);
 			//assert
 			createPRPromise.then(() => {
-				assert(res.render.calledOnce);
+				assert(res.send.calledOnce);
 				assert(mockedGithubHelper.createReference.calledOnce);
 				assert(mockedGithubHelper.createPullRequest.calledOnce);
 				assert(mockedGithubHelper.createContent.calledOnce);
 				assert(mockedGithubHelper.getHeadReferenceForBranch.calledOnce);
-				assert.deepEqual(res.render.getCall(0).args, [ 'ok', {pullRequestURL: 'HTML URL for pull request'} ]);
+				assert.deepEqual(res.send.firstCall.args[0], bodyResponse);
 				done();
 			});
 		});
@@ -158,7 +158,7 @@ describe('suggestionController', () => {
 			const githubHelperStub = {
 				createReference: sinon.stub().returns(Promise.resolve({data: true})),
 				createContent: sinon.stub().returns(Promise.resolve({data: true})),
-				createPullRequest: sinon.stub().returns(Promise.resolve({error: true})),
+				createPullRequest: sinon.stub().returns(Promise.reject({error: true})),
 				getHeadReferenceForBranch: sinon.stub().returns(Promise.resolve('branchReferenceSHA'))
 			};
 			sinon.stub(suggestionsController, 'githubHelper', {
