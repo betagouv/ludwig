@@ -39,10 +39,8 @@ class SuggestionsController {
 					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, description, base64FileContents, res.req.session.passport.user);
 				})
 				.then(() => this.githubHelper.createPullRequest(newBranchName, title, description, accessToken))
-				.then(newPullRequestData => res.render('ok', {pullRequestURL: newPullRequestData.body.html_url}))
-				.catch(reason => {
-					res.status(500).send(reason);
-				});
+				.then(newPullRequestData => res.send(newPullRequestData.body))
+				.catch(reason => res.status(500).send(reason));
 		} else {
 			res.status(500).send({ error: 'Missing input' });
 		}
