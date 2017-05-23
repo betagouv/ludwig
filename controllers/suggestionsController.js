@@ -41,11 +41,10 @@ class SuggestionsController {
 				.then(() => this.githubHelper.createPullRequest(newBranchName, title, description, accessToken))
 				.then(newPullRequestData => res.render('ok', {pullRequestURL: newPullRequestData.body.html_url}))
 				.catch(reason => {
-					console.error(reason);
-					res.render('ko');
+					res.status(500).send(reason);
 				});
 		} else {
-			res.render('ko');
+			res.status(500).send({ error: 'Missing input' });
 		}
 	}
 }

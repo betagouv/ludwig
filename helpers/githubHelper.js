@@ -80,7 +80,6 @@ class GithubHelper {
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createCommitResult) => {
 					if (err) {
-						console.error(err);
 						reject({message: err.message, details: err});
 					} else {
 						resolve(createCommitResult);
@@ -105,7 +104,6 @@ class GithubHelper {
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createReferenceResult) => {
 					if (err) {
-						console.error(err);
 						reject({message: err.message, details: err});
 					} else {
 						resolve(createReferenceResult);
@@ -115,7 +113,6 @@ class GithubHelper {
 	}
 
 	getHeadReferenceForBranch(requestedBranch) {
-		console.log(`Trying to get ${this.config.referencesEndpoint}/heads/${requestedBranch}`);
 		return new Promise((resolve, reject) => {
 			this.agent
 				.get(`${this.config.referencesEndpoint}/heads/${requestedBranch}`)

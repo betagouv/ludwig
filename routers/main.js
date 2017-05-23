@@ -70,7 +70,7 @@ router.get('/listTests', (req, res) => {
 	}
 	ListTestsController.showLatestTestSuite(customUserFilter, (err, renderParams) => {
 		if (err) {
-			res.render('ko');
+			res.status(500).send(err);
 		} else {
 			renderParams.mine = myTestsOnly;
 			res.render('listTests', renderParams);
@@ -85,7 +85,7 @@ router.get('/listTestsConnected', (req, res, next) => {
 router.get('/history', (req, res) => {
 	HistoryController.collectTestHistoryDataForTest(req.query.testName, (err, dataToFeedToTemplateEngine) => {
 		if (err) {
-			res.render('ko');
+			res.status(500).send(err);
 		} else {
 			res.render('testHistory', dataToFeedToTemplateEngine);
 		}

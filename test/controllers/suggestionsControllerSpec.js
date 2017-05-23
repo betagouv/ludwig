@@ -19,13 +19,17 @@ describe('suggestionController', () => {
 		};
 		let res = {};
 		beforeEach(()=> {
-			res = {render: sinon.spy(), req:{session:{passport:{user:{}}}}};
+			res = {
+				render: sinon.spy(),
+				req:{session:{passport:{user:{}}}},
+				send: sinon.spy(),
+			};
+			res.status = sinon.stub().returns(res);
 		});
 
 		it('should render the ok page if all remote calls work without errors', (done) => {
 			//setup
 			const title = 'title', description = 'description';
-			const res = {render: sinon.spy(), req:{session:{passport:{user:{}}}}};
 			const mockedGithubHelper = {
 				getHeadReferenceForBranch: sinon.stub().returns(Promise.resolve('branchedReferenceSHA')),
 				createReference: sinon.stub().returns(Promise.resolve({})),
@@ -48,11 +52,11 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(title, description, state, res);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(res.render.calledOnce, true);
-				assert.equal(mockedGithubHelper.createReference.calledOnce, true);
-				assert.equal(mockedGithubHelper.createPullRequest.calledOnce, true);
-				assert.equal(mockedGithubHelper.createContent.calledOnce, true);
-				assert.equal(mockedGithubHelper.getHeadReferenceForBranch.calledOnce, true);
+				assert(res.render.calledOnce);
+				assert(mockedGithubHelper.createReference.calledOnce);
+				assert(mockedGithubHelper.createPullRequest.calledOnce);
+				assert(mockedGithubHelper.createContent.calledOnce);
+				assert(mockedGithubHelper.getHeadReferenceForBranch.calledOnce);
 				assert.deepEqual(res.render.getCall(0).args, [ 'ok', {pullRequestURL: 'HTML URL for pull request'} ]);
 				done();
 			});
@@ -94,8 +98,9 @@ describe('suggestionController', () => {
 				//action
 				suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 				//assert
-				assert.equal(res.render.calledOnce, true);
-				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+				assert(res.send.calledOnce);
+				assert(res.status.calledOnce);
+				assert.equal(res.status.firstCall.args[0], 500);
 			});
 		});
 
@@ -115,9 +120,10 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(res.render.calledOnce, true);
-				assert.equal(createContentSpy.called, false);
-				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+				assert(res.send.calledOnce);
+				assert(res.status.calledOnce);
+				assert.equal(res.status.firstCall.args[0], 500);
+				assert(createContentSpy.notCalled);
 				done();
 			});
 		});
@@ -139,10 +145,10 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(res.render.calledOnce, true);
-				assert.equal(createPullRequestSpy.called, false);
-
-				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+				assert(createPullRequestSpy.notCalled);
+				assert(res.status.calledOnce);
+				assert(res.send.calledOnce);
+				assert.equal(res.status.firstCall.args[0], 500);
 				done();
 			});
 		});
@@ -164,10 +170,10 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(res.render.calledOnce, true);
-				assert.equal(githubHelperStub.createPullRequest.calledOnce, true);
-
-				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+				assert(githubHelperStub.createPullRequest.calledOnce);
+				assert(res.status.calledOnce);
+				assert(res.send.calledOnce);
+				assert.equal(res.status.firstCall.args[0], 500);
 				done();
 			});
 		});
@@ -185,12 +191,17 @@ describe('suggestionController', () => {
 					return githubHelperStub;
 				}
 			});
-			const customRes = {render:sinon.spy(),req:{session:{passport:{user:{username:'user name', emails:[ {value:'user@mail'} ]}}}}};
+			const customRes = {
+				render: sinon.spy(),
+				req: { session: { passport: { user: { username: 'user name', emails: [{ value:'user@mail' }]}}}},
+				send: sinon.spy()
+			};
+			customRes.status = sinon.stub().returns(customRes);
 			//action
 			const createPRPromise = suggestionsController.createPullRequest('title', 'description', 'state', customRes);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(githubHelperStub.createContent.calledOnce, true);
+				assert(githubHelperStub.createContent.calledOnce);
 				assert.deepEqual(githubHelperStub.createContent.getCall(0).args[5], {username:'user name', emails:[ {value:'user@mail'} ]});
 
 				done();
@@ -212,10 +223,10 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
 			//assert
 			createPRPromise.then(() => {
-				assert.equal(res.render.calledOnce, true);
-				assert.equal(githubHelperStub.createReference.called, false);
-
-				assert.deepEqual(res.render.getCall(0).args, [ 'ko' ]);
+				assert(res.status.calledOnce);
+				assert(res.send.calledOnce);
+				assert.deepEqual(res.status.firstCall.args[0], 500);
+				assert(githubHelperStub.createReference.notCalled);
 				done();
 			});
 		});
