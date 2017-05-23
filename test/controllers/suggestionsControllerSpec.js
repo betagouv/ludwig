@@ -20,7 +20,7 @@ describe('suggestionController', () => {
 		};
 		let res = {};
 		beforeEach(()=> {
-			res = { redirect: sinon.spy(), render: sinon.spy(), req: { session: { passport: { user: {}}}} };
+			res = { redirect: sinon.spy(), render: sinon.spy(), send: sinon.spy(), req: { session: { passport: { user: {}}}} };
 		});
 
 		function successfulRequest(message, validator, redirect) {
@@ -61,8 +61,7 @@ describe('suggestionController', () => {
 		}
 
 		successfulRequest('should render the ok page if all remote calls work without errors', (res) => {
-			assert.equal(res.render.calledOnce, true);
-			assert.deepEqual(res.render.getCall(0).args, [ 'ok', {pullRequestURL: 'HTML URL for pull request'} ]);
+			assert.equal(res.send.calledOnce, true);
 		});
 
 		successfulRequest('should redirect if all remote calls work without errors', (res) => {

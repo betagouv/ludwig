@@ -47,7 +47,7 @@ class SuggestionsController {
 						redirectURL.query.contributionId = newPullRequestData.body.number;
 						res.redirect(url.format(redirectURL));
 					} else {
-						res.render('ok', { pullRequestURL: newPullRequestData.body.html_url });
+						res.send(newPullRequestData.body);
 					}
 				})
 				.catch(reason => {

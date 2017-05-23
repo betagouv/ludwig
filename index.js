@@ -5,7 +5,6 @@ import store from 'connect-mongo';
 import passport from 'passport';
 import mongoose from 'mongoose';
 import path from 'path';
-import bodyParser from 'body-parser';
 
 module.exports = (appConfiguration) => {
     const MongoStore = store(session);
@@ -18,13 +17,12 @@ module.exports = (appConfiguration) => {
 
     app.set('view engine', 'ejs');
     app.use(express.static(path.join(__dirname, '/dist')));
-    app.use(bodyParser.urlencoded({ extended: false }));
 
     app.use(session({
         secret: appConfiguration.session.secret,
-        resave:false,
-        saveUninitialized:false,
-        store:new MongoStore({mongooseConnection: mongoose.connection})
+        resave: false,
+        saveUninitialized: false,
+        store: new MongoStore({mongooseConnection: mongoose.connection})
     }));
 
     app.use(passport.initialize());

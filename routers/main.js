@@ -66,6 +66,14 @@ module.exports = (ludwigConfiguration) => {
 		suggestionsController.createPullRequest({title:'title', 'description':'description', state:'state'}, res);
 	})
 
+	var formidable = require('formidable');
+	router.post('/anon/tests/suggestions', (req, res) => {
+		var form = new formidable.IncomingForm();
+		form.parse(req, function(err, fields, files) {
+			suggestionsController.createPullRequest(fields, res);
+		});
+	});
+
 	function isUserConnected(sessionData) {
 		return typeof(sessionData) !== 'undefined' && sessionData !== null && sessionData.user.id.length > 0;
 	}
