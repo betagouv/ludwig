@@ -134,32 +134,23 @@ describe('Ludwig DAO', () => {
 	});
 
 	describe('getTestHistoryFilteredByUserData', () => {
-		const stubbedTestSuiteModelFind = {
-			sort: () => {
-				const sort = () => {
-				};
-				sort.populate = () => {
-					const populate = () => {
+		function createStubbedTestSuiteModelFind(findResults) {
+			return {
+				sort: () => {
+					const sort = () => {
 					};
-					populate.exec = (callback) => {
-						callback(null, [ {
-							testCases: [ {
-								author: {
-									name: 'foo',
-									email: 'foo@test.com'
-								}
-							}, {author: {name: 'bar', email: 'bar@test.com'}} ]
-						} ]);
+					sort.populate = () => {
+						const populate = () => {
+						};
+						populate.exec = (callback) => {
+							callback(null, findResults);
+						};
+						return populate;
 					};
-					return populate;
-				};
-				return sort;
-			}
-		};
-
-		beforeEach(() => {
-			sinon.stub(mongoose.Model, 'find').returns(stubbedTestSuiteModelFind);
-		});
+					return sort;
+				}
+			};
+		}
 
 		afterEach(() => {
 			mongoose.Model.find.restore();
@@ -167,6 +158,14 @@ describe('Ludwig DAO', () => {
 
 		it('should not filter results if there are no filters set', (done) => {
 			//setup
+			sinon.stub(mongoose.Model, 'find').returns(createStubbedTestSuiteModelFind( [ {
+				testCases: [ {
+					author: {
+						name: 'foo',
+						email: 'foo@test.com'
+					}
+				}, {author: {name: 'bar', email: 'bar@test.com'}} ]
+			} ] ));
 			//action
 			ludwigDAO.getTestHistoryFilteredByUserData({})
 				.then((testHistory) => {
@@ -187,6 +186,16 @@ describe('Ludwig DAO', () => {
 		});
 
 		it('should filter testsCases by matching user login to author name', (done) => {
+			//setup
+			sinon.stub(mongoose.Model, 'find').returns(createStubbedTestSuiteModelFind( [ {
+				testCases: [ {
+					author: {
+						name: 'foo',
+						email: 'foo@test.com'
+					}
+				}, {author: {name: 'bar', email: 'bar@test.com'}} ]
+			} ] ));
+			//action / assert
 			ludwigDAO.getTestHistoryFilteredByUserData({login:'foo'})
 				.then((testHistory) => {
 					assert.deepEqual(testHistory, {
@@ -205,6 +214,16 @@ describe('Ludwig DAO', () => {
 		});
 
 		it('should filter testsCases by matching user name to author name', (done) => {
+			//setup
+			sinon.stub(mongoose.Model, 'find').returns(createStubbedTestSuiteModelFind( [ {
+				testCases: [ {
+					author: {
+						name: 'foo',
+						email: 'foo@test.com'
+					}
+				}, {author: {name: 'bar', email: 'bar@test.com'}} ]
+			} ] ));
+			//action / assert
 			ludwigDAO.getTestHistoryFilteredByUserData({name:'foo'})
 				.then((testHistory) => {
 					assert.deepEqual(testHistory, {
@@ -223,6 +242,16 @@ describe('Ludwig DAO', () => {
 		});
 
 		it('should filter testsCases by matching user email to author email', (done) => {
+			//setup
+			sinon.stub(mongoose.Model, 'find').returns(createStubbedTestSuiteModelFind( [ {
+				testCases: [ {
+					author: {
+						name: 'foo',
+						email: 'foo@test.com'
+					}
+				}, {author: {name: 'bar', email: 'bar@test.com'}} ]
+			} ] ));
+			//action / assert
 			ludwigDAO.getTestHistoryFilteredByUserData({emails:[ 'test@something.net', 'foo@test.com' ]})
 				.then((testHistory) => {
 					assert.deepEqual(testHistory, {
@@ -241,32 +270,15 @@ describe('Ludwig DAO', () => {
 		});
 
 		it('should allow filter combinations based on email or name', (done) => {
-			mongoose.Model.find.restore();
-			const stubbedTestSuiteModelFind = {
-				sort: () => {
-					const sort = () => {
-					};
-					sort.populate = () => {
-						const populate = () => {
-						};
-						populate.exec = (callback) => {
-							callback(null, [ {
-								testCases: [ {
-									author: {
-										name: 'foo',
-										email: 'foo@test.com'
-									}
-								}, {author: {name: 'bar', email: 'bar@test.com'}},
-									{author: {name: 'baz', email: 'baz@somewhere.else'}}  ]
-							} ]);
-						};
-						return populate;
-					};
-					return sort;
-				}
-			};
-
-			sinon.stub(mongoose.Model, 'find').returns(stubbedTestSuiteModelFind);
+			sinon.stub(mongoose.Model, 'find').returns(createStubbedTestSuiteModelFind([ {
+				testCases: [ {
+					author: {
+						name: 'foo',
+						email: 'foo@test.com'
+					}
+				}, {author: {name: 'bar', email: 'bar@test.com'}},
+					{author: {name: 'baz', email: 'baz@somewhere.else'}}  ]
+			} ] ));
 
 			ludwigDAO.getTestHistoryFilteredByUserData({name:'baz', emails:[ 'test@something.net', 'foo@test.com' ]})
 				.then((testHistory) => {
@@ -286,6 +298,82 @@ describe('Ludwig DAO', () => {
 					done();
 				})
 				.catch((err) => {
+					done(err);
+				});
+		});
+
+		it('should filter tests which names contain foo if customUserFilter.testNameFilter is equal to "foo"', (done) => {
+			//setup
+			sinon.stub(mongoose.Model, 'find').returns(createStubbedTestSuiteModelFind([ {
+				testCases: [
+					{name: 'foobartest', author: {name: 'bar', email: 'bar@test.com'}},
+					{name: 'testcase', author: {name: 'bar', email: 'bar@test.com'}},
+					{name: 'barfootest', author: {name: 'baz', email: 'baz@somewhere.else'}}  ]
+			} ] ));
+			//action / assert
+			ludwigDAO.getTestHistoryFilteredByUserData({testNameFilter:'foo'})
+				.then((data) => {
+					assert.deepEqual(data, {testCases:[ {name:'foobartest', author: {name: 'bar', email: 'bar@test.com'}}, {name:'barfootest', author: {name: 'baz', email: 'baz@somewhere.else'}} ]});
+					done();
+				})
+				.catch( (err) => {
+					done(err);
+				});
+		});
+
+		it('test name filtering on recorded testcase names should be case insensitive', (done) => {
+			//setup
+			sinon.stub(mongoose.Model, 'find').returns(createStubbedTestSuiteModelFind([ {
+				testCases: [
+					{name: 'fOObartest', author: {name: 'bar', email: 'bar@test.com'}},
+					{name: 'testcase', author: {name: 'bar', email: 'bar@test.com'}},
+					{name: 'barFOotest', author: {name: 'baz', email: 'baz@somewhere.else'}}  ]
+			} ] ));
+			//action / assert
+			ludwigDAO.getTestHistoryFilteredByUserData({testNameFilter:'foo'})
+				.then( (data) => {
+					assert.deepEqual(data, {testCases:[ {name:'fOObartest', author: {name: 'bar', email: 'bar@test.com'}}, {name:'barFOotest', author: {name: 'baz', email: 'baz@somewhere.else'}} ]});
+					done();
+				})
+				.catch( (err) => {
+					done(err);
+				});
+		});
+
+		it('test name filter should be case insensitive', (done) => {
+			//setup
+			sinon.stub(mongoose.Model, 'find').returns(createStubbedTestSuiteModelFind([ {
+				testCases: [
+					{name: 'foobartest', author: {name: 'bar', email: 'bar@test.com'}},
+					{name: 'testcase', author: {name: 'bar', email: 'bar@test.com'}},
+					{name: 'barfootest', author: {name: 'baz', email: 'baz@somewhere.else'}}  ]
+			} ] ));
+			//action / assert
+			ludwigDAO.getTestHistoryFilteredByUserData({testNameFilter:'fOo'})
+				.then( (data) => {
+					assert.deepEqual(data, {testCases:[ {name:'foobartest', author: {name: 'bar', email: 'bar@test.com'}}, {name:'barfootest', author: {name: 'baz', email: 'baz@somewhere.else'}} ]});
+					done();
+				})
+				.catch( (err) => {
+					done(err);
+				});
+		});
+
+		it('should enforce both testName & user data base filters if they are present', (done) => {
+			//setup
+			sinon.stub(mongoose.Model, 'find').returns(createStubbedTestSuiteModelFind([ {
+				testCases: [
+					{name: 'foobartest', author: {name: 'bar', email: 'bar@test.com'}},
+					{name: 'testcase', author: {name: 'bar', email: 'bar@test.com'}},
+					{name: 'barfootest', author: {name: 'baz', email: 'baz@somewhere.else'}}  ]
+			} ] ));
+			//action / assert
+			ludwigDAO.getTestHistoryFilteredByUserData({testNameFilter:'fOo', login:'bar'})
+				.then( (data) => {
+					assert.deepEqual(data, {testCases:[ {name:'foobartest', author: {name: 'bar', email: 'bar@test.com'}} ]});
+					done();
+				})
+				.catch( (err) => {
 					done(err);
 				});
 		});

@@ -70,6 +70,11 @@ router.get('/listTests', (req, res) => {
 	if (myTestsOnly) {
 		customUserFilter = ListTestsController.buildTestFilterForUser(req.session.passport.user._json);
 	}
+
+	if (req.query['testNameFilter']) {
+		customUserFilter.testNameFilter = req.query['testNameFilter'];
+	}
+
 	ListTestsController.showLatestTestSuite(customUserFilter, (err, renderParams) => {
 		if (err) {
 			res.status(500).send(err);

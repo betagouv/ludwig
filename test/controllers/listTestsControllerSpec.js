@@ -49,7 +49,7 @@ describe('ListTestsController', () => {
 	describe('authenticateToFilterMyTests', () => {
 		it('should redirect to "/listTests?filter=mine" if passport session data is defined', () => {
 			//setup
-			const res = {redirect:sinon.spy(), req:{session:{passport:{}}}};
+			const res = {redirect:sinon.spy(), req:{query:{}, session:{passport:{}}}};
 			//action
 			ListTestsController.authenticateToFilterMyTests(res);
 			//assert
@@ -66,6 +66,18 @@ describe('ListTestsController', () => {
 			//assert
 			assert.equal(res.redirect.called, false);
 			assert.equal(next.calledOnce, true);
+		});
+
+		it('should include the testNameFilter query param if it is set in incoming query', () => {
+			//setup
+			const next = sinon.spy();
+			const res = {redirect:sinon.spy(), req:{session:{passport:{}}, query:{testNameFilter:'foo'}}};
+			//action
+			ListTestsController.authenticateToFilterMyTests(res, next);
+			//assert
+			assert.equal(res.redirect.calledOnce, true);
+			assert.equal(res.redirect.getCall(0).args[0], '/listTests?filter=mine&testNameFilter=foo');
+			assert.equal(next.called, false);
 		});
 	});
 

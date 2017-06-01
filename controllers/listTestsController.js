@@ -22,7 +22,11 @@ module.exports.showLatestTestSuite = function (customUserFilter, callback) {
 
 module.exports.authenticateToFilterMyTests = function (res, next) {
 	if (res.req.session.passport) {
-		return res.redirect('/listTests?filter=mine');
+		let redirectTarget = '/listTests?filter=mine';
+		if (res.req.query.testNameFilter) {
+			redirectTarget+=`&testNameFilter=${res.req.query.testNameFilter}`;
+		}
+		return res.redirect(redirectTarget);
 	}
 	next();
 };
