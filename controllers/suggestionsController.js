@@ -16,29 +16,28 @@ class SuggestionsController {
 
 	/*
 	 This function chains github API calls in order to create a pull request
-	 @param accessToken: A valid accessToken to access the github API
-	 @param title: (string) Will be used as a title for the pull request creation
-	 @param description: (urlencoded JSON string) The state we want to record
-	 @param state: (urlencoded JSON string) The state we want to record
+	 @param testSuggestion.title: (string) Will be used as a title for the pull request creation
+	 @param testSuggestion.description: The full commit message and PR initial comment
+	 @param testSuggestion.state: (urlencoded JSON string) The state we want to record
 	 @param res: An expressjs Response object to get back to the user
 	 */
-	createPullRequest(title, description, state, res) {
+	createPullRequest(testSuggestion, res) {
 		const accessToken = process.env.npm_config_ludwig_accessToken;
 		const now = (new Date()).getTime();
 		const newBranchName = BRANCH_PREFIX + now;
 
-		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, title, description, state)) {
+		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, testSuggestion)) {
 			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch(this._configuration.github.branch || 'master');
 
 			return pullRequestFlowPromise
 				.then(headerReference => this.githubHelper.createReference(accessToken, newBranchName, headerReference))
 				.then(() => {
 					const testFileName = `${FILE_NAME_PREFIX}${now}.txt`;
-					const stateStringBuffer = new Buffer(state);
+					const stateStringBuffer = new Buffer(testSuggestion.state);
 					const base64FileContents = stateStringBuffer.toString('base64');
-					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, description, base64FileContents, res.req.session.passport.user);
+					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, testSuggestion.description, base64FileContents, res.req.session.passport.user);
 				})
-				.then(() => this.githubHelper.createPullRequest(newBranchName, title, description, accessToken))
+				.then(() => this.githubHelper.createPullRequest(newBranchName, testSuggestion.title, testSuggestion.description, accessToken))
 				.then(newPullRequestData => res.render('ok', {pullRequestURL: newPullRequestData.body.html_url}))
 				.catch(reason => {
 					res.status(500).send(reason);
@@ -52,8 +51,8 @@ class SuggestionsController {
 /*
  * Checks whether the pull request creation call lacks mandatory data or not
  * */
-let necessaryPullRequestDataIsDefinedAndNotEmpty = (accessToken, title, description, state) => {
-	return accessToken && title && description && state;
+let necessaryPullRequestDataIsDefinedAndNotEmpty = (accessToken, testSuggestion) => {
+	return accessToken && testSuggestion.title && testSuggestion.description && testSuggestion.state;
 };
 
 export {SuggestionsController};

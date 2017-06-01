@@ -49,7 +49,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(title, description, state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert(res.render.calledOnce);
@@ -96,7 +96,7 @@ describe('suggestionController', () => {
 				const testData = testCase.data;
 				process.env.npm_config_ludwig_accessToken = testData.accessToken;
 				//action
-				suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+				suggestionsController.createPullRequest(testData, res);
 				//assert
 				assert(res.send.calledOnce);
 				assert(res.status.calledOnce);
@@ -117,7 +117,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert(res.send.calledOnce);
@@ -142,7 +142,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert(createPullRequestSpy.notCalled);
@@ -167,7 +167,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert(githubHelperStub.createPullRequest.calledOnce);
@@ -198,7 +198,7 @@ describe('suggestionController', () => {
 			};
 			customRes.status = sinon.stub().returns(customRes);
 			//action
-			const createPRPromise = suggestionsController.createPullRequest('title', 'description', 'state', customRes);
+			const createPRPromise = suggestionsController.createPullRequest(testData, customRes);
 			//assert
 			createPRPromise.then(() => {
 				assert(githubHelperStub.createContent.calledOnce);
@@ -220,7 +220,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert(res.status.calledOnce);
@@ -244,7 +244,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(githubHelperStub.getHeadReferenceForBranch.calledOnce, true);
@@ -266,7 +266,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData.title, testData.description, testData.state, res);
+			const createPRPromise = suggestionsController.createPullRequest(testData, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(githubHelperStub.getHeadReferenceForBranch.calledOnce, true);

@@ -30,9 +30,11 @@ if (process.env.NODE_ENV === 'development') {
 
 router.get('/createSuggestion',
 	(req, res, next) => {
-		req.session.title = req.query.title;
-		req.session.description = req.query.description;
-		req.session.state = req.query.state;
+		req.session.testSuggestion = {
+			title: req.query.title,
+			description: req.query.description,
+			state: req.query.state
+		};
 		next();
 	},
 	passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]}));
@@ -47,7 +49,7 @@ router.post('/createSuggestion',
 	passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]}));
 
 router.get('/github_callback/createPR', passport.authenticate(CREATE_PR_STRATEGY_NAME, {failureRedirect: '/authKO'}), (req, res) => {
-	suggestionsController.createPullRequest(req.session.title, req.session.description, req.session.state, res);
+	suggestionsController.createPullRequest(req.session.testSuggestion, res);
 });
 
 router.get('/github_callback/login', passport.authenticate(CHECK_LOGIN_STRATEGY_NAME, {failureRedirect: '/authKO'}), (req, res) => {
