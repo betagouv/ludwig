@@ -50,32 +50,24 @@ class GithubHelper {
 		});
 	}
 
-	createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents, authorData) {
+	createContentRequestBody(testFileName, branchName, commitMessage, base64FileContents, committer) {
 		const contentRequestBodyJSON = {
-			path: testFileName,
 			branch: branchName,
+			content: base64FileContents,
 			message: commitMessage,
-			content: base64FileContents
+			path: testFileName,
 		};
-		function authorDataContainsRequiredInformation() {
-			return authorData && authorData.username && Array.isArray(authorData.emails) && authorData.emails.length;
-		}
-
-		if (authorDataContainsRequiredInformation()) {
-			const author = {
-				name: authorData.username,
-				email: authorData.emails[0].value
-			};
-			contentRequestBodyJSON.author = author;
+		if (committer) {
+			contentRequestBodyJSON.committer = committer;
 		}
 		return JSON.stringify(contentRequestBodyJSON);
 	}
 
-	createContent(accessToken, testFileName, branchName, commitMessage, base64FileContents, authorData) {
+	createContent(accessToken, testFileName, branchName, commitMessage, base64FileContents, author) {
 		return new Promise((resolve, reject) => {
 			this.agent
 				.put(`${this.config.createContent}${this.config.acceptedTestsLocation}/${testFileName}`)
-				.send(this.createContentRequestBody(`${this.config.acceptedTestsLocation}/${testFileName}`, branchName, commitMessage, base64FileContents, authorData))
+				.send(this.createContentRequestBody(`${this.config.acceptedTestsLocation}/${testFileName}`, branchName, commitMessage, base64FileContents, author))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createCommitResult) => {
 					if (err) {

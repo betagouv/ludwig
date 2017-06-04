@@ -38,45 +38,25 @@ describe('Github Helper', () => {
 	});
 
 	describe('createContentRequestBody', () => {
-		it('should generate a correctly constructed commit request body', () => {
-			//setup
-			const suggestionFileName = 'path for the suggestion file', branchName = 'branch to commit to', commitMessage = 'commit message', base64FileContents = 'Base64 Contents';
-			//action
-			const actual = githubHelper.createContentRequestBody(suggestionFileName, branchName, commitMessage, base64FileContents);
-			//assert
-			assert.equal(actual, '{"path":"path for the suggestion file","branch":"branch to commit to","message":"commit message","content":"Base64 Contents"}');
-		});
-
 		it('should include author information if present, and use the 1st email if more than 1 is available', () => {
 			//setup
-			const suggestionFileName = 'path for the suggestion file', branchName = 'branch to commit to', commitMessage = 'commit message', base64FileContents = 'Base64 Contents';
+			const base64FileContents = 'Base64 Contents',
+				branchName = 'branch to commit to',
+				commitMessage = 'commit message',
+				committer = { name: 'committerName', email: 'committerEmail' },
+				suggestionFileName = 'path for the suggestion file';
 			//action
-			const actual = githubHelper.createContentRequestBody(suggestionFileName, branchName, commitMessage, base64FileContents, {
-				username: 'authorName',
-				emails: [ {value: 'authorEmail'}, {value: 'someOtherEmail'} ]
-			});
+			const actual = githubHelper.createContentRequestBody(suggestionFileName, branchName, commitMessage, base64FileContents,  committer);
+
 			//assert
-			assert.equal(actual, '{"path":"path for the suggestion file","branch":"branch to commit to","message":"commit message","content":"Base64 Contents","author":{"name":"authorName","email":"authorEmail"}}');
-		});
-
-		const authorBadInfoVariationsTests = [
-			{title: 'the author user name is missing', authorData: {emails: [ {value: 'authorEmail'} ]}},
-			{title: 'the author email is missing (email not public)', authorData: {username: 'authorName'}},
-			{
-				title: 'the author email is missing (empty emails array)',
-				authorData: {username: 'authorName', emails: [ ]}
-			}
-		];
-
-		authorBadInfoVariationsTests.forEach((testCase) => {
-			it(`should not include author information if ${testCase.title}`, () => {
-				//setup
-				const suggestionFileName = 'path for the suggestion file', branchName = 'branch to commit to', commitMessage = 'commit message', base64FileContents = 'Base64 Contents';
-				//action
-				const actual = githubHelper.createContentRequestBody(suggestionFileName, branchName, commitMessage, base64FileContents, testCase.authorData);
-				//assert
-				assert.equal(actual, '{"path":"path for the suggestion file","branch":"branch to commit to","message":"commit message","content":"Base64 Contents"}');
-			});
+			const expected = {
+				branch: branchName,
+				committer: committer,
+				content: base64FileContents,
+				message: commitMessage,
+				path: suggestionFileName,
+			};
+			assert.deepEqual(JSON.parse(actual), expected);
 		});
 	});
 
@@ -171,12 +151,12 @@ describe('Github Helper', () => {
 			});
 			sinon.stub(githubHelper, 'createContentRequestBody').returns(sinon.spy());
 			//action
-			const createContentPromise = githubHelper.createContent('accessToken', 'testFileName', 'branchName', 'commitMessage', 'b64FC==',  {username:'authorName', emails:[ {value:'email1'} ]});
+			const createContentPromise = githubHelper.createContent('accessToken', 'testFileName', 'branchName', 'commitMessage', 'b64FC==', 'committer');
 			//assert
 			createContentPromise.then((data) => {
 				assert.deepEqual(data, {ok: 'some data'});
 				assert.equal(githubHelper.createContentRequestBody.calledOnce, true);
-				assert.deepEqual(githubHelper.createContentRequestBody.getCall(0).args, [ 'testsDir/testFileName', 'branchName', 'commitMessage', 'b64FC==', {username:'authorName', emails:[ {value:'email1'} ]} ]);
+				assert.deepEqual(githubHelper.createContentRequestBody.getCall(0).args, [ 'testsDir/testFileName', 'branchName', 'commitMessage', 'b64FC==', 'committer' ]);
 				superagentMock.unset();
 				done();
 			}).catch( (err) => {
