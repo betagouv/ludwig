@@ -20,7 +20,7 @@ describe('suggestionController', () => {
 		beforeEach(()=> {
 			res = {
 				render: sinon.spy(),
-				req:{session:{passport:{user:{}}}},
+				req: { ludwig: { user: {}}},
 				send: sinon.spy(),
 			};
 			res.status = sinon.stub().returns(res);
@@ -191,7 +191,7 @@ describe('suggestionController', () => {
 			});
 			const customRes = {
 				render: sinon.spy(),
-				req: { session: { passport: { user: { username: 'user name', emails: [{ value:'user@mail' }]}}}},
+				req: { ludwig: { committer: { name: 'committer name', email: 'committer@mail' }}},
 				send: sinon.spy()
 			};
 			customRes.status = sinon.stub().returns(customRes);
@@ -200,7 +200,7 @@ describe('suggestionController', () => {
 			//assert
 			createPRPromise.then(() => {
 				assert(githubHelperStub.createContent.calledOnce);
-				assert.deepEqual(githubHelperStub.createContent.getCall(0).args[5], {username:'user name', emails:[ {value:'user@mail'} ]});
+				assert.deepEqual(githubHelperStub.createContent.getCall(0).args[5], customRes.req.ludwig.committer);
 
 				done();
 			});
