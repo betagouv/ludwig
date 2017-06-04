@@ -1,12 +1,20 @@
 module.exports = {
-	repo: 'github-user/repository',
 	acceptedTestsLocation:'/',
-	github:{
-		branch:'master',
-		authenticationCallback:'http://authentication.callback.url/github_callback'
+	cors: 'CORS Allow-Origin - list all domains that will use this instance',
+	github: {
+		accessToken: 'From https://help.github.com/articles/creating-an-access-token-for-command-line-use/',
+		branch: 'master',
+		clientID: 'Github API ClientID - result from https://github.com/settings/applications/new',
+		clientSecret: 'Github API ClientSecret - result from https://github.com/settings/applications/new',
 	},
-	mongo:{
-		uri:'mongodb://host/database-name',
-		options:{}
-	}
+	ip: 'localhost',
+	mongo: {
+		uri: 'mongodb://localhost/ludwig',
+		options: {}
+	},
+	port: 3000,
+	repo: 'github-user/repository',
+	session: {
+		secret: 'Application session secret? (arbitrary, used for session authentication)',
+	},
 };

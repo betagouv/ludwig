@@ -22,12 +22,12 @@ class SuggestionsController {
 	 @param res: An expressjs Response object to get back to the user
 	 */
 	createPullRequest(testSuggestion, res) {
-		const accessToken = process.env.npm_config_ludwig_accessToken;
+		const accessToken = this._configuration.github.accessToken;
 		const now = (new Date()).getTime();
 		const newBranchName = BRANCH_PREFIX + now;
 
 		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, testSuggestion)) {
-			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch(this._configuration.github.branch || 'master');
+			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch(this._configuration.github.branch);
 
 			return pullRequestFlowPromise
 				.then(headerReference => this.githubHelper.createReference(accessToken, newBranchName, headerReference))

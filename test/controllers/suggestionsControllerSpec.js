@@ -6,8 +6,7 @@ import {SuggestionsController} from '../../controllers/suggestionsController';
 describe('suggestionController', () => {
 	let suggestionsController;
 	beforeEach(() => {
-		suggestionsController = new SuggestionsController({github:{}});
-		process.env.npm_config_ludwig_accessToken = 'access token';
+		suggestionsController = new SuggestionsController({github:{accessToken: 'token'}});
 	});
 
 	describe('createPullRequest', () => {
@@ -94,7 +93,6 @@ describe('suggestionController', () => {
 			it(`should return an error if ${testCase.title} missing`, () => {
 				//setup
 				const testData = testCase.data;
-				process.env.npm_config_ludwig_accessToken = testData.accessToken;
 				//action
 				suggestionsController.createPullRequest(testData, res);
 				//assert
@@ -233,7 +231,10 @@ describe('suggestionController', () => {
 
 		it('should use the "not_master" branch to create pull requests for if branch "not_master" is specified', (done) => {
 			//setup
-			const suggestionsController = new SuggestionsController({github:{branch:'not_master'}});
+			const suggestionsController = new SuggestionsController({github:{branch:'not_master',
+		accessToken: ' accessToken',
+		clientID: 'clientID',
+		clientSecret: 'clientSecret'}});
 			const githubHelperStub = {
 				createReference: sinon.spy(),
 				getHeadReferenceForBranch: sinon.stub().returns(Promise.reject({}))
@@ -249,28 +250,6 @@ describe('suggestionController', () => {
 			createPRPromise.then(() => {
 				assert.equal(githubHelperStub.getHeadReferenceForBranch.calledOnce, true);
 				assert.deepEqual(githubHelperStub.getHeadReferenceForBranch.getCall(0).args, [ 'not_master' ]);
-
-				done();
-			});
-		});
-
-		it('should use the "master" branch to create pull requests for if no branch is specified', (done) => {
-			//setup
-			const githubHelperStub = {
-				createReference: sinon.spy(),
-				getHeadReferenceForBranch: sinon.stub().returns(Promise.reject({}))
-			};
-			sinon.stub(suggestionsController, 'githubHelper', {
-				get: () => {
-					return githubHelperStub;
-				}
-			});
-			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData, res);
-			//assert
-			createPRPromise.then(() => {
-				assert.equal(githubHelperStub.getHeadReferenceForBranch.calledOnce, true);
-				assert.deepEqual(githubHelperStub.getHeadReferenceForBranch.getCall(0).args, [ 'master' ]);
 
 				done();
 			});

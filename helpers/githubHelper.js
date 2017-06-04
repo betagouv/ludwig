@@ -142,7 +142,7 @@ class GithubHelper {
 		};
 		return new Promise((resolve, reject) => {
 			this.agent
-				.get(`${this.config.commitsEndpoint}?path=${fileName}&client_id=${process.env.npm_config_ludwig_clientID}&client_secret=${process.env.npm_config_ludwig_clientSecret}`)
+				.get(`${this.config.commitsEndpoint}?path=${fileName}&client_id=${self.githubConfig.github.clientID}&client_secret=${self.githubConfig.github.clientSecret}`)
 				.end((err, response) => {
 					if (err) {
 						return reject({message: 'Not able to retrieve commit', details: err && err.message});
