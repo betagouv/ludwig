@@ -33,7 +33,7 @@ router.get('/createSuggestion',
 		req.session.testSuggestion = {
 			title: req.query.title,
 			description: req.query.description,
-			state: req.query.state
+			state: req.query.state,
 		};
 		next();
 	},
@@ -41,9 +41,11 @@ router.get('/createSuggestion',
 
 router.post('/createSuggestion',
 	(req, res, next) => {
-		req.session.title = req.body.title;
-		req.session.description = req.body.description;
-		req.session.state = req.body.state;
+		req.session.testSuggestion = {
+			title: req.body.title,
+			description: req.body.description,
+			state: req.body.state,
+		};
 		next();
 	},
 	passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]}));
