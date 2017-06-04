@@ -35,11 +35,10 @@ class GithubHelper {
 	}
 
 	createPullRequest(head, title, body, accessToken) {
-		const self = this;
 		return new Promise((resolve, reject) => {
 			this.agent
 				.post(this.config.createPullRequest)
-				.send(this.createPullRequestRequestBody(head, title, body, self.githubConfig.github.branch))
+				.send(this.createPullRequestRequestBody(head, title, body, this.config.github.branch))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createPRResult) => {
 					if (err) {
@@ -75,8 +74,8 @@ class GithubHelper {
 	createContent(accessToken, testFileName, branchName, commitMessage, base64FileContents, authorData) {
 		return new Promise((resolve, reject) => {
 			this.agent
-				.put(`${this.config.createContent}${this.githubConfig.acceptedTestsLocation}/${testFileName}`)
-				.send(this.createContentRequestBody(`${this.githubConfig.acceptedTestsLocation}/${testFileName}`, branchName, commitMessage, base64FileContents, authorData))
+				.put(`${this.config.createContent}${this.config.acceptedTestsLocation}/${testFileName}`)
+				.send(this.createContentRequestBody(`${this.config.acceptedTestsLocation}/${testFileName}`, branchName, commitMessage, base64FileContents, authorData))
 				.set('Authorization', `token ${accessToken}`)
 				.end((err, createCommitResult) => {
 					if (err) {
@@ -142,7 +141,7 @@ class GithubHelper {
 		};
 		return new Promise((resolve, reject) => {
 			this.agent
-				.get(`${this.config.commitsEndpoint}?path=${fileName}&client_id=${process.env.npm_config_ludwig_clientID}&client_secret=${process.env.npm_config_ludwig_clientSecret}`)
+				.get(`${this.config.commitsEndpoint}?path=${fileName}&client_id=${this.config.github.clientID}&client_secret=${this.config.github.clientSecret}`)
 				.end((err, response) => {
 					if (err) {
 						return reject({message: 'Not able to retrieve commit', details: err && err.message});
