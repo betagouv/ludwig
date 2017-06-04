@@ -51,13 +51,26 @@ module.exports = (ludwigConfiguration) => {
 		},
 		passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]}));
 
-	router.get('/github_callback/createPR', passport.authenticate(CREATE_PR_STRATEGY_NAME, {failureRedirect: '/authKO'}), (req, res) => {
-		suggestionsController.createPullRequest(req.session.testSuggestion, res);
-	});
+	function storePassportUserInRequest(req, res, next) {
+		req.ludwig.user = req.session.passport.user;
+		next();
+	}
 
-	router.get('/github_callback/login', passport.authenticate(CHECK_LOGIN_STRATEGY_NAME, {failureRedirect: '/authKO'}), (req, res) => {
-		res.redirect('/listTestsConnected');
-	});
+	router.get('/github_callback/createPR',
+		passport.authenticate(CREATE_PR_STRATEGY_NAME, {failureRedirect: '/authKO'}),
+		storePassportUserInRequest,
+		(req, res) => {
+			suggestionsController.createPullRequest(req.session.testSuggestion, res);
+		}
+	);
+
+	router.get('/github_callback/login',
+		passport.authenticate(CHECK_LOGIN_STRATEGY_NAME, {failureRedirect: '/authKO'}),
+		storePassportUserInRequest,
+		(req, res) => {
+			res.redirect('/listTestsConnected');
+		}
+	);
 
 	router.get('/', (req, res) => {
 		res.redirect('/listTests');
