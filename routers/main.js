@@ -23,6 +23,11 @@ module.exports = (ludwigConfiguration) => {
 	passport.use(CREATE_PR_STRATEGY_NAME, passportStrategyFactory(ludwigConfiguration.github, callbackURLPrefix + 'createPR'));
 	passport.use(CHECK_LOGIN_STRATEGY_NAME, passportStrategyFactory(ludwigConfiguration.github, callbackURLPrefix + 'login'));
 
+	router.use((req, res, next) => {
+		req.ludwig = {};
+		next();
+	});
+
 	if (process.env.NODE_ENV === 'development') {
 		router.get('/test', (req, res) => {
 			res.render('test');
