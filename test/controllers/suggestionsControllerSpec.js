@@ -17,10 +17,16 @@ describe('suggestionController', () => {
 			state: 'state'
 		};
 		let res = {};
+		const req = {
+			ludwig: {
+				committer: {},
+				testSuggestion: testData,
+				user: {},
+			},
+		};
 		beforeEach(()=> {
 			res = {
 				render: sinon.spy(),
-				req: { ludwig: { user: {}}},
 				send: sinon.spy(),
 			};
 			res.status = sinon.stub().returns(res);
@@ -48,7 +54,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData, res);
+			const createPRPromise = suggestionsController.createPullRequest(req, res);
 			//assert
 			createPRPromise.then(() => {
 				assert(res.render.calledOnce);
@@ -92,9 +98,10 @@ describe('suggestionController', () => {
 		paramsCombinationsWithMissingParams.forEach((testCase) => {
 			it(`should return an error if ${testCase.title} missing`, () => {
 				//setup
-				const testData = testCase.data;
+				const ludwig = Object.assign({}, req.ludwig, { testSuggestion: testCase.data });
+				const testedReq = Object.assign({}, req, { ludwig: ludwig });
 				//action
-				suggestionsController.createPullRequest(testData, res);
+				suggestionsController.createPullRequest(testedReq, res);
 				//assert
 				assert(res.send.calledOnce);
 				assert(res.status.calledOnce);
@@ -115,7 +122,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData, res);
+			const createPRPromise = suggestionsController.createPullRequest(req, res);
 			//assert
 			createPRPromise.then(() => {
 				assert(res.send.calledOnce);
@@ -140,7 +147,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData, res);
+			const createPRPromise = suggestionsController.createPullRequest(req, res);
 			//assert
 			createPRPromise.then(() => {
 				assert(createPullRequestSpy.notCalled);
@@ -165,7 +172,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData, res);
+			const createPRPromise = suggestionsController.createPullRequest(req, res);
 			//assert
 			createPRPromise.then(() => {
 				assert(githubHelperStub.createPullRequest.calledOnce);
@@ -189,18 +196,14 @@ describe('suggestionController', () => {
 					return githubHelperStub;
 				}
 			});
-			const customRes = {
-				render: sinon.spy(),
-				req: { ludwig: { committer: { name: 'committer name', email: 'committer@mail' }}},
-				send: sinon.spy()
-			};
-			customRes.status = sinon.stub().returns(customRes);
+			const customLudwig = Object.assign({}, req.ludwig, { committer: { name: 'committer name', email: 'committer@mail' }});
+			const customReq = Object.assign({}, req, { ludwig: customLudwig });
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData, customRes);
+			const createPRPromise = suggestionsController.createPullRequest(customReq, res);
 			//assert
 			createPRPromise.then(() => {
 				assert(githubHelperStub.createContent.calledOnce);
-				assert.deepEqual(githubHelperStub.createContent.getCall(0).args[5], customRes.req.ludwig.committer);
+				assert.deepEqual(githubHelperStub.createContent.getCall(0).args[5], customReq.ludwig.committer);
 
 				done();
 			});
@@ -218,7 +221,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData, res);
+			const createPRPromise = suggestionsController.createPullRequest(req, res);
 			//assert
 			createPRPromise.then(() => {
 				assert(res.status.calledOnce);
@@ -248,7 +251,7 @@ describe('suggestionController', () => {
 				}
 			});
 			//action
-			const createPRPromise = suggestionsController.createPullRequest(testData, res);
+			const createPRPromise = suggestionsController.createPullRequest(req, res);
 			//assert
 			createPRPromise.then(() => {
 				assert.equal(githubHelperStub.getHeadReferenceForBranch.calledOnce, true);
