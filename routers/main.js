@@ -1,3 +1,4 @@
+import bodyParser from 'body-parser';
 import express from 'express';
 import HistoryController from '../controllers/historyController';
 import passport from 'passport';
@@ -8,6 +9,7 @@ import {passportStrategyFactory} from '../helpers/passportStrategyHelper';
 module.exports = (ludwigConfiguration) => {
 	const router = express.Router();
 	const suggestionsController = new SuggestionsController(ludwigConfiguration);
+	const bodyParserURLEncoded = bodyParser.urlencoded({ extended: false });
 
 	passport.serializeUser((user, done) => {
 		done(null, user);
@@ -71,6 +73,7 @@ module.exports = (ludwigConfiguration) => {
 	);
 
 	router.post('/createSuggestion',
+		bodyParserURLEncoded,
 		extractTestSuggestionToSession((req) => req.body),
 		passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]})
 	);
