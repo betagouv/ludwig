@@ -8,7 +8,7 @@ import {passportStrategyFactory} from '../helpers/passportStrategyHelper';
 
 module.exports = (ludwigConfiguration) => {
 	const router = express.Router();
-	const suggestionsController = new SuggestionsController(ludwigConfiguration);
+	const suggestionsCtrl = new SuggestionsController(ludwigConfiguration);
 	const bodyParserURLEncoded = bodyParser.urlencoded({ extended: false });
 
 	passport.serializeUser((user, done) => {
@@ -45,10 +45,10 @@ module.exports = (ludwigConfiguration) => {
 		next();
 	}
 
-	function extractTestSuggestionToSession(sourceFn) {
+	function extractTestSuggestion(sourceFn, destFn) {
 		return (req, res, next) => {
 			const source = sourceFn(req);
-			req.session.testSuggestion = {
+			destFn(req).testSuggestion = {
 				description: source.description,
 				state: source.state,
 				title: source.title,
@@ -61,6 +61,11 @@ module.exports = (ludwigConfiguration) => {
 		req.ludwig.user = req.session.passport.user;
 		next();
 	}
+
+	const extractTestSuggestionToSession = (sourceFn) =>
+	{
+		return extractTestSuggestion(sourceFn, (req) => req.session);
+	};
 
 	function storeSessionTestSuggestionInRequest(req, res, next) {
 		req.ludwig.testSuggestion = req.session.testSuggestion;
@@ -82,7 +87,7 @@ module.exports = (ludwigConfiguration) => {
 		passport.authenticate(CREATE_PR_STRATEGY_NAME, {failureRedirect: '/authKO'}),
 		storePassportUserInRequest,
 		storeSessionTestSuggestionInRequest,
-		suggestionsController.createPullRequest
+		suggestionsCtrl.createPullRequest
 	);
 
 	router.get('/github_callback/login',
