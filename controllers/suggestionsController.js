@@ -5,6 +5,7 @@ const BRANCH_PREFIX = 'ludwig-';
 class SuggestionsController {
 	constructor(configuration) {
 		this._configuration = configuration;
+		this.createPullRequest = this.createPullRequest.bind(this);
 	}
 
 	get githubHelper() {
