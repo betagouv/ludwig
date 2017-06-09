@@ -4,7 +4,7 @@
     <title>Test page</title>
 </head>
 <body>
-<script type="text/javascript" src="http://localhost:3000/ludwig.js" charset="utf-8">
+<script type="text/javascript" src="<%= root %>/ludwig.js" charset="utf-8">
 </script>
 <script>
     var configuration = {
@@ -13,7 +13,7 @@
         template: 'some+basic+template\r\nwith\r\n\tmultiple indented lines\r\n===============================================================================================================',
         prefix: 'test-ludwig',
         expectedTemplate: '{\r\n\t"data":"123",\r\n\t"toBe":{\r\n\t\t"used":1, \r\n\t\t"as":"template for expected state"\r\n\t}\r\n}',
-        ludwigCreateSuggestionURL: 'http://localhost:3000/createSuggestion'
+        ludwigCreateSuggestionURL: '<%= root %>/createSuggestion'
     }
 
     var ludwig = new Ludwig(configuration)

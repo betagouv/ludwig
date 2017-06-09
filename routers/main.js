@@ -17,7 +17,7 @@ module.exports = (ludwigConfiguration) => {
 		done(null, obj);
 	});
 
-	const callbackURLPrefix = 'http://' + ludwigConfiguration.ip + ':' + ludwigConfiguration.port + '/github_callback/';
+	const callbackURLPrefix = 'http://' + ludwigConfiguration.ip + ':' + ludwigConfiguration.port + ludwigConfiguration.root + '/github_callback/';
 	const CREATE_PR_STRATEGY_NAME = 'githubCreatePR';
 	const CHECK_LOGIN_STRATEGY_NAME = 'githubLogin';
 	passport.use(CREATE_PR_STRATEGY_NAME, passportStrategyFactory(ludwigConfiguration.github, callbackURLPrefix + 'createPR'));
@@ -30,7 +30,7 @@ module.exports = (ludwigConfiguration) => {
 
 	if (process.env.NODE_ENV === 'development') {
 		router.get('/test', (req, res) => {
-			res.render('test');
+			res.render('test', { root: ludwigConfiguration.root });
 		});
 	}
 
