@@ -5,6 +5,7 @@ const BRANCH_PREFIX = 'ludwig-';
 class SuggestionsController {
 	constructor(configuration) {
 		this._configuration = configuration;
+		this.createPullRequest = this.createPullRequest.bind(this);
 	}
 
 	get githubHelper() {
@@ -16,15 +17,15 @@ class SuggestionsController {
 
 	/*
 	 This function chains github API calls in order to create a pull request
-	 @param testSuggestion.title: (string) Will be used as a title for the pull request creation
-	 @param testSuggestion.description: The full commit message and PR initial comment
-	 @param testSuggestion.state: (urlencoded JSON string) The state we want to record
+	 @param req: An expressjs Request object with a ludwig.testSuggestion
 	 @param res: An expressjs Response object to get back to the user
 	 */
-	createPullRequest(testSuggestion, res) {
+	createPullRequest(req, res) {
 		const accessToken = this._configuration.github.accessToken;
 		const now = (new Date()).getTime();
 		const newBranchName = BRANCH_PREFIX + now;
+
+		const testSuggestion = req.ludwig.testSuggestion;
 
 		if (necessaryPullRequestDataIsDefinedAndNotEmpty(accessToken, testSuggestion)) {
 			const pullRequestFlowPromise = this.githubHelper.getHeadReferenceForBranch(this._configuration.github.branch);
@@ -35,7 +36,7 @@ class SuggestionsController {
 					const testFileName = `${FILE_NAME_PREFIX}${now}.txt`;
 					const stateStringBuffer = new Buffer(testSuggestion.state);
 					const base64FileContents = stateStringBuffer.toString('base64');
-					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, testSuggestion.description, base64FileContents, res.req.ludwig.committer);
+					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, testSuggestion.description, base64FileContents, req.ludwig.committer);
 				})
 				.then(() => this.githubHelper.createPullRequest(newBranchName, testSuggestion.title, testSuggestion.description, accessToken))
 				.then(newPullRequestData => res.render('ok', {pullRequestURL: newPullRequestData.body.html_url}))
