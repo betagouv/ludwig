@@ -34,47 +34,58 @@ module.exports = (ludwigConfiguration) => {
 		});
 	}
 
-	router.get('/createSuggestion',
-		(req, res, next) => {
-			req.session.testSuggestion = {
-				title: req.query.title,
-				description: req.query.description,
-				state: req.query.state,
-			};
-			next();
-		},
-		passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]}));
+	function storeQueryTestSuggestionInSession(req, res, next) {
+		req.session.testSuggestion = {
+			title: req.query.title,
+			description: req.query.description,
+			state: req.query.state,
+		};
+		next();
+	}
 
-	router.post('/createSuggestion',
-		(req, res, next) => {
+	function extractTestSuggestionToSession(sourceFn) {
+		return (req, res, next) => {
+			const source = sourceFn(req);
 			req.session.testSuggestion = {
-				title: req.body.title,
-				description: req.body.description,
-				state: req.body.state,
+				description: source.description,
+				state: source.state,
+				title: source.title,
 			};
 			next();
-		},
-		passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]}));
+		};
+	}
 
 	function storePassportUserInRequest(req, res, next) {
 		req.ludwig.user = req.session.passport.user;
 		next();
 	}
 
+	function storeSessionTestSuggestionInRequest(req, res, next) {
+		req.ludwig.testSuggestion = req.session.testSuggestion;
+		next();
+	}
+
+	router.get('/createSuggestion',
+		extractTestSuggestionToSession((req) => req.query),
+		passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]})
+	);
+
+	router.post('/createSuggestion',
+		extractTestSuggestionToSession((req) => req.body),
+		passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]})
+	);
+
 	router.get('/github_callback/createPR',
 		passport.authenticate(CREATE_PR_STRATEGY_NAME, {failureRedirect: '/authKO'}),
 		storePassportUserInRequest,
-		(req, res) => {
-			suggestionsController.createPullRequest(req.session.testSuggestion, res);
-		}
+		storeSessionTestSuggestionInRequest,
+		suggestionsController.createPullRequest
 	);
 
 	router.get('/github_callback/login',
 		passport.authenticate(CHECK_LOGIN_STRATEGY_NAME, {failureRedirect: '/authKO'}),
 		storePassportUserInRequest,
-		(req, res) => {
-			res.redirect('/listTestsConnected');
-		}
+		(req, res) => res.redirect('/listTestsConnected')
 	);
 
 	router.get('/', (req, res) => {
