@@ -91,6 +91,12 @@ module.exports = (ludwigConfiguration) => {
 		(req, res) => res.render('ok', { pullRequestURL: req.ludwig.pullRequest.html_url })
 	);
 
+	router.post('/anon/tests/suggestions', bodyParser.json(),
+		extractTestSuggestion((req) => req.body, (req) => req.ludwig),
+		suggestionsCtrl.createPullRequest,
+		(req, res) => res.send(req.ludwig.pullRequest)
+	);
+
 	router.get('/github_callback/login',
 		passport.authenticate(CHECK_LOGIN_STRATEGY_NAME, {failureRedirect: '/authKO'}),
 		storePassportUserInRequest,
