@@ -11,6 +11,12 @@ module.exports = (appConfiguration) => {
     const MongoStore = store(session);
 
     mongoose.connect(appConfiguration.mongo.uri, appConfiguration.mongo.options);
+    if (appConfiguration.root && appConfiguration.root.length) {
+        const endpoint = appConfiguration.root;
+        appConfiguration.root = (endpoint.charAt(endpoint.length-1) === '/') ? endpoint.slice(0, -1) : endpoint;
+    } else {
+        appConfiguration.root = '';
+    }
 
     process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
