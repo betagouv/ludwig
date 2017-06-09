@@ -33,7 +33,7 @@ class SuggestionsController {
 			return pullRequestFlowPromise
 				.then(headerReference => this.githubHelper.createReference(accessToken, newBranchName, headerReference))
 				.then(() => {
-					const testFileName = `${FILE_NAME_PREFIX}${now}.txt`;
+					const testFileName = `${FILE_NAME_PREFIX}${now}.${this._configuration.testFileExtension}`;
 					const stateStringBuffer = new Buffer(testSuggestion.state);
 					const base64FileContents = stateStringBuffer.toString('base64');
 					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, testSuggestion.description, base64FileContents, req.ludwig.committer);

@@ -17,4 +17,5 @@ module.exports = {
 	session: {
 		secret: 'Application session secret? (arbitrary, used for session authentication)',
 	},
+	testFileExtension: 'yaml',
 };
