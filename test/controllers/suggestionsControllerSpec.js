@@ -26,24 +26,24 @@ describe('suggestionController', () => {
 		};
 		beforeEach(()=> {
 			res = {
-				render: sinon.spy(),
 				send: sinon.spy(),
 			};
 			res.status = sinon.stub().returns(res);
 		});
 
-		it('should render the ok page if all remote calls work without errors', (done) => {
+		it('should set the pullRequest attribute if all remote calls work without errors', (done) => {
 			//setup
 			const title = 'title', description = 'description';
+			const pullRequestBody = {
+				url: 'API URL for pull request',
+				html_url: 'HTML URL for pull request'
+			};
 			const mockedGithubHelper = {
 				getHeadReferenceForBranch: sinon.stub().returns(Promise.resolve('branchedReferenceSHA')),
 				createReference: sinon.stub().returns(Promise.resolve({})),
 				createContent: sinon.stub().returns(Promise.resolve({})),
 				createPullRequest: sinon.stub().returns(Promise.resolve({
-					body: {
-						url: 'API URL for pull request',
-						html_url: 'HTML URL for pull request'
-					}
+					body: pullRequestBody
 				}))
 			};
 
@@ -57,12 +57,12 @@ describe('suggestionController', () => {
 			const createPRPromise = suggestionsController.createPullRequest(req, res);
 			//assert
 			createPRPromise.then(() => {
-				assert(res.render.calledOnce);
 				assert(mockedGithubHelper.createReference.calledOnce);
 				assert(mockedGithubHelper.createPullRequest.calledOnce);
 				assert(mockedGithubHelper.createContent.calledOnce);
 				assert(mockedGithubHelper.getHeadReferenceForBranch.calledOnce);
-				assert.deepEqual(res.render.getCall(0).args, [ 'ok', {pullRequestURL: 'HTML URL for pull request'} ]);
+				assert(mockedGithubHelper.getHeadReferenceForBranch.calledOnce);
+				assert.deepEqual(req.ludwig.pullRequest, pullRequestBody);
 				done();
 			});
 		});

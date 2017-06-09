@@ -87,7 +87,8 @@ module.exports = (ludwigConfiguration) => {
 		passport.authenticate(CREATE_PR_STRATEGY_NAME, {failureRedirect: '/authKO'}),
 		storePassportUserInRequest,
 		storeSessionTestSuggestionInRequest,
-		suggestionsCtrl.createPullRequest
+		suggestionsCtrl.createPullRequest,
+		(req, res) => res.render('ok', { pullRequestURL: req.ludwig.pullRequest.html_url })
 	);
 
 	router.get('/github_callback/login',
