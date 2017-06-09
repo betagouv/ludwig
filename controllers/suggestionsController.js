@@ -20,7 +20,7 @@ class SuggestionsController {
 	 @param req: An expressjs Request object with a ludwig.testSuggestion
 	 @param res: An expressjs Response object to get back to the user
 	 */
-	createPullRequest(req, res) {
+	createPullRequest(req, res, next) {
 		const accessToken = this._configuration.github.accessToken;
 		const now = (new Date()).getTime();
 		const newBranchName = BRANCH_PREFIX + now;
@@ -39,7 +39,10 @@ class SuggestionsController {
 					return this.githubHelper.createContent(accessToken, testFileName, newBranchName, testSuggestion.description, base64FileContents, req.ludwig.committer);
 				})
 				.then(() => this.githubHelper.createPullRequest(newBranchName, testSuggestion.title, testSuggestion.description, accessToken))
-				.then(newPullRequestData => res.render('ok', {pullRequestURL: newPullRequestData.body.html_url}))
+				.then(newPullRequestData => {
+					req.ludwig.pullRequest = newPullRequestData.body;
+					next();
+				})
 				.catch(reason => {
 					res.status(500).send(reason);
 				});

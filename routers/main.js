@@ -1,3 +1,4 @@
+import bodyParser from 'body-parser';
 import express from 'express';
 import HistoryController from '../controllers/historyController';
 import passport from 'passport';
@@ -7,7 +8,8 @@ import {passportStrategyFactory} from '../helpers/passportStrategyHelper';
 
 module.exports = (ludwigConfiguration) => {
 	const router = express.Router();
-	const suggestionsController = new SuggestionsController(ludwigConfiguration);
+	const suggestionsCtrl = new SuggestionsController(ludwigConfiguration);
+	const bodyParserURLEncoded = bodyParser.urlencoded({ extended: false });
 
 	passport.serializeUser((user, done) => {
 		done(null, user);
@@ -43,10 +45,10 @@ module.exports = (ludwigConfiguration) => {
 		next();
 	}
 
-	function extractTestSuggestionToSession(sourceFn) {
+	function extractTestSuggestion(sourceFn, destFn) {
 		return (req, res, next) => {
 			const source = sourceFn(req);
-			req.session.testSuggestion = {
+			destFn(req).testSuggestion = {
 				description: source.description,
 				state: source.state,
 				title: source.title,
@@ -60,6 +62,11 @@ module.exports = (ludwigConfiguration) => {
 		next();
 	}
 
+	const extractTestSuggestionToSession = (sourceFn) =>
+	{
+		return extractTestSuggestion(sourceFn, (req) => req.session);
+	};
+
 	function storeSessionTestSuggestionInRequest(req, res, next) {
 		req.ludwig.testSuggestion = req.session.testSuggestion;
 		next();
@@ -71,6 +78,7 @@ module.exports = (ludwigConfiguration) => {
 	);
 
 	router.post('/createSuggestion',
+		bodyParserURLEncoded,
 		extractTestSuggestionToSession((req) => req.body),
 		passport.authenticate(CREATE_PR_STRATEGY_NAME, {scope: [ 'repo' ]})
 	);
@@ -79,7 +87,14 @@ module.exports = (ludwigConfiguration) => {
 		passport.authenticate(CREATE_PR_STRATEGY_NAME, {failureRedirect: '/authKO'}),
 		storePassportUserInRequest,
 		storeSessionTestSuggestionInRequest,
-		suggestionsController.createPullRequest
+		suggestionsCtrl.createPullRequest,
+		(req, res) => res.render('ok', { pullRequestURL: req.ludwig.pullRequest.html_url })
+	);
+
+	router.post('/anon/tests/suggestions', bodyParser.json(),
+		extractTestSuggestion((req) => req.body, (req) => req.ludwig),
+		suggestionsCtrl.createPullRequest,
+		(req, res) => res.send(req.ludwig.pullRequest)
 	);
 
 	router.get('/github_callback/login',
