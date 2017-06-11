@@ -1,6 +1,6 @@
 {
   "name": "@sgmap/ludwig",
-  "version": "0.5.0-alpha.1",
+  "version": "0.5.0-alpha.2",
   "license": "AGPL-3.0",
   "main": "dist/index.js",
   "repository": {
@@ -52,7 +52,7 @@
   ],
   "scripts": {
     "build:back": "mkdir -p dist && babel --copy-files --out-dir dist src",
-    "build:front": "mkdir -p dist && cp -r node_modules/bootstrap/dist ./dist/bootstrap && cp -r ./src/views/css/ ./dist/ && webpack",
+    "build:front": "mkdir -p dist/static && cp -r node_modules/bootstrap/dist ./dist/static/bootstrap && cp -r ./src/views/css/ ./dist/static/ && webpack",
     "build": "npm run build:front && npm run build:back",
     "prepublish": "npm run build",
     "dev": "babel-watch src/server.js",
