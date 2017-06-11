@@ -1,7 +1,7 @@
 module.exports = {
 	entry: './src/js/ludwidget.js',
 	output: {
-		filename: './dist/ludwig.js'
+		filename: './dist/static/ludwig.js'
 	},
 	module:{
 		loaders: [
