@@ -1,5 +1,5 @@
 'use strict';
-import appConfiguration from './ludwig-conf';
+import appConfiguration from '../ludwig-conf';
 
 const app = require('.')(appConfiguration);
 

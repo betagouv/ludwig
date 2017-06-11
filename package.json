@@ -2,6 +2,7 @@
   "name": "@sgmap/ludwig",
   "version": "0.5.0",
   "license": "AGPL-3.0",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/sgmap/ludwig"
@@ -56,14 +57,14 @@
     "webpack.config.js"
   ],
   "scripts": {
-    "build": "mkdir -p dist && cp -r node_modules/bootstrap/dist ./dist/bootstrap && cp -r ./views/css/ ./dist/ && webpack",
+    "build": "mkdir -p dist && cp -r node_modules/bootstrap/dist ./dist/bootstrap && cp -r ./src/views/css/ ./dist/ && webpack",
     "prepublish": "npm run build",
-    "dev": "babel-watch server.js",
-    "start": "babel-node server.js",
-    "test": "mocha --compilers js:babel-core/register --recursive ./test/",
-    "qualimetry": "istanbul cover _mocha --dir qualimetry/cover -- --compilers js:babel-core/register -R spec test/* test/batch/*",
-    "lint": "eslint --ignore-pattern=dist --ignore-pattern=qualimetry .",
+    "dev": "babel-watch src/server.js",
+    "start": "babel-node src/server.js",
+    "test": "mocha --compilers js:babel-core/register --recursive ./src/test/",
+    "qualimetry": "istanbul cover _mocha --dir qualimetry/cover -- --compilers js:babel-core/register -R spec src/test/* src/test/batch/*",
+    "lint": "eslint src",
     "clean": "rm -rf node_modules && rm -rf dist",
-    "insertTestReportData": "babel-node batch/runner.js"
+    "insertTestReportData": "babel-node src/batch/runner.js"
   }
 }
