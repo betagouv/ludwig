@@ -1,0 +1,29 @@
+{
+  "name": "@sgmap/ludwig",
+  "version": "0.6.0-alpha.1",
+  "license": "AGPL-3.0",
+  "main": "server/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sgmap/ludwig"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.6",
+    "request": "^2.34",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "eslint": "^4.10.0"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "files": [],
+  "scripts": {
+    "start": "node server/index.js",
+    "lint": "eslint server",
+    "test": "npm run lint"
+  }
+}
