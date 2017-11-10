@@ -59,6 +59,20 @@ function filter (directory) {
   )
 }
 
+function serialize (testFile) {
+  return fs.readFileAsync(testFile.fullPath, { encoding: 'utf-8' })
+    .then((content) => {
+      return {
+        id: testFile.id,
+        content: content
+      }
+    })
+    .catch((err) => {
+      console.error(testFile.fullPath, err.message)
+      throw err
+    })
+}
+
 function main (repository) {
   return ensureHomeDirectoryExists(repository)
     .then((repositoryFullPath) => {
@@ -78,6 +92,14 @@ function main (repository) {
       const folder = path.join(ref.workdir(), repository.folder || 'tests')
       const testPath = path.resolve(path.join(ref.workdir(), '../tests.json'))
       return filter(folder)
+        .then((files) => {
+          return Promise.map(files, (file) => {
+            return {
+              id: file,
+              fullPath: path.join(folder, file)
+            }
+          }).map(serialize)
+        })
         .then(JSON.stringify)
         .then((files) => fs.writeFile(testPath, files, { encoding: 'utf-8' }))
         .then(() => ref)
