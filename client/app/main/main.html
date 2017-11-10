@@ -1,3 +1,10 @@
 <div ui-view>
   <h1>Ludwig</h1>
+  <h2>Faciliter la validation collaborative des applications</h2>
+  <h3>Liste des applications&nbsp;:</h3>
+  <div>
+      <p ng-repeat="repository in repositories">
+          ID: {{ repository.id }}
+      </p>
+  </div>
 </div>
