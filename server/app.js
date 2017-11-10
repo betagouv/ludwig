@@ -14,6 +14,7 @@ app.use('/lib', express.static(path.resolve(path.join(__dirname, '../node_module
     index: false,
 }));
 
+app.use('/api/repositories', require('./api/repository'));
 app.use('/api/', function(req, res) {
     res.json({
         message: 'You‘re at Ludwig API root!'
@@ -25,7 +26,6 @@ app.route('/*').get((req, res) => {
 });
 
 var port = 4000;
-// Start server
 app.listen(port, function () {
     console.log('Ludwig server is listening on port %d, in %s mode.', port, app.get('env'));
 });

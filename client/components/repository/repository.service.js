@@ -1,18 +1,11 @@
 'use strict';
 
 angular.module('ludwigApp')
-.factory('RepositoryService', function RepositoryService($q) {
+.factory('RepositoryService', function RepositoryService($http) {
   return {
     getAll: function() {
-        return $q(function(resolve) {
-            resolve([{
-                id: 'github/sgmap/openfisca-france',
-            }, {
-                id: 'github/sgmap/openfisca-paris',
-            }, {
-                id: 'github/sgmap/openfisca-rennesmetropole',
-            }]);
-        });
+        return $http.get('/api/repositories')
+        .then(function(response) { return response.data; }, function() { return []; })
     },
   };
 });
