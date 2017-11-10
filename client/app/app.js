@@ -1,3 +1,3 @@
-'use strict';
+'use strict'
 
-angular.module('ludwigApp', ['ui.router']).config(function() {});
+angular.module('ludwigApp', ['ui.router']).config(function () {})

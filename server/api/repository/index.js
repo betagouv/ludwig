@@ -1,16 +1,16 @@
-'use strict';
+'use strict'
 
-var express = require('express');
+var express = require('express')
 
-var router = express.Router();
+var router = express.Router()
 router.get('/', function (req, res) {
-    res.json([{
-        id: 'github/sgmap/openfisca-france',
-    }, {
-        id: 'github/sgmap/openfisca-paris',
-    }, {
-        id: 'github/sgmap/openfisca-rennesmetropole',
-    }]);
-});
+  res.json([{
+    id: 'github/sgmap/openfisca-france'
+  }, {
+    id: 'github/sgmap/openfisca-paris'
+  }, {
+    id: 'github/sgmap/openfisca-rennesmetropole'
+  }])
+})
 
-module.exports = router;
+module.exports = router

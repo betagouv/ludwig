@@ -1,33 +1,33 @@
 #!/usr/bin/env node
 
-'use strict';
+'use strict'
 
-var express = require('express');
-var path = require('path');
+var express = require('express')
+var path = require('path')
 
 // Setup Express
-var app = express();
+var app = express()
 
-app.use(express.static(path.resolve(path.join(__dirname, '../client'))));
+app.use(express.static(path.resolve(path.join(__dirname, '../client'))))
 app.use('/lib', express.static(path.resolve(path.join(__dirname, '../node_modules')), {
-    fallthrough: false,  // short-circuit 404s
-    index: false,
-}));
+  fallthrough: false, // short-circuit 404s
+  index: false
+}))
 
-app.use('/api/repositories', require('./api/repository'));
-app.use('/api/', function(req, res) {
-    res.json({
-        message: 'You‘re at Ludwig API root!'
-    });
-});
+app.use('/api/repositories', require('./api/repository'))
+app.use('/api/', function (req, res) {
+  res.json({
+    message: 'You‘re at Ludwig API root!'
+  })
+})
 
 app.route('/*').get((req, res) => {
-  res.sendFile(path.resolve(path.join(__dirname, '../client/index.html')));
-});
+  res.sendFile(path.resolve(path.join(__dirname, '../client/index.html')))
+})
 
-var port = 4000;
+var port = 4000
 app.listen(port, function () {
-    console.log('Ludwig server is listening on port %d, in %s mode.', port, app.get('env'));
-});
+  console.log('Ludwig server is listening on port %d, in %s mode.', port, app.get('env'))
+})
 
-module.exports = app;
+module.exports = app

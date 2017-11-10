@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
 angular.module('ludwigApp')
-.controller('MainCtrl', function($scope, RepositoryService) {
+  .controller('MainCtrl', function ($scope, RepositoryService) {
     RepositoryService.getAll()
-    .then(function(repositories) {
-        $scope.repositories = repositories;
-    });
-});
+      .then(function (repositories) {
+        $scope.repositories = repositories
+      })
+  })
