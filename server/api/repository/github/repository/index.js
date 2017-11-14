@@ -131,6 +131,12 @@ router.use((req, res, next) => {
   next()
 })
 
+router.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  next()
+})
+
 router.get('/tests', (req, res) => {
   ensureHomeDirectoryExists(req.repository)
     .then((homeDirectory) => res.sendFile(path.join(homeDirectory, 'tests.json')))
