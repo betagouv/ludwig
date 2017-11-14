@@ -75,7 +75,7 @@ function serialize (testFile) {
       return result
     })
     .catch((err) => {
-      console.error(testFile.fullPath, err.message)
+      err.path = testFile.fullPath
       throw err
     })
 }
