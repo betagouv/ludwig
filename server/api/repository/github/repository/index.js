@@ -6,6 +6,7 @@ const router = express.Router({ mergeParams: true })
 const Promise = require('bluebird')
 const fs = Promise.promisifyAll(require('fs'))
 const path = require('path')
+const jsYaml = require('js-yaml')
 
 const Git = require('nodegit')
 
@@ -62,10 +63,16 @@ function filter (directory) {
 function serialize (testFile) {
   return fs.readFileAsync(testFile.fullPath, { encoding: 'utf-8' })
     .then((content) => {
-      return {
-        id: testFile.id,
-        content: content
+      const ext = path.extname(testFile.fullPath)
+      let result = {
+        id: testFile.id
       }
+      if (ext === '.yaml') {
+        result.data = jsYaml.safeLoad(content)
+      } else {
+        result.content = content
+      }
+      return result
     })
     .catch((err) => {
       console.error(testFile.fullPath, err.message)

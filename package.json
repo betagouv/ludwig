@@ -12,6 +12,7 @@
     "angular-ui-router": "^0.4.3",
     "bluebird": "^3.5.1",
     "express": "^4.13.4",
+    "js-yaml": "^3.10.0",
     "mongoose": "^4.4.6",
     "nodegit": "^0.20.3",
     "request": "^2.34",
