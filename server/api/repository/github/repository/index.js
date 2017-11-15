@@ -28,7 +28,7 @@ function ensureDirectoryExists (fullPath) {
 }
 
 function ensureHomeDirectoryExists (repository) {
-  return ensureDirectoryExists('/tmp/ludwig')
+  return ensureDirectoryExists('/opt/ludwig')
     .then((parentFullPath) => ensureDirectoryExists(path.join(parentFullPath, repository.provider)))
     .then((parentFullPath) => ensureDirectoryExists(path.join(parentFullPath, repository.owner)))
     .then((parentFullPath) => ensureDirectoryExists(path.join(parentFullPath, repository.name)))
