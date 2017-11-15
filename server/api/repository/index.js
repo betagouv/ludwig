@@ -3,14 +3,10 @@
 var express = require('express')
 
 var router = express.Router()
-router.get('/', function (req, res) {
-  res.json([{
-    id: 'github/sgmap/openfisca-france'
-  }, {
-    id: 'github/sgmap/openfisca-paris'
-  }, {
-    id: 'github/sgmap/openfisca-rennesmetropole'
-  }])
+router.get('/', (req, res) => {
+  res.json(require('./list'))
 })
+
+router.use('/github', require('./github'))
 
 module.exports = router
