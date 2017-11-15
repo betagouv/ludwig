@@ -39,14 +39,17 @@ function getRepositoryURL (repository) {
   return 'https://github.com/' + repository.owner + '/' + repository.name + '.git'
 }
 
-function fetchRepo (repo) {
-  return repo.fetch('origin', {
-    updateFetchhead: 1
-  }).then(() => repo)
+function checkoutDefaultBranch (repo) {
+  const reference = repo.meta.reference || 'origin/master'
+  return repo.ref.getReference(reference)
+    .then((ref) => repo.ref.checkoutRef(ref))
+    .then(() => repo)
 }
 
-function checkoutMaster (repo) {
-  return repo.checkoutBranch('origin/master').then(() => repo)
+function fetchRepo (repo) {
+  return repo.ref.fetch('origin', {
+    updateFetchhead: 1
+  }).then(() => repo)
 }
 
 function filter (directory) {
@@ -75,9 +78,27 @@ function serialize (testFile) {
       return result
     })
     .catch((err) => {
-      console.error(testFile.fullPath, err.message)
+      err.path = testFile.fullPath
       throw err
     })
+}
+
+function processTestFiles (repository) {
+  const ref = repository.ref
+  const folder = path.join(ref.workdir(), repository.meta.folder || 'tests')
+  const testPath = path.resolve(path.join(ref.workdir(), '../tests.json'))
+  return filter(folder)
+    .then((files) => {
+      return Promise.map(files, (file) => {
+        return {
+          id: file,
+          fullPath: path.join(folder, file)
+        }
+      }).map(serialize)
+    })
+    .then(JSON.stringify)
+    .then((files) => fs.writeFile(testPath, files, { encoding: 'utf-8' }))
+    .then(() => ref)
 }
 
 function main (repository) {
@@ -92,25 +113,13 @@ function main (repository) {
 
           throw err
         })
+        .then((repoRef) => {
+          return { meta: repository, ref: repoRef }
+        })
     })
     .then(fetchRepo)
-    .then(checkoutMaster)
-    .then((ref) => {
-      const folder = path.join(ref.workdir(), repository.folder || 'tests')
-      const testPath = path.resolve(path.join(ref.workdir(), '../tests.json'))
-      return filter(folder)
-        .then((files) => {
-          return Promise.map(files, (file) => {
-            return {
-              id: file,
-              fullPath: path.join(folder, file)
-            }
-          }).map(serialize)
-        })
-        .then(JSON.stringify)
-        .then((files) => fs.writeFile(testPath, files, { encoding: 'utf-8' }))
-        .then(() => ref)
-    })
+    .then(checkoutDefaultBranch)
+    .then(processTestFiles)
     .then(() => repository)
 }
 
