@@ -1,6 +1,6 @@
 module.exports = [{
   id: 'github/sgmap/openfisca-france',
-  folder: 'tests/mes-aides.gouv.fr'
+  testDirectory: 'tests/mes-aides.gouv.fr'
 }, {
   id: 'github/sgmap/openfisca-paris'
 }, {

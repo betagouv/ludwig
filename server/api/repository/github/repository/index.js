@@ -10,11 +10,37 @@ const jsYaml = require('js-yaml')
 
 const Git = require('nodegit')
 
-router.get('/', (req, res) => {
-  res.json({
+function manageDefaultProperties (repo) {
+  repo.testDirectory = repo.testDirectory || 'tests'
+  repo.reference = repo.reference || 'master'
+  return repo
+}
+
+router.use((req, res, next) => {
+  const repo = {
+    provider: 'github',
     owner: req.params.owner,
-    repo: req.params.repo
-  })
+    name: req.params.repo
+  }
+  const id = [repo.provider, repo.owner, repo.name].join('/')
+  const repoList = require('../../list')
+
+  var details = repoList.find(function (item) { return item.id === id })
+  if (!details) {
+    return res.status(404).json(repo)
+  }
+  req.repository = manageDefaultProperties(Object.assign(repo, details))
+  next()
+})
+
+router.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  next()
+})
+
+router.get('/', (req, res) => {
+  res.json(req.repository)
 })
 
 function ensureDirectoryExists (fullPath) {
@@ -37,11 +63,11 @@ function ensureHomeDirectoryExists (repository) {
 }
 
 function getRepositoryURL (repository) {
-  return 'https://github.com/' + repository.owner + '/' + repository.name + '.git'
+  return `https://github.com/${repository.owner}/${repository.name}.git`
 }
 
 function checkoutDefaultBranch (repo) {
-  const reference = repo.meta.reference || 'origin/master'
+  const reference = `origin/${repo.meta.reference || 'master'}`
   return repo.ref.getReference(reference)
     .then((ref) => repo.ref.checkoutRef(ref))
     .then(() => repo)
@@ -86,23 +112,23 @@ function serialize (testFile) {
 
 function processTestFiles (repository) {
   const ref = repository.ref
-  const folder = path.join(ref.workdir(), repository.meta.folder || 'tests')
+  const testDirectory = path.join(ref.workdir(), repository.meta.testDirectory)
   const testPath = path.resolve(path.join(ref.workdir(), '../tests.json'))
-  return filter(folder)
+  return filter(testDirectory)
     .then((files) => {
       return Promise.map(files, (file) => {
         return {
           id: file,
-          fullPath: path.join(folder, file)
+          fullPath: path.join(testDirectory, file)
         }
       }).map(serialize)
     })
     .then(JSON.stringify)
     .then((files) => fs.writeFile(testPath, files, { encoding: 'utf-8' }))
-    .then(() => ref)
+    .then(() => repository)
 }
 
-function main (repository) {
+function getRepository (repository) {
   return ensureHomeDirectoryExists(repository)
     .then((repositoryFullPath) => {
       const fullPath = path.join(repositoryFullPath, 'content')
@@ -120,32 +146,12 @@ function main (repository) {
     })
     .then(fetchRepo)
     .then(checkoutDefaultBranch)
-    .then(processTestFiles)
-    .then(() => repository)
 }
 
-router.use((req, res, next) => {
-  const repo = {
-    provider: 'github',
-    owner: req.params.owner,
-    name: req.params.repo
-  }
-  const id = [repo.provider, repo.owner, repo.name].join('/')
-  const repoList = require('../../list')
-
-  var details = repoList.find(function (item) { return item.id === id })
-  if (!details) {
-    return res.status(404).json(repo)
-  }
-  req.repository = Object.assign(repo, details)
-  next()
-})
-
-router.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-  next()
-})
+function refresh (repository) {
+  return getRepository(repository)
+    .then(processTestFiles)
+}
 
 router.get('/tests', (req, res) => {
   ensureHomeDirectoryExists(req.repository)
@@ -154,14 +160,14 @@ router.get('/tests', (req, res) => {
 
 router.get('/refresh', (req, res) => {
   const start = new Date()
-  main(req.repository)
+  refresh(req.repository)
     .then(repo => {
       res.json({
         refresh: (new Date()).getTime() - start.getTime(),
         repository: repo
       })
     })
-    .catch(function (err) {
+    .catch((err) => {
       res.status(500).json(JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err))))
     })
 })
