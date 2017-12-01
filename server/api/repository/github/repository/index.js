@@ -75,7 +75,7 @@ function getRepositoryURL (repository) {
 }
 
 function checkoutDefaultBranch (repo) {
-  const reference = `origin/${repo.meta.reference || 'master'}`
+  const reference = `origin/${repo.meta.reference}`
   return repo.ref.getReference(reference)
     .then((ref) => repo.ref.checkoutRef(ref))
     .then(() => repo)
@@ -173,6 +173,101 @@ router.get('/refresh', (req, res) => {
       res.json({
         refresh: (new Date()).getTime() - start.getTime(),
         repository: repo.meta.id
+      })
+    })
+    .catch((err) => manageError(res, err))
+})
+
+function pushOptions (user) {
+  return {
+    callbacks: {
+      credentials: () => {
+        return Git.Cred.userpassPlaintextNew(user.name, user.token)
+      }
+    }
+  }
+}
+
+function commitSignature (user) {
+  return Git.Signature.now(user.name, user.name)
+}
+
+const rp = require('request-promise')
+
+router.post('/suggest', (req, res) => {
+  const suggestion = {
+    title: req.body.title,
+    body: req.body.body,
+    content: req.body.content
+  }
+
+  if (typeof suggestion.title === 'undefined' ||
+    typeof suggestion.body === 'undefined' ||
+    typeof suggestion.content === 'undefined') {
+    return res.status(400).json({
+      message: Object.keys(suggestion).join(', ') + ' are all required.',
+      payload: req.body
+    })
+  }
+
+  const timestamp = (new Date()).getTime()
+  const headName = `ludwig_${timestamp}`
+  const newFilePathInRepo = path.join(req.repository.testDirectory, `ludwig_test_${timestamp}.yaml`)
+
+  const repositoryRoot = `/opt/ludwig/repositories/github/${req.repository.owner}/${req.repository.name}/content`
+  const newFilePath = path.join(repositoryRoot, newFilePathInRepo)
+
+  getRepository(req.repository)
+    .then(repo => {
+      return repo.ref.getRemote('origin')
+        .then((remote) => repo.ref.fetch(remote))
+        .then(() => repo)
+    })
+    .then(repo => {
+      return repo.ref.getHeadCommit()
+        .then((head) => repo.ref.createBranch(headName, head))
+        .then((branchRef) => repo.ref.checkoutRef(branchRef))
+        .then(() => repo)
+    })
+    .then((repo) => {
+      return fs.writeFileAsync(newFilePath, suggestion.content, 'utf-8')
+        .then(() => repo)
+    })
+    .then(repo => {
+      const signature = commitSignature(config.github.user)
+      return repo.ref.createCommitOnHead([newFilePathInRepo], signature, signature, `${suggestion.title}\n${suggestion.body}`)
+        .then(() => repo)
+    })
+    .then(repo => {
+      return repo.ref.getRemote('origin')
+        .then((remote) => {
+          return repo.ref.getCurrentBranch()
+            .then((ref) => {
+              return remote.push([ref], pushOptions(repo.meta.user))
+                .then(() => {
+                  return rp({
+                    method: 'POST',
+                    uri: `https://api.github.com/repos/${repo.meta.owner}/${repo.meta.name}/pulls`,
+                    body: {
+                      head: `refs/heads/${headName}`,
+                      base: req.repository.reference,
+                      title: suggestion.title,
+                      body: suggestion.body
+                    },
+                    headers: {
+                      'Authorization': `token ${config.github.user.token}`,
+                      'User-Agent': config.github.application.userAgent
+                    },
+                    json: true
+                  })
+                })
+            })
+        })
+    })
+    .then(data => {
+      res.json({
+        push: (new Date()).getTime() - timestamp,
+        data: data
       })
     })
     .catch((err) => manageError(res, err))
