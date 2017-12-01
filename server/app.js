@@ -2,28 +2,11 @@
 
 'use strict'
 
-var express = require('express')
-var path = require('path')
+const express = require('express')
 
-// Setup Express
 var app = express()
-
-app.use(express.static(path.resolve(path.join(__dirname, '../client'))))
-app.use('/lib', express.static(path.resolve(path.join(__dirname, '../node_modules')), {
-  fallthrough: false, // short-circuit 404s
-  index: false
-}))
-
-app.use('/api/repositories', require('./api/repository'))
-app.use('/api/', (req, res) => {
-  res.json({
-    message: 'You‘re at Ludwig API root!'
-  })
-})
-
-app.route('/*').get((req, res) => {
-  res.sendFile(path.resolve(path.join(__dirname, '../client/index.html')))
-})
+require('./config/express')(app)
+require('./routes')(app)
 
 var port = 4000
 app.listen(port, () => {
