@@ -65,7 +65,7 @@ User=root
 Group=root
 WorkingDirectory=/home/cloud/ludwig
 EnvironmentFile=/opt/ludwig/secrets
-ExecStart=/usr/bin/nodejs server/app.js
+ExecStart=/usr/bin/nodejs server
 
 [Install]
 WantedBy=multi-user.target
