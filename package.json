@@ -10,6 +10,7 @@
   "dependencies": {
     "angular": "^1.6.6",
     "angular-ui-router": "^0.4.3",
+    "body-parser": "^1.18.2",
     "bluebird": "^3.5.1",
     "express": "^4.13.4",
     "js-yaml": "^3.10.0",
