@@ -9,11 +9,20 @@ const path = require('path')
 const jsYaml = require('js-yaml')
 
 const Git = require('nodegit')
+const config = require('../../../../config/environment')
+const repoList = config.alpha.repositoryList
 
 function manageDefaultProperties (repo) {
   repo.testDirectory = repo.testDirectory || 'tests'
   repo.reference = repo.reference || 'master'
   return repo
+}
+
+function manageError (res, err) {
+  res.status(500).json({
+    message: err.message,
+    stack: err.stack
+  })
 }
 
 router.use((req, res, next) => {
@@ -23,7 +32,6 @@ router.use((req, res, next) => {
     name: req.params.repo
   }
   const id = [repo.provider, repo.owner, repo.name].join('/')
-  const repoList = require('../../list')
 
   var details = repoList.find(function (item) { return item.id === id })
   if (!details) {
@@ -40,7 +48,7 @@ router.use((req, res, next) => {
 })
 
 router.get('/', (req, res) => {
-  res.json(req.repository)
+  res.json({ id: req.repository.id })
 })
 
 function ensureDirectoryExists (fullPath) {
@@ -164,12 +172,10 @@ router.get('/refresh', (req, res) => {
     .then(repo => {
       res.json({
         refresh: (new Date()).getTime() - start.getTime(),
-        repository: repo
+        repository: repo.meta.id
       })
     })
-    .catch((err) => {
-      res.status(500).json(JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err))))
-    })
+    .catch((err) => manageError(res, err))
 })
 
 module.exports = router
