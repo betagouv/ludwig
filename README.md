@@ -58,18 +58,18 @@ sudo service nginx restart
 Systemd service, pour `/lib/systemd/system/ludwig.service` :
 ```
 [Unit]
-Description=Service in charge of lduwig main webserver
+Description=Service in charge of ludwig main webserver
 
 [Service]
 User=root
 Group=root
 WorkingDirectory=/home/cloud/ludwig
+EnvironmentFile=/opt/ludwig/secrets
 ExecStart=/usr/bin/nodejs server/app.js
 
 [Install]
 WantedBy=multi-user.target
 ```
-
 
 ```
 sudo systemctl daemon-reload
@@ -100,3 +100,28 @@ Puis il faut suivre les instructions de la commande suivante.
 ```
 sudo certbot --nginx
 ```
+
+## GitHub integration and environment variables
+
+Il y a plusieurs liens avec GitHub :
+- Une [OAuth application](https://developer.github.com/apps/building-oauth-apps/) visible pour les membres de betagouv sur [GitHub](https://github.com/organizations/betagouv/settings/applications/504245)
+- Un compte de bot [`ludwig-bot`](https://github.com/ludwig-bot) pour créer des PRs sans compte sur GitHub et
+- Un compte de test [`ludwig-test`](https://github.com/ludwig-test) pour `git push` sur GitHub.
+
+### OAuth application
+
+Variables d'environnement pour `/opt/ludwig/secrets` :
+```
+GITHUB_APP_CLIENT_ID=xxxxxxxxxxxxxxxxxxxx
+GITHUB_APP_CLIENT_SECRET=yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+
+# Default committer and pull requester - personal token - ludwig-bot
+GITHUB_LUDWIG_USER_TOKEN=zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+
+# Beta pusher - personal token - ludwig-test
+GITHUB_PUSH_TOKEN=uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+```
+
+`GITHUB_APP_CLIENT_ID` et `` sont disponibles sur [la page de l'application](https://github.com/organizations/betagouv/settings/applications/504245).
+
+Les `personal token`s de compte GitHub sont générés via [la page suivante](https://github.com/settings/tokens).
