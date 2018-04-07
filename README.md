@@ -58,18 +58,18 @@ sudo service nginx restart
 Systemd service, pour `/lib/systemd/system/ludwig.service` :
 ```
 [Unit]
-Description=Service in charge of lduwig main webserver
+Description=Service in charge of ludwig main webserver
 
 [Service]
 User=root
 Group=root
 WorkingDirectory=/home/cloud/ludwig
+EnvironmentFile=/opt/ludwig/secrets
 ExecStart=/usr/bin/nodejs server/app.js
 
 [Install]
 WantedBy=multi-user.target
 ```
-
 
 ```
 sudo systemctl daemon-reload
@@ -99,4 +99,20 @@ sudo apt-get install python-certbot-nginx
 Puis il faut suivre les instructions de la commande suivante.
 ```
 sudo certbot --nginx
+```
+
+## GitHub integration and environment variables
+
+### OAuth application
+
+Variables d'environnement pour `/opt/ludwig/secrets` :
+```
+GITHUB_APP_CLIENT_ID=xxxxxxxxxxxxxxxxxxxx
+GITHUB_APP_CLIENT_SECRET=yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+
+# Default committer and pull requester - personal token - ludwig-bot
+GITHUB_LUDWIG_USER_TOKEN=zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+
+# Default committer and pull requester - personal token - ludwig-test
+GITHUB_PUSH_TOKEN=uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 ```
