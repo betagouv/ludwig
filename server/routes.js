@@ -9,6 +9,8 @@ module.exports = function (app) {
       message: 'You‘re at Ludwig API root!'
     })
   })
+  app.use('/login', require('./login'))
+  app.use('/oauth', require('./oauth'))
 
   app.route('/*').get((req, res) => {
     res.sendFile(path.resolve(path.join(__dirname, '../client/index.html')))
