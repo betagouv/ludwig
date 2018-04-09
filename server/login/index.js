@@ -16,4 +16,10 @@ router.get('/github', (req, res) => {
   res.redirect('https://github.com/login/oauth/authorize?' + params)
 })
 
+router.get('/', (req, res) => {
+  res.json({
+    github: config.session.cookie.signed ? req.signedCookies.github : req.cookies.github
+  })
+})
+
 module.exports = router

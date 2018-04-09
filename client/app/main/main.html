@@ -2,7 +2,13 @@
   <h1>Ludwig</h1>
   <h2>Faciliter la validation collaborative des applications</h2>
 
-  <p><a href="/login/github">Connectez vous</a> pour permettre à votre communauté de participer à l'améliorer votre service&nbsp;!</p>
+  <div ng-if="identities.github">
+    <p>Bonjour <code>{{identities.github}}</code>, vous êtes identifié sur GitHub.</p>
+  </div>
+
+  <div ng-if="! identities.github">
+    <p><a href="/login/github">Connectez vous sur GitHub</a> pour permettre à votre communauté de participer à l'améliorer votre service&nbsp;!</p>
+  </div>
   
   <h3>Liste des applications&nbsp;:</h3>
   <div>
