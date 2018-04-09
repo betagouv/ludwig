@@ -22,4 +22,11 @@ router.get('/', (req, res) => {
   })
 })
 
+router.delete('/', (req, res) => {
+  res.clearCookie('github')
+  res.json({
+    github: true
+  })
+})
+
 module.exports = router

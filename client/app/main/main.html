@@ -2,11 +2,13 @@
   <h1>Ludwig</h1>
   <h2>Faciliter la validation collaborative des applications</h2>
 
-  <div ng-if="identities.github">
-    <p>Bonjour <code>{{identities.github}}</code>, vous êtes identifié sur GitHub.</p>
+  <div ng-if="auth.identities.github">
+    <p>Bonjour <code>{{auth.identities.github}}</code>, vous êtes identifié sur GitHub.</p>
+    <button ng-if="! auth.logout" ng-click="logout()">Vous déconnecter</button>
+    <p ng-if="auth.logout">Vous avez été déconnecté.</p>
   </div>
 
-  <div ng-if="! identities.github">
+  <div ng-if="! auth.identities.github">
     <p><a href="/login/github">Connectez vous sur GitHub</a> pour permettre à votre communauté de participer à l'améliorer votre service&nbsp;!</p>
   </div>
   

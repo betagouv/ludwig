@@ -5,7 +5,11 @@ angular.module('ludwigApp')
     return {
       get: function () {
         return $http.get('/login')
-          .then(function (response) { return response.data }, function () { return [] })
+          .then(function (response) { return response.data }, function () { return {} })
+      },
+      delete: function () {
+        return $http.delete('/login')
+          .then(function (response) { return response.data }, function () { return {} })
       }
     }
   })
