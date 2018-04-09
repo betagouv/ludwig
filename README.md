@@ -81,7 +81,12 @@ sudo systemctl enable ludwig
 ## CI
 
 ```
-ssh cloud@84.39.45.155 'cd ludwig && git fetch && git pull && npm install && sudo systemctl restart ludwig && git log -n 1 && ls -ld .git'
+ssh cloud@ludwig.incubateur.net 'cd ludwig && git fetch && git pull && npm install && sudo systemctl restart ludwig && git log -n 1 && ls -ld .git'
+```
+
+En cas de changement du service, il faut aussi lancer la commande suivante
+```
+sudo systemctl daemon-reload
 ```
 
 ## HTTPS
