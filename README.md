@@ -65,7 +65,7 @@ User=root
 Group=root
 WorkingDirectory=/home/cloud/ludwig
 EnvironmentFile=/opt/ludwig/secrets
-ExecStart=/usr/bin/nodejs server/app.js
+ExecStart=/usr/bin/nodejs server
 
 [Install]
 WantedBy=multi-user.target
@@ -112,8 +112,9 @@ Il y a plusieurs liens avec GitHub :
 
 Variables d'environnement pour `/opt/ludwig/secrets` :
 ```
-GITHUB_APP_CLIENT_ID=xxxxxxxxxxxxxxxxxxxx
+GITHUB_APP_CLIENT_ID=b5a749648fca58d886ec
 GITHUB_APP_CLIENT_SECRET=yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+GITHUB_APP_USER_AGENT=Ludwig-504245
 
 # Default committer and pull requester - personal token - ludwig-bot
 GITHUB_LUDWIG_USER_TOKEN=zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
@@ -122,6 +123,7 @@ GITHUB_LUDWIG_USER_TOKEN=zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 GITHUB_PUSH_TOKEN=uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 ```
 
-`GITHUB_APP_CLIENT_ID` et `` sont disponibles sur [la page de l'application](https://github.com/organizations/betagouv/settings/applications/504245).
+`GITHUB_APP_CLIENT_ID` et `GITHUB_APP_CLIENT_SECRET` sont disponibles sur [la page de l'application](https://github.com/organizations/betagouv/settings/applications/504245).
+`GITHUB_APP_USER_AGENT` est [demandé par GitHub](https://developer.github.com/v3/#user-agent-required) pour faciliter l'identification des utilisateurs de son API.
 
 Les `personal token`s de compte GitHub sont générés via [la page suivante](https://github.com/settings/tokens).

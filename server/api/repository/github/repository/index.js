@@ -12,6 +12,8 @@ const Git = require('nodegit')
 const config = require('../../../../config/environment')
 const repoList = config.alpha.repositoryList
 
+const rp = require('request-promise')
+
 function manageDefaultProperties (repo) {
   repo.testDirectory = repo.testDirectory || 'tests'
   repo.reference = repo.reference || 'master'
@@ -192,8 +194,6 @@ function commitSignature (user) {
   return Git.Signature.now(user.name, user.name)
 }
 
-const rp = require('request-promise')
-
 router.post('/suggest', (req, res) => {
   const suggestion = {
     title: req.body.title,
@@ -255,7 +255,7 @@ router.post('/suggest', (req, res) => {
                       body: suggestion.body
                     },
                     headers: {
-                      'Authorization': `token ${config.github.user.token}`,
+                      Authorization: `token ${config.github.user.token}`,
                       'User-Agent': config.github.application.userAgent
                     },
                     json: true

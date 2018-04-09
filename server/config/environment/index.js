@@ -7,12 +7,11 @@ const alphaUser = {
 
 var all = {
   env: process.env.NODE_ENV,
-
   github: {
     application: {
-      id: process.env.GITHUB_APP_CLIENT_ID || 'GITHUB_APP_CLIENT_ID',
+      id: process.env.GITHUB_APP_CLIENT_ID || 'b5a749648fca58d886ec',
       secret: process.env.GITHUB_APP_CLIENT_SECRET || 'GITHUB_APP_CLIENT_SECRET',
-      userAgent: 'Ludwig-504245'
+      userAgent: process.env.GITHUB_APP_USER_AGENT || 'Ludwig-504245'
     },
     user: {
       name: 'Ludwig Wittgenstein',

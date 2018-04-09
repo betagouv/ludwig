@@ -2,7 +2,7 @@
   "name": "@sgmap/ludwig",
   "version": "0.6.0-alpha.1",
   "license": "AGPL-3.0",
-  "main": "server/app.js",
+  "main": "server/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/sgmap/ludwig"
@@ -25,15 +25,20 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-promise": "^3.6.0",
-    "eslint-plugin-standard": "^3.0.1"
+    "eslint-plugin-standard": "^3.0.1",
+    "expect": "^21.2.1",
+    "mocha": "^4.0.1",
+    "supertest": "^3.0.0"
   },
   "engines": {
     "node": ">=6.0.0"
   },
   "files": [],
   "scripts": {
-    "start": "node server/app.js",
+    "dev": "DEBUG=express:* npm run start",
+    "start": "node server",
     "lint": "eslint .",
-    "test": "npm run lint"
+    "mocha": "mocha server/**/*test*",
+    "test": "npm run lint && npm run mocha"
   }
 }
