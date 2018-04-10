@@ -7,9 +7,16 @@ const alphaUser = {
 
 var all = {
   env: process.env.NODE_ENV,
+  session: {
+    secret: process.env.SESSION_SECRET || 'not-so-secret',
+    cookie: {
+      signed: true
+    }
+  },
   github: {
     application: {
       id: process.env.GITHUB_APP_CLIENT_ID || 'b5a749648fca58d886ec',
+      redirectURI: process.env.GITHUB_APP_REDIRECT_URI || 'http://localhost:4000/oauth/github/callback',
       secret: process.env.GITHUB_APP_CLIENT_SECRET || 'GITHUB_APP_CLIENT_SECRET',
       userAgent: process.env.GITHUB_APP_USER_AGENT || 'Ludwig-504245'
     },

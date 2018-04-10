@@ -106,6 +106,16 @@ Puis il faut suivre les instructions de la commande suivante.
 sudo certbot --nginx
 ```
 
+## Secrets
+
+Certaines variables doivent restées privées pour protéger les informations des usagers.
+
+Variables d'environnement pour `/opt/ludwig/secrets` :
+```
+# Secret for signing cookies
+SESSION_SECRET=not-so-secret
+```
+
 ## GitHub integration and environment variables
 
 Il y a plusieurs liens avec GitHub :
@@ -119,6 +129,7 @@ Variables d'environnement pour `/opt/ludwig/secrets` :
 ```
 GITHUB_APP_CLIENT_ID=b5a749648fca58d886ec
 GITHUB_APP_CLIENT_SECRET=yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+GITHUB_APP_REDIRECT_URI=https://ludwig.incubateur.net/oauth/github/callback
 GITHUB_APP_USER_AGENT=Ludwig-504245
 
 # Default committer and pull requester - personal token - ludwig-bot
@@ -128,7 +139,7 @@ GITHUB_LUDWIG_USER_TOKEN=zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 GITHUB_PUSH_TOKEN=uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 ```
 
-`GITHUB_APP_CLIENT_ID` et `GITHUB_APP_CLIENT_SECRET` sont disponibles sur [la page de l'application](https://github.com/organizations/betagouv/settings/applications/504245).
+`GITHUB_APP_CLIENT_ID`, `GITHUB_APP_CLIENT_SECRET` et `GITHUB_APP_REDIRECT_URI` sont disponibles sur [la page de l'application](https://github.com/organizations/betagouv/settings/applications/504245).
 `GITHUB_APP_USER_AGENT` est [demandé par GitHub](https://developer.github.com/v3/#user-agent-required) pour faciliter l'identification des utilisateurs de son API.
 
 Les `personal token`s de compte GitHub sont générés via [la page suivante](https://github.com/settings/tokens).
