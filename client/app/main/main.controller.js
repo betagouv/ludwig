@@ -6,11 +6,11 @@ angular.module('ludwigApp')
     LoginService.get()
       .then(function (identities) {
         $scope.auth.identities = identities
-      })
 
-    RepositoryService.getAll()
-      .then(function (repositoryIds) {
-        $scope.repositoryIds = repositoryIds
+        RepositoryService.getCandidates()
+          .then(function (repositories) {
+            $scope.repositories = repositories
+          })
       })
 
     $scope.logout = function () {
