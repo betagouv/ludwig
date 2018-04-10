@@ -12,6 +12,7 @@
     "angular-ui-router": "^0.4.3",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
+    "composable-middleware": "^0.3.0",
     "cookie-parser": "1.4.3",
     "express": "^4.13.4",
     "js-yaml": "^3.10.0",
@@ -40,7 +41,7 @@
     "dev": "DEBUG=express:* npm run start",
     "start": "node server",
     "lint": "eslint .",
-    "mocha": "mocha server/**/*test*",
+    "mocha": "mocha --require mocha.conf.js  \"server/**/*test*.js\"",
     "test": "npm run lint && npm run mocha"
   }
 }

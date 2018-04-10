@@ -3,8 +3,8 @@
 angular.module('ludwigApp')
   .factory('RepositoryService', function RepositoryService ($http) {
     return {
-      getAll: function () {
-        return $http.get('/api/repositories')
+      getCandidates: function () {
+        return $http.get('/api/repositories/candidates')
           .then(function (response) { return response.data }, function () { return [] })
       }
     }

@@ -12,10 +12,10 @@
     <p><a href="/login/github">Connectez vous sur GitHub</a> pour permettre à votre communauté de participer à l'améliorer votre service&nbsp;!</p>
   </div>
   
-  <h3>Liste des applications&nbsp;:</h3>
+  <h3 ng-if="repositories">Liste des dépôts pouvant être activés&nbsp;:</h3>
   <div>
-      <p ng-repeat="id in repositoryIds">
-          ID: {{ id }}
+      <p ng-repeat="repository in repositories">
+          {{ repository.full_name }}
       </p>
   </div>
 </div>

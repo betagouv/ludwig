@@ -1,5 +1,4 @@
 const expect = require('expect')
-const mongoose = require('mongoose')
 const supertest = require('supertest')
 
 const app = require('../app')
@@ -17,12 +16,6 @@ describe('oauth: github', () => {
           expect()
         })
         .end(done)
-    })
-  })
-
-  after(function (done) {
-    mongoose.connection.db.dropDatabase(function () {
-      mongoose.connection.close(done)
     })
   })
 })
