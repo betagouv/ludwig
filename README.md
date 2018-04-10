@@ -10,7 +10,7 @@ Ludwig a été déployé sur une Ubuntu 16.4.
 Les commandes suivantes ont été nécessaires :
 ```shell
 sudo apt-get update
-sudo apt-get install build-essential git libcurl4-openssl-dev nginx nodejs npm
+sudo apt-get install build-essential git libcurl4-openssl-dev mongodb-server nginx nodejs npm
 sudo ln -s /usr/bin/nodejs /usr/local/bin/node
 git clone https://github.com/sgmap/ludwig.git
 cd ludwig/
