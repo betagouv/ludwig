@@ -1,6 +1,8 @@
-const supertest = require('supertest')
-const app = require('../../app')
 const expect = require('expect')
+const mongoose = require('mongoose')
+const supertest = require('supertest')
+
+const app = require('../../app')
 
 describe('api: repository', () => {
   describe('When requesting /api/repositories', () => {
@@ -12,6 +14,12 @@ describe('api: repository', () => {
           expect(res.body instanceof Array).toBeTruthy()
         })
         .end(done)
+    })
+  })
+
+  after(function (done) {
+    mongoose.connection.db.dropDatabase(function () {
+      mongoose.connection.close(done)
     })
   })
 })

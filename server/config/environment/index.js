@@ -27,7 +27,10 @@ var all = {
     }
   },
   mongo: {
-    uri: 'mongodb://localhost/ludwig'
+    uri: 'mongodb://localhost/ludwig',
+    options: {
+      useMongoClient: true
+    }
   },
 
   alpha: {
