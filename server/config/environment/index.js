@@ -15,10 +15,10 @@ var all = {
   },
   github: {
     application: {
-      id: process.env.GITHUB_APP_CLIENT_ID || 'b5a749648fca58d886ec',
+      id: process.env.GITHUB_APP_CLIENT_ID || 'ba0f9fbf5bc8d9759c50',
       redirectURI: process.env.GITHUB_APP_REDIRECT_URI || 'http://localhost:4000/oauth/github/callback',
       secret: process.env.GITHUB_APP_CLIENT_SECRET || 'GITHUB_APP_CLIENT_SECRET',
-      userAgent: process.env.GITHUB_APP_USER_AGENT || 'Ludwig-504245'
+      userAgent: process.env.GITHUB_APP_USER_AGENT || 'Ludwig-test-701557'
     },
     user: {
       name: 'Ludwig Wittgenstein',
