@@ -10,12 +10,13 @@
   "dependencies": {
     "angular": "^1.6.6",
     "angular-ui-router": "^0.4.3",
+    "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
     "cookie-parser": "1.4.3",
-    "bluebird": "^3.5.1",
     "express": "^4.13.4",
     "js-yaml": "^3.10.0",
     "mongoose": "^4.4.6",
+    "nock": "^9.2.4",
     "nodegit": "^0.20.3",
     "request": "^2.34",
     "request-promise": "^4.2.2"

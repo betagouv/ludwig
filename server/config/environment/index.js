@@ -26,6 +26,12 @@ var all = {
       token: process.env.GITHUB_LUDWIG_USER_TOKEN || 'GITHUB_LUDWIG_USER_TOKEN'
     }
   },
+  mongo: {
+    uri: 'mongodb://localhost/ludwig',
+    options: {
+      useMongoClient: true
+    }
+  },
 
   alpha: {
     repositoryList: [{
