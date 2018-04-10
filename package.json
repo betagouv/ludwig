@@ -41,7 +41,7 @@
     "dev": "DEBUG=express:* npm run start",
     "start": "node server",
     "lint": "eslint .",
-    "mocha": "mocha server/**/*test*",
+    "mocha": "mocha --require mocha.conf.js  \"server/**/*test*.js\"",
     "test": "npm run lint && npm run mocha"
   }
 }
