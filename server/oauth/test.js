@@ -6,7 +6,7 @@ require('../../stub/github')
 
 describe('oauth: github', () => {
   describe('When returning from GitHub at /oauth/github/callback', () => {
-    it('should return 200', (done) => {
+    it('should return 302', (done) => {
       supertest(app())
         .get('/oauth/github/callback')
         .expect(302)

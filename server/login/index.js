@@ -11,7 +11,8 @@ router.get('/github', (req, res) => {
   var params = querystring.stringify({
     client_id: config.github.application.id,
     redirect_uri: config.github.application.redirectURI,
-    state: '1234'
+    state: '1234',
+    scopes: 'repo'
   })
   res.redirect('https://github.com/login/oauth/authorize?' + params)
 })
