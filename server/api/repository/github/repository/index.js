@@ -40,6 +40,7 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', auth.isAuthenticated(), (req, res) => {
+  req.repository.user = req.user
   req.repository.save()
     .then(() => req.repository.getRepository())
     .then(repository => {

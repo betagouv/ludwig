@@ -1,8 +1,15 @@
 'use strict'
 
 const alphaUser = {
-  name: 'ludwig-test',
-  token: process.env.GITHUB_PUSH_TOKEN || 'GITHUB_PUSH_TOKEN'
+  _id: 'github/ludwig-test',
+  github: {
+    details: {
+      login: 'ludwig-test'
+    },
+    access_token: {
+      access_token: process.env.GITHUB_PUSH_TOKEN || 'GITHUB_PUSH_TOKEN'
+    }
+  }
 }
 
 var all = {

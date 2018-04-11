@@ -21,16 +21,7 @@ var RepositorySchema = new mongoose.Schema({
     type: String,
     default: 'master'
   },
-  user: {
-    name: {
-      type: String,
-      default: 'ludwig-test'
-    },
-    token: {
-      type: String,
-      default: process.env.GITHUB_PUSH_TOKEN
-    }
-  }
+  user: Object
 })
 
 RepositorySchema.virtual('provider')
@@ -125,18 +116,15 @@ function processTestFiles (repository) {
     .then(() => repository)
 }
 
+// User is a Mongoose item
 function pushOptions (user) {
   return {
     callbacks: {
       credentials: () => {
-        return Git.Cred.userpassPlaintextNew(user.name, user.token)
+        return Git.Cred.userpassPlaintextNew(user.github.details.login, user.github.access_token.access_token)
       }
     }
   }
-}
-
-function commitSignature (user) {
-  return Git.Signature.now(user.name, user.name)
 }
 
 RepositorySchema.methods = {
@@ -182,11 +170,12 @@ RepositorySchema.methods = {
           .then(() => repo)
       })
       .then((repo) => {
-        return fs.writeFileAsync(fullPath, suggestion.content, 'utf-8')
+        return mkdirp.mkdirpAsync(path.dirname(fullPath))
+          .then(() => fs.writeFileAsync(fullPath, suggestion.content, 'utf-8'))
           .then(() => repo)
       })
       .then(repo => {
-        const signature = commitSignature(config.github.user)
+        const signature = Git.Signature.now(config.github.user.name, config.github.user.name)
         return repo.ref.createCommitOnHead([suggestion.filePath], signature, signature, `${suggestion.title}\n${suggestion.body}`)
           .then(() => repo)
       })
