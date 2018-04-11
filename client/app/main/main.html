@@ -1,7 +1,4 @@
 <div ui-view>
-  <h1>Ludwig</h1>
-  <h2>Faciliter la validation collaborative des applications</h2>
-
   <div ng-if="auth.identities.github">
     <p>Bonjour <code>{{auth.identities.github}}</code>, vous êtes identifié sur GitHub.</p>
     <button ng-if="! auth.logout" ng-click="logout()">Vous déconnecter</button>
