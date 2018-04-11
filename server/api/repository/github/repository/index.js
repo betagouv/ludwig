@@ -6,16 +6,7 @@ const router = express.Router({ mergeParams: true })
 const path = require('path')
 
 const auth = require('../../../../auth/auth.service')
-const config = require('../../../../config/environment')
-const repoList = config.alpha.repositoryList
-
-const model = require('./repository.model')
-
-function manageDefaultProperties (repo) {
-  repo.testDirectory = repo.testDirectory || 'tests'
-  repo.reference = repo.reference || 'master'
-  return repo
-}
+const Repository = require('./repository.model')
 
 function manageError (res, err) {
   res.status(500).json({
@@ -25,19 +16,17 @@ function manageError (res, err) {
 }
 
 router.use((req, res, next) => {
-  const repo = {
-    provider: 'github',
-    owner: req.params.owner,
-    name: req.params.repo
-  }
-  const id = [repo.provider, repo.owner, repo.name].join('/')
-
-  var details = repoList.find(function (item) { return item.id === id })
-  if (!details) {
-    return res.status(404).json(repo)
-  }
-  req.repository = manageDefaultProperties(Object.assign(repo, details))
-  next()
+  const id = `github/${req.params.owner}/${req.params.repo}`
+  Repository
+    .findById(id)
+    .exec()
+    .then(repository => {
+      req.repository = repository || new Repository({ _id: id })
+      next()
+    })
+    .catch(() => {
+      res.sendStatus(500)
+    })
 })
 
 router.use((req, res, next) => {
@@ -51,21 +40,27 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', auth.isAuthenticated(), (req, res) => {
-  model.getRepository(req.repository)
+  req.repository.save()
+    .then(() => req.repository.getRepository())
+    .then(repository => {
+      res.json({
+        id: repository.id
+      })
+    })
+    .catch((err) => manageError(res, err))
 })
 
 router.get('/tests', (req, res) => {
-  model.ensureHomeDirectoryExists(req.repository)
-    .then((homeDirectory) => res.sendFile(path.join(homeDirectory, 'tests.json')))
+  res.sendFile(path.join(req.repository.root, 'tests.json'))
 })
 
 router.get('/refresh', (req, res) => {
   const start = new Date()
-  model.refresh(req.repository)
+  req.repository.refresh()
     .then(repo => {
       res.json({
         refresh: (new Date()).getTime() - start.getTime(),
-        repository: repo.meta.id
+        repository: repo.id
       })
     })
     .catch((err) => manageError(res, err))
@@ -90,7 +85,7 @@ router.post('/suggest', (req, res) => {
   suggestion.headName = `ludwig_${timestamp}`
   suggestion.filePath = path.join(req.repository.testDirectory, `ludwig_test_${timestamp}.yaml`)
 
-  model.suggest(req.repository, suggestion)
+  req.repository.suggest(suggestion)
     .then(data => {
       res.json({
         push: (new Date()).getTime() - timestamp,
