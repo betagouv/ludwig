@@ -1,6 +1,7 @@
 'use strict'
 
 var express = require('express')
+const querystring = require('querystring')
 const rp = require('request-promise')
 
 const config = require('../config/environment')
@@ -24,7 +25,7 @@ router.get('/github/callback', (req, res) => {
     },
     json: true
   }).then(accessTokenPayload => {
-    rp({
+    return rp({
       uri: 'https://api.github.com/user',
       headers: {
         Authorization: `token ${accessTokenPayload.access_token}`,
@@ -47,10 +48,14 @@ router.get('/github/callback', (req, res) => {
           return user.save()
         }).then(user => {
           res.cookie('github', user.github.details.login, config.session.cookie)
-        }).finally(() => {
           res.redirect('/')
         })
     })
+  }).catch((error) => {
+    var params = querystring.stringify({
+      message: error.message
+    })
+    res.redirect('/error?' + params)
   })
 })
 
