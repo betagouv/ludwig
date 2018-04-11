@@ -38,7 +38,7 @@
   },
   "files": [],
   "scripts": {
-    "dev": "DEBUG=express:* npm run start",
+    "dev": "NODE_ENV=development DEBUG=express:* npm run start",
     "start": "node server",
     "lint": "eslint .",
     "mocha": "mocha --require mocha.conf.js  \"server/**/*test*.js\"",
