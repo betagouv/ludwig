@@ -13,6 +13,8 @@ angular.module('ludwigApp')
           })
       })
 
+    $scope.activateRepository = RepositoryService.activateRepository
+
     $scope.logout = function () {
       LoginService.delete()
         .then(function (result) {
