@@ -1,10 +1,5 @@
 'use strict'
 
-const alphaUser = {
-  name: 'ludwig-test',
-  token: process.env.GITHUB_PUSH_TOKEN || 'GITHUB_PUSH_TOKEN'
-}
-
 var all = {
   env: process.env.NODE_ENV,
   session: {
@@ -31,20 +26,6 @@ var all = {
     options: {
       useMongoClient: true
     }
-  },
-
-  alpha: {
-    repositoryList: [{
-      id: 'github/ludwig-test/openfisca-france',
-      testDirectory: 'tests/mes-aides.gouv.fr',
-      user: alphaUser
-    }, {
-      id: 'github/ludwig-test/openfisca-paris',
-      user: alphaUser
-    }, {
-      id: 'github/ludwig-test/openfisca-rennesmetropole',
-      user: alphaUser
-    }]
   }
 }
 

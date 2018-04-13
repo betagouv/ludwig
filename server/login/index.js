@@ -12,7 +12,7 @@ router.get('/github', (req, res) => {
     client_id: config.github.application.id,
     redirect_uri: config.github.application.redirectURI,
     state: '1234',
-    scopes: 'repo'
+    scope: 'repo'
   })
   res.redirect('https://github.com/login/oauth/authorize?' + params)
 })

@@ -6,6 +6,10 @@ angular.module('ludwigApp')
       getCandidates: function () {
         return $http.get('/api/repositories/candidates')
           .then(function (response) { return response.data }, function () { return [] })
+      },
+      activateRepository: function (repositoryId) {
+        return $http.post('/api/repositories/github/' + repositoryId)
+          .then(function (response) { return response.data }, function (error) { return { error: error } })
       }
     }
   })

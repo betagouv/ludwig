@@ -5,11 +5,8 @@ const rp = require('request-promise')
 
 const auth = require('../../auth/auth.service')
 const config = require('../../config/environment')
-const repoList = config.alpha.repositoryList
-const repositoryIds = repoList.map((repo) => repo.id)
 
 var router = express.Router()
-router.get('/', (req, res) => res.json(repositoryIds))
 router.use('/github', require('./github'))
 
 router.get('/candidates', auth.isAuthenticated(), (req, res) => {
