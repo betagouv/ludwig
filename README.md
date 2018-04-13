@@ -78,10 +78,10 @@ sudo service ludwig status
 sudo systemctl enable ludwig
 ```
 
-## CI
+## _Continuous_ deployment
 
 ```
-ssh cloud@ludwig.incubateur.net 'cd ludwig && git fetch && git pull && npm install && sudo systemctl restart ludwig && git log -n 1 && ls -ld .git'
+ssh cloud@ludwig.incubateur.net 'cd ludwig && git fetch && git pull && npm install && sudo systemctl restart ludwig && git log -n 1 && ls -ld .git && sleep 1 && sudo systemctl status ludwig'
 ```
 
 En cas de changement du service, il faut aussi lancer la commande suivante
