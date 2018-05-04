@@ -1,18 +1,17 @@
 'use strict'
 
-const path = require('path')
-
-module.exports = function (app) {
-  app.use('/api/repositories', require('./api/repository'))
-  app.use('/api/', (req, res) => {
+module.exports = function (app, server) {
+  server.use('/api/repositories', require('./api/repository'))
+  server.use('/api/', (req, res) => {
     res.json({
       message: 'You‘re at Ludwig API root!'
     })
   })
-  app.use('/login', require('./login'))
-  app.use('/oauth', require('./oauth'))
+  server.use('/login', require('./login'))
+  server.use('/oauth', require('./oauth'))
 
-  app.route('/*').get((req, res) => {
-    res.sendFile(path.resolve(path.join(__dirname, '../client/index.html')))
+  const handle = app.getRequestHandler()
+  server.get('*', (req, res) => {
+    return handle(req, res)
   })
 }
