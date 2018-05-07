@@ -3,4 +3,4 @@ dependencies:
     - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test; sudo apt-get update; sudo apt-get install libstdc++-4.9-dev
 machine:
   node:
-    version: 6
+    version: 8
