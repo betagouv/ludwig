@@ -46,7 +46,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "mocha": "mocha --require mocha.conf.js  \"server/**/*test*.js\"",
+    "mocha": "mocha --timeout 5000 --require mocha.conf.js  \"server/**/*test*.js\"",
     "test": "npm run lint && npm run mocha"
   }
 }
