@@ -1,6 +1,20 @@
 Ludwig facilite la validation collaborative d'une application.
 
 
+# Usage
+
+L'usage principal, ou du moins initial de ce produit correspond à l'ajout de fichier de tests à partir de l'API.
+
+`curl -X POST https://ludwig.incubateur.net/api/repositories/github/betagouv/openfisca-paris/suggest -d @data.json -H 'Content-Type: application/json'`
+Avec `data.json`:
+```json
+{
+  "title": "Titre de la Pull Request et du commit",
+  "body": "Détails de la pull request et du commit",
+  "content": "Contenu du fichier ajouté\n"
+}
+```
+
 # Notes d'installation
 
 ## Commandes initiales
