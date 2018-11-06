@@ -2,6 +2,7 @@ defaults: &defaults
   working_directory: ~/ludwig
   docker:
     - image: circleci/node:6.14-stretch
+    - image: mongo:3.2.18
 
 version: 2
 jobs:
