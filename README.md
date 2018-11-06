@@ -1,6 +1,20 @@
 Ludwig facilite la validation collaborative d'une application.
 
 
+# Usage
+
+L'usage principal, ou du moins initial de ce produit correspond à l'ajout de fichier de tests à partir de l'API.
+
+`curl -X POST https://ludwig.incubateur.net/api/repositories/github/betagouv/openfisca-paris/suggest -d @data.json -H 'Content-Type: application/json'`
+Avec `data.json`:
+```json
+{
+  "title": "Titre de la Pull Request et du commit",
+  "body": "Détails de la pull request et du commit",
+  "content": "Contenu du fichier ajouté\n"
+}
+```
+
 # Notes d'installation
 
 ## Commandes initiales
@@ -64,6 +78,7 @@ Description=Service in charge of ludwig main webserver
 User=root
 Group=root
 WorkingDirectory=/home/cloud/ludwig
+Restart=always
 EnvironmentFile=/opt/ludwig/secrets
 ExecStart=/usr/bin/nodejs server
 
@@ -81,7 +96,7 @@ sudo systemctl enable ludwig
 ## _Continuous_ deployment
 
 ```
-ssh cloud@ludwig.incubateur.net 'cd ludwig && git fetch && git pull && npm install && sudo systemctl restart ludwig && git log -n 1 && ls -ld .git && sleep 1 && sudo systemctl status ludwig'
+command="/home/cloud/ludwig/deploy.sh",no-pty,no-port-forwarding,no-agent-forwarding ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDoD3h4KJfjrGmRkYBd3/+gtaQTVautl/W8P258puydWx/ON5gZeyNuYBMzBaix9SfZk5qkY+U6y1PrnqKqjYQLJVU5IVcHkgaBGREQmOCQyfdBvpuXBeAVvmqEodeS32PtjNVC8F32CMwFZxJs0dCpMWyPkX2cLElZrqZdX6n+Ki2BbpHTwcEi2YRM6gmKxMStsYVxjTCpx90B2lnNuByoIb+saz5+g8ivF3XySxLQKJ72g8NC6mg1FZewsTCmvfpPL3gX3+v62CRjRMb68YgCBFAW7aKv/9XtNCr9jo+icpDcpD3js9/qvHKHE0yJEKSj1U2MsHdGP1qivRGf4iGB
 ```
 
 En cas de changement du service, il faut aussi lancer la commande suivante
