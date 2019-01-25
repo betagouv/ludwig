@@ -21,7 +21,13 @@ router.use((req, res, next) => {
     .findById(id)
     .exec()
     .then(repository => {
-      req.repository = repository || new Repository({ _id: id })
+      if (!repository) {
+        return res.status(500).json({
+          message: id + ' is not active. Contributions are not possible. Log in to activate and aloow contributions.'
+        })
+      }
+
+      req.repository = repository
       next()
     })
     .catch(() => {
