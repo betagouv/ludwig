@@ -1,12 +1,14 @@
 <div id="account" ui-view>
   <p>Bonjour <code>{{user.id}}</code>, vous êtes bien identifié.</p>
   <button ng-click="logout()">Vous déconnecter</button>
-
   <h3 ng-if="user.repositories.length">Liste des dépôts activés&nbsp;:</h3>
   <div>
       <div class="row repository" ng-repeat="repository in user.repositories">
         <div>
           {{ repository }}
+          <button ng-click="props.test = repository" ng-if="props.test !== repository">Tester la contribution</button>
+          <button ng-click="props.test = ''" ng-if="props.test === repository">Fermer l'outil de contribution</button>
+          <tester repository="repository" ng-if="props.test === repository"></tester>
         </div>
       </div>
   </div>

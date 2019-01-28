@@ -7,8 +7,9 @@
     <title>Ludwig - Outil de validation collaborative</title>
     <meta name="description" content="Ludwig - Outil de validation collaborative">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="app/home/home.css" />
     <link rel="stylesheet" href="app/account/account.css" />
+    <link rel="stylesheet" href="app/home/home.css" />
+    <link rel="stylesheet" href="components/tester/tester.css" />
   </head>
   <body ng-app="ludwigApp">
     <!--[if lt IE 10]>
@@ -30,19 +31,21 @@
 
     <script src="app/app.js"></script>
 
+    <script src="app/account/account.controller.js"></script>
+    <script src="app/account/account.js"></script>
+
     <script src="app/error/error.controller.js"></script>
     <script src="app/error/error.js"></script>
-
-    <script src="app/layout/layout.js"></script>
 
     <script src="app/home/home.controller.js"></script>
     <script src="app/home/home.js"></script>
 
-    <script src="app/account/account.controller.js"></script>
-    <script src="app/account/account.js"></script>
-
-    <script src="components/repository/repository.service.js"></script>
+    <script src="app/layout/layout.js"></script>
 
     <script src="components/login/login.service.js"></script>
+    <script src="components/repository/repository.service.js"></script>
+    <script src="components/tester/tester.js"></script>
+
+
 </body>
 </html>

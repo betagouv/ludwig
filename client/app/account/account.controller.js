@@ -2,6 +2,8 @@
 
 angular.module('ludwigApp')
   .controller('AccountCtrl', function ($scope, $state, LoginService, RepositoryService) {
+    $scope.props = {}
+
     LoginService.get()
       .then(function (user) {
         if (!user) {

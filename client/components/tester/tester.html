@@ -1,0 +1,23 @@
+<div class="tester">
+  <h4>Vous êtes en train de contribuer à <code>{{ repository }}</code></h4>
+  
+  <p ng-if="externalLink">
+    Votre contribution est visible à la <a href="{{ externalLink }}">page suivante</a>.
+    Pour faire une nouvelle contribution, <a href ng-click="renew()">cliquez ici</a>.
+  </p>
+  <div ng-hide="externalLink">
+    <div>
+      <label id="title">Titre:</label>
+      <input for="title" ng-value="props.title"/>
+    </div>
+    <div>
+      <label id="body">Message:</label>
+      <textarea for="body" ng-value="props.body"></textarea>
+    </div>
+    <div>
+      <label id="content">Contenu:</label>
+      <textarea for="content" ng-value="props.content"></textarea>
+    </div>
+    <button ng-disabled="isSending" ng-click="send()">Envoyer</button>
+  </div>
+</div>
