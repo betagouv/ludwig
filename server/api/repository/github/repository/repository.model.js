@@ -41,7 +41,7 @@ RepositorySchema.virtual('name')
 
 RepositorySchema.virtual('root')
   .get(function () {
-    return `/opt/ludwig/repositories/github/${this.owner}/${this.name}`
+    return `${config.fs.root}/repositories/github/${this.owner}/${this.name}`
   })
 
 RepositorySchema.virtual('content')
@@ -154,7 +154,7 @@ RepositorySchema.methods = {
   },
 
   suggest: function (suggestion) {
-    const repositoryRoot = `/opt/ludwig/repositories/github/${this.owner}/${this.name}/content`
+    const repositoryRoot = `${config.fs.root}/repositories/github/${this.owner}/${this.name}/content`
     const fullPath = path.join(repositoryRoot, suggestion.filePath)
 
     return this.getRepository()
@@ -175,7 +175,7 @@ RepositorySchema.methods = {
           .then(() => repo)
       })
       .then(repo => {
-        const signature = Git.Signature.now(config.github.user.name, config.github.user.name)
+        const signature = Git.Signature.now(config.github.user.name, config.github.user.email)
         return repo.ref.createCommitOnHead([suggestion.filePath], signature, signature, `${suggestion.title}\n${suggestion.body}`)
           .then(() => repo)
       })

@@ -1,0 +1,13 @@
+.tester div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tester div * {
+  min-width: 500px;
+}
+
+.tester textarea {
+  min-height: 200px;
+}

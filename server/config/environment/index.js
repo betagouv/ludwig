@@ -8,6 +8,9 @@ var all = {
       signed: true
     }
   },
+  fs: {
+    root: '/opt/ludwig'
+  },
   github: {
     application: {
       id: process.env.GITHUB_APP_CLIENT_ID || 'ba0f9fbf5bc8d9759c50',
