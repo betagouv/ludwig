@@ -11,7 +11,7 @@ describe('oauth: github', () => {
         .get('/oauth/github/callback')
         .expect(302)
         .expect((res) => {
-          expect(res.headers.location).toEqual('/')
+          expect(res.headers.location).toEqual('/account')
           expect(res.headers['set-cookie'][0]).toMatch(/great-user/)
           expect()
         })

@@ -1,0 +1,8 @@
+#account .row {
+    display: flex;
+    justify-content: space-between;
+}
+
+#account .row:nth-of-type(2n) {
+    background-color: lightgray;
+}

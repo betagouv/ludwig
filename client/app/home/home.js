@@ -3,9 +3,9 @@
 angular.module('ludwigApp')
   .config(function ($stateProvider) {
     $stateProvider
-      .state('layout.main', {
+      .state('layout.home', {
         url: '/',
-        templateUrl: 'app/main/main.html',
-        controller: 'MainCtrl'
+        templateUrl: 'app/home/home.html',
+        controller: 'HomeCtrl'
       })
   })
