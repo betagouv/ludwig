@@ -9,6 +9,24 @@ const User = require('../api/user/user.model')
 
 var router = express.Router()
 
+router.get('/local/callback', (req, res) => {
+  const userId = 'local/stub'
+  User
+    .findById(userId)
+    .exec()
+    .then(user => {
+      if (!user) {
+        user = new User({ _id: userId })
+      }
+
+      return user.save()
+    })
+    .then(user => {
+      res.cookie('userId', user._id, config.session.cookie)
+      res.redirect('/account')
+    })
+})
+
 router.get('/github/callback', (req, res) => {
   rp({
     method: 'POST',
@@ -47,7 +65,7 @@ router.get('/github/callback', (req, res) => {
 
           return user.save()
         }).then(user => {
-          res.cookie('github', user.github.details.login, config.session.cookie)
+          res.cookie('userId', user._id, config.session.cookie)
           res.redirect('/account')
         })
     })

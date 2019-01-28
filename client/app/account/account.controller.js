@@ -3,15 +3,17 @@
 angular.module('ludwigApp')
   .controller('AccountCtrl', function ($scope, $state, LoginService, RepositoryService) {
     LoginService.get()
-      .then(function (identities) {
-        if (identities === {}) {
-          $state.go('layout.home')
+      .then(function (user) {
+        if (!user) {
+          return $state.go('layout.home')
         }
 
-        $scope.auth = {identities: identities}
+        $scope.user = user
         RepositoryService.getCandidates()
           .then(function (repositories) {
-            $scope.repositories = repositories
+            $scope.candidates = repositories.filter(function (repo) {
+              return $scope.user.repositories.indexOf(repo.full_name) < 0
+            })
           })
       })
 
@@ -22,5 +24,20 @@ angular.module('ludwigApp')
         })
     }
 
-    $scope.activateRepository = RepositoryService.activateRepository
+    $scope.activateRepository = function (repository) {
+      RepositoryService.activateRepository(repository)
+        .then(function (repository) {
+          if (repository.error) {
+            return
+          }
+
+          $scope.user.repositories.push(repository.id)
+          var idx = $scope.candidates.findIndex(function (repo) {
+            return repo.full_name === repository.id
+          })
+          if (idx > -1) {
+            $scope.candidates.splice(idx, 1)
+          }
+        })
+    }
   })

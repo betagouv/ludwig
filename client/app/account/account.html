@@ -1,13 +1,19 @@
 <div id="account" ui-view>
-  <div ng-if="auth.identities.github">
-    <p>Bonjour <code>{{auth.identities.github}}</code>, vous êtes identifié sur GitHub.</p>
-    <button ng-if="! auth.logout" ng-click="logout()">Vous déconnecter</button>
-    <p ng-if="auth.logout">Vous avez été déconnecté.</p>
+  <p>Bonjour <code>{{user.id}}</code>, vous êtes bien identifié.</p>
+  <button ng-click="logout()">Vous déconnecter</button>
+
+  <h3 ng-if="user.repositories.length">Liste des dépôts activés&nbsp;:</h3>
+  <div>
+      <div class="row repository" ng-repeat="repository in user.repositories">
+        <div>
+          {{ repository }}
+        </div>
+      </div>
   </div>
 
-  <h3 ng-if="repositories">Liste des dépôts pouvant être activés&nbsp;:</h3>
+  <h3 ng-if="candidates">Liste des dépôts pouvant être activés&nbsp;:</h3>
   <div>
-      <div class="row repository" ng-repeat="repository in repositories">
+      <div class="row repository" ng-repeat="repository in candidates">
         <div>
           {{ repository.full_name }}
         </div>

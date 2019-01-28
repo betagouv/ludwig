@@ -12,6 +12,12 @@ router.use('/github', require('./github'))
 
 router.post('/', auth.isAuthenticated(), (req, res) => {
   const id = req.body.id
+  if (!id) {
+    return res.status(400).json({
+      message: 'id is missing.'
+    })
+  }
+
   Repository
     .findById(id)
     .exec()
@@ -26,19 +32,33 @@ router.post('/', auth.isAuthenticated(), (req, res) => {
         _id: id,
         user: req.user
       })
-      repository.save()
-        .then(repository => {
-          return res.json({
-            id: id
-          })
-        })
+      return repository.save()
     })
-    .catch(() => {
+    .then(repository => {
+      req.user.repositories.push(repository._id)
+      req.user.repositories = req.user.repositories
+      return req.user.save()
+    })
+    .then(() => {
+      return res.json({
+        id: id
+      })
+    })
+    .catch((err) => {
+      console.log(err)
       return res.sendStatus(500)
     })
 })
 
 router.get('/candidates', auth.isAuthenticated(), (req, res) => {
+  if (req.user.provider === 'local') {
+    return res.json([{
+      full_name: 'local/celebrities/ludwig'
+    }, {
+      full_name: 'local/celebrities/shakespeare'
+    }])
+  }
+
   rp({
     uri: 'https://api.github.com/user/repos?per_page=100',
     headers: {

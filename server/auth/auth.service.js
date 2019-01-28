@@ -13,7 +13,7 @@ function isAuthenticated () {
   return compose()
     // Attach user to request
     .use(function (req, res, next) {
-      const userId = `github/${config.session.cookie.signed ? req.signedCookies.github : req.cookies.github}`
+      const userId = config.session.cookie.signed ? req.signedCookies.userId : req.cookies.userId
       User
         .findById(userId)
         .exec()
