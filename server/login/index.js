@@ -5,6 +5,8 @@ const querystring = require('querystring')
 
 const config = require('../config/environment')
 
+const auth = require('../auth/auth.service')
+
 var router = express.Router()
 
 router.get('/github', (req, res) => {
@@ -21,14 +23,15 @@ router.get('/local', (req, res) => {
   res.redirect('/oauth/local/callback')
 })
 
-router.get('/', (req, res) => {
+router.get('/', auth.isAuthenticated(), (req, res) => {
   res.json({
-    github: config.session.cookie.signed ? req.signedCookies.github : req.cookies.github
+    id: req.user._id,
+    repositories: req.user.repositories
   })
 })
 
 router.delete('/', (req, res) => {
-  res.clearCookie('github')
+  res.clearCookie('userId')
   res.json({
     github: true
   })

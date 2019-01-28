@@ -22,7 +22,7 @@ router.get('/local/callback', (req, res) => {
       return user.save()
     })
     .then(user => {
-      res.cookie('local', user._id, config.session.cookie)
+      res.cookie('userId', user._id, config.session.cookie)
       res.redirect('/account')
     })
 })
@@ -65,7 +65,7 @@ router.get('/github/callback', (req, res) => {
 
           return user.save()
         }).then(user => {
-          res.cookie('github', user.github.details.login, config.session.cookie)
+          res.cookie('userId', user._id, config.session.cookie)
           res.redirect('/account')
         })
     })
