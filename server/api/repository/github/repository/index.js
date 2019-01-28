@@ -5,7 +5,6 @@ const router = express.Router({ mergeParams: true })
 
 const path = require('path')
 
-const auth = require('../../../../auth/auth.service')
 const Repository = require('./repository.model')
 
 function manageError (res, err) {
@@ -43,18 +42,6 @@ router.use((req, res, next) => {
 
 router.get('/', (req, res) => {
   res.json({ id: req.repository.id })
-})
-
-router.post('/', auth.isAuthenticated(), (req, res) => {
-  req.repository.user = req.user
-  req.repository.save()
-    .then(() => req.repository.getRepository())
-    .then(repository => {
-      res.json({
-        id: repository.id
-      })
-    })
-    .catch((err) => manageError(res, err))
 })
 
 router.get('/tests', (req, res) => {
