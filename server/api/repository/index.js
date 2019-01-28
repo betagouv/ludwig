@@ -32,14 +32,20 @@ router.post('/', auth.isAuthenticated(), (req, res) => {
         _id: id,
         user: req.user
       })
-      repository.save()
-        .then(repository => {
-          return res.json({
-            id: id
-          })
-        })
+      return repository.save()
     })
-    .catch(() => {
+    .then(repository => {
+      req.user.repositories.push(repository._id)
+      req.user.repositories = req.user.repositories
+      return req.user.save()
+    })
+    .then(() => {
+      return res.json({
+        id: id
+      })
+    })
+    .catch((err) => {
+      console.log(err)
       return res.sendStatus(500)
     })
 })
