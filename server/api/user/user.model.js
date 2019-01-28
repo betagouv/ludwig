@@ -14,4 +14,9 @@ var UserSchema = new mongoose.Schema({
   }
 })
 
+UserSchema.virtual('provider')
+  .get(function () {
+    return this._id.split('/')[0]
+  })
+
 module.exports = mongoose.model('User', UserSchema)

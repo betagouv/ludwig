@@ -39,6 +39,14 @@ router.post('/', auth.isAuthenticated(), (req, res) => {
 })
 
 router.get('/candidates', auth.isAuthenticated(), (req, res) => {
+  if (req.user.provider === 'local') {
+    return res.json([{
+      full_name: 'local/celebrities/ludwig'
+    }, {
+      full_name: 'local/celebrities/shakespeare'
+    }])
+  }
+
   rp({
     uri: 'https://api.github.com/user/repos?per_page=100',
     headers: {
