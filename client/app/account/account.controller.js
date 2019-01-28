@@ -11,7 +11,9 @@ angular.module('ludwigApp')
         $scope.user = user
         RepositoryService.getCandidates()
           .then(function (repositories) {
-            $scope.repositories = repositories
+            $scope.candidates = repositories.filter(function (repo) {
+              return $scope.user.repositories.indexOf(repo.full_name) < 0
+            })
           })
       })
 
