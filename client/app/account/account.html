@@ -1,9 +1,6 @@
 <div id="account" ui-view>
-  <div ng-if="auth.identities.github">
-    <p>Bonjour <code>{{auth.identities.github}}</code>, vous êtes identifié sur GitHub.</p>
-    <button ng-if="! auth.logout" ng-click="logout()">Vous déconnecter</button>
-    <p ng-if="auth.logout">Vous avez été déconnecté.</p>
-  </div>
+  <p>Bonjour <code>{{user.id}}</code>, vous êtes bien identifié.</p>
+  <button ng-click="logout()">Vous déconnecter</button>
 
   <h3 ng-if="repositories">Liste des dépôts pouvant être activés&nbsp;:</h3>
   <div>

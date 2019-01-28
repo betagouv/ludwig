@@ -3,12 +3,12 @@
 angular.module('ludwigApp')
   .controller('AccountCtrl', function ($scope, $state, LoginService, RepositoryService) {
     LoginService.get()
-      .then(function (identities) {
-        if (identities === {}) {
-          $state.go('layout.home')
+      .then(function (user) {
+        if (!user) {
+          return $state.go('layout.home')
         }
 
-        $scope.auth = {identities: identities}
+        $scope.user = user
         RepositoryService.getCandidates()
           .then(function (repositories) {
             $scope.repositories = repositories
