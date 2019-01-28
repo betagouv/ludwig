@@ -24,5 +24,20 @@ angular.module('ludwigApp')
         })
     }
 
-    $scope.activateRepository = RepositoryService.activateRepository
+    $scope.activateRepository = function (repository) {
+      RepositoryService.activateRepository(repository)
+        .then(function (repository) {
+          if (repository.error) {
+            return
+          }
+
+          $scope.user.repositories.push(repository.id)
+          var idx = $scope.candidates.findIndex(function (repo) {
+            return repo.full_name === repository.id
+          })
+          if (idx > -1) {
+            $scope.candidates.splice(idx, 1)
+          }
+        })
+    }
   })
