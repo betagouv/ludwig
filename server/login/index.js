@@ -17,6 +17,10 @@ router.get('/github', (req, res) => {
   res.redirect('https://github.com/login/oauth/authorize?' + params)
 })
 
+router.get('/local', (req, res) => {
+  res.redirect('/oauth/local/callback')
+})
+
 router.get('/', (req, res) => {
   res.json({
     github: config.session.cookie.signed ? req.signedCookies.github : req.cookies.github
