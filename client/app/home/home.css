@@ -1,8 +1,8 @@
-#main .row {
+#home .row {
     display: flex;
     justify-content: space-between;
 }
 
-#main .row:nth-of-type(2n) {
+#home .row:nth-of-type(2n) {
     background-color: lightgray;
 }

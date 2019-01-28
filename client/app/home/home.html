@@ -1,0 +1,16 @@
+<div id="home" ui-view>
+
+  <h3>
+    Recueillez directement les retours de vos usagers dans vos outils préférés
+  </h3>
+  <ol>
+      <li>Connectez-vous</li>
+      <li>Sélectionnez un dépôt</li>
+      <li>Testez la génération de suggestion</li>
+      <li>Intégrez dans votre service</li>
+  </ol>
+
+  <div ng-if="! auth.identities.github">
+    <p><a href="/login/github" target="_self">Connectez vous sur GitHub</a> pour permettre à votre communauté de participer à l'amélioration de votre service&nbsp;!</p>
+  </div>
+</div>

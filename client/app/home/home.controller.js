@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('ludwigApp')
-  .controller('MainCtrl', function ($scope, LoginService, RepositoryService) {
+  .controller('HomeCtrl', function ($scope, LoginService, RepositoryService) {
     $scope.auth = {}
     LoginService.get()
       .then(function (identities) {
