@@ -12,6 +12,12 @@ router.use('/github', require('./github'))
 
 router.post('/', auth.isAuthenticated(), (req, res) => {
   const id = req.body.id
+  if (!id) {
+    return res.status(400).json({
+      message: 'id is missing.'
+    })
+  }
+
   Repository
     .findById(id)
     .exec()

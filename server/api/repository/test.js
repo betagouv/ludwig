@@ -22,4 +22,18 @@ describe('api: repository', () => {
         .end(done)
     })
   })
+
+  describe('When posting to /repository', () => {
+    it('should return 200', (done) => {
+      const id = 'local/celebrities/ludwig'
+      supertest(app())
+        .post('/api/repository')
+        .send({ id: id })
+        .set('Cookie', 'userId=local%2Fstub;')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toEqual({ id: id })
+        }).end(done)
+    })
+  })
 })
