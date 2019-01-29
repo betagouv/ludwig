@@ -60,7 +60,7 @@ router.get('/candidates', auth.isAuthenticated(), (req, res) => {
   }
 
   rp({
-    uri: 'https://api.github.com/user/repos?per_page=100',
+    uri: 'https://api.github.com/user/repos?per_page=100&sort=pushed',
     headers: {
       Authorization: `token ${req.user.github.access_token.access_token}`,
       'User-Agent': config.github.application.userAgent
@@ -70,13 +70,21 @@ router.get('/candidates', auth.isAuthenticated(), (req, res) => {
   }).then((repositoryResponse) => {
     return repositoryResponse.body
   }).then((candidates) => {
+    return candidates.filter((candidate) => !candidate.archived)
+  }).then((candidates) => {
+    candidates.sort(function (a, b) {
+      return a.full_name < b.full_name ? -1 : (a.full_name === b.full_name ? 0 : 1)
+    })
+    return candidates
+  }).then((candidates) => {
     candidates.forEach((candidate) => {
       candidate.full_name = 'github/' + candidate.full_name
     })
     return candidates
   }).then((candidates) => {
     res.json(candidates)
-  }).catch(() => {
+  }).catch((err) => {
+    console.error(err)
     res.status(500).json([])
   })
 })
