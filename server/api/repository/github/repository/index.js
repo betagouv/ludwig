@@ -1,5 +1,6 @@
 'use strict'
 
+var cors = require('cors')
 const express = require('express')
 const router = express.Router({ mergeParams: true })
 
@@ -59,6 +60,8 @@ router.get('/refresh', (req, res) => {
     })
     .catch((err) => manageError(res, err))
 })
+
+router.use('/suggest', cors())
 
 router.post('/suggest', (req, res) => {
   const suggestion = {
