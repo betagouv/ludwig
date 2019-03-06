@@ -61,9 +61,8 @@ router.get('/refresh', (req, res) => {
     .catch((err) => manageError(res, err))
 })
 
-router.use('/suggest', cors())
-
-router.post('/suggest', (req, res) => {
+router.options('/suggest', cors())
+router.post('/suggest', cors({ origin: '*' }), (req, res) => {
   const suggestion = {
     title: req.body.title,
     body: req.body.body,
