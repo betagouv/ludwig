@@ -123,7 +123,7 @@ sudo certbot --nginx
 
 ## Secrets
 
-Certaines variables doivent restées privées pour protéger les informations des usagers.
+Certaines variables doivent rester privées pour protéger les informations des usagers.
 
 Variables d'environnement pour `/opt/ludwig/secrets` :
 ```
