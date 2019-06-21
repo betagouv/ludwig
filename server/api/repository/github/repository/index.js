@@ -61,6 +61,16 @@ router.get('/refresh', (req, res) => {
     .catch((err) => manageError(res, err))
 })
 
+function getPath (req, timestamp) {
+  if (req.path) {
+    const normalizedPath = path.normalize(req.path)
+    if (path.isRelative(normalizedPath) && (!normalizedPath.startsWith('..'))) {
+      return normalizedPath
+    }
+  }
+  return path.join(req.repository.testDirectory, `ludwig_test_${timestamp}.yaml`)
+}
+
 router.options('/suggest', cors())
 router.post('/suggest', cors({ origin: '*' }), (req, res) => {
   const suggestion = {
@@ -78,8 +88,8 @@ router.post('/suggest', cors({ origin: '*' }), (req, res) => {
     })
   }
   const timestamp = (new Date()).getTime()
-  suggestion.headName = `ludwig_${timestamp}`
-  suggestion.filePath = path.join(req.repository.testDirectory, `ludwig_test_${timestamp}.yaml`)
+  suggestion.headName = req.body.branch ? `${req.body.branch}_${timestamp}` : `ludwig_${timestamp}`
+  suggestion.filePath = getPath(req, timestamp)
 
   req.repository.suggest(suggestion)
     .then(data => {
