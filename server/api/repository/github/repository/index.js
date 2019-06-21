@@ -62,8 +62,8 @@ router.get('/refresh', (req, res) => {
 })
 
 function getPath (req, timestamp) {
-  if (req.path) {
-    const normalizedPath = path.normalize(req.path)
+  if (req.body.path) {
+    const normalizedPath = path.normalize(req.body.path)
     if (!path.isAbsolute(normalizedPath) && !normalizedPath.startsWith('..')) {
       return normalizedPath
     }
