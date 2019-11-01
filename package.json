@@ -18,7 +18,7 @@
     "express": "^4.13.4",
     "js-yaml": "^3.10.0",
     "mkdirp": "^0.5.1",
-    "mongoose": "^4.4.6",
+    "mongoose": "^5.7.7",
     "nock": "^9.2.4",
     "nodegit": "^0.20.3",
     "request": "^2.34",
